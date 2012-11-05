@@ -1,0 +1,104 @@
+#form_field_factory{
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+border:5px solid cadetblue;
+padding:10px;
+}
+
+#form_field_factory .right{
+float:right;
+width:48%;
+border-left:5px dotted grey;
+padding:10px;
+}
+
+#form_field_factory .left select{
+width:100%;
+padding:10px;
+height:200px;
+}
+
+#form_field_factory .left{
+float:left;
+width:48%;
+}
+
+#input_type_selector li{
+border:1px solid red;
+}
+
+#sample_field{
+border:1px solid red;
+}
+
+#sample_form_layout li{
+position:relative;
+}
+
+.btn_menu{
+position:absolute;
+top:4px;
+right:4px;
+width:200px;
+}
+
+.btn_menu div{
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+width:20px;
+height:20px;
+line-height:20px;
+font-weight:bold;
+text-align:center;
+font-size:16px;
+cursor:hand;
+cursor:pointer;
+float:right;
+margin-right:5px;
+}
+
+.delete_btn{
+background-color:#f66;
+border:2px solid #600;
+color:white;
+}
+
+.up_btn{
+background-color:#66f;
+border:2px solid #006;
+color:white;
+}
+
+.down_btn{
+background-color:#66f;
+border:2px solid #006;
+color:white;
+}
+
+.change_btn{
+background-color:#fa6;
+border:2px solid #630;
+color:white;
+}
+
+#controller_source{
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+border:5px solid lime;
+padding:10px;
+}
+
+#view_source{
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+border:5px solid aqua;
+padding:10px;
+}

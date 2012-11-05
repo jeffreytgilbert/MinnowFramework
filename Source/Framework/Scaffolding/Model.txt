@@ -1,0 +1,29 @@
+<?php
+
+/*
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ */
+
+class ObjectName extends DataObject{
+	public function __construct($data=array(), $default_filter='Parse::decode'){
+		$this->addAllowedData(array());
+		parent::__construct($data, $default_filter);
+	}
+
+	public static function cast(DataObject $DataObject){
+		return ($DataObject instanceof ObjectName)?$DataObject:new ObjectName($DataObject->toArray());
+	}	
+	// Static typed child methods for autocomplete on object
+}
+
+class ObjectNameCollection extends DataCollection{
+	public function __construct(){
+		$this->setCollectionType('ObjectName');
+	}
+	
+	public static function cast(ObjectNameCollection $ObjectNameCollection){
+		return $ObjectNameCollection;
+	}
+	
+	// Static typed child methods for autocomplete on collection
+}
