@@ -1,0 +1,219 @@
+@import url(http://fonts.googleapis.com/css?family=Josefin+Sans);
+@import url(http://fonts.googleapis.com/css?family=Nothing+You+Could+Do);
+@import url(http://fonts.googleapis.com/css?family=Annie+Use+Your+Telescope);
+
+/*
+	<link href='http://fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Anton' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Jura:600' rel='stylesheet' type='text/css'>
+*/
+
+
+legend{
+font-weight:bold;
+padding:5px;
+margin:5px;
+}
+
+fieldset{
+border:5px solid #607bab;
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+}
+
+
+fieldset.guys_only{
+border:5px solid green;
+}
+
+fieldset div{
+padding:5px 10px;
+}
+
+em{
+color:red;
+display:block;
+}
+
+.offscreen{
+display:block;
+position:absolute;
+left:-5000px;
+top:-5000px;
+visibility:hidden;
+}
+
+.spam_warning{
+padding:10px;
+border:5px solid maroon;
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+background:maroon;
+color:white;
+margin-top:8px;
+margin-bottom:8px;
+}
+
+/* template */
+
+#container{
+width:980px;
+margin:-40px auto 0 auto;
+padding:0;
+min-height:460px;
+}
+
+
+#login_options{
+text-align:right;
+margin-top:8px;
+}
+
+#login_options a{
+font-weight:bold;
+color:blue;
+font-size:1em;
+}
+
+#page_body{
+padding:0;
+margin:0;
+}
+
+
+
+#search_label{
+font-weight:bold;
+color:#999;
+font-size:1em;
+padding-right:1.5em;
+}
+
+#search_input:hover{
+}
+
+#search_input:active{
+
+}
+
+
+.form_confirmation,
+.form_notice,
+.form_warning{
+color:#fff;
+padding:10px;
+  -webkit-border-radius: 12px; 
+     -moz-border-radius: 12px; 
+          border-radius: 12px; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+margin-left:5px;
+margin-bottom:10px;
+}
+
+.form_confirmation a,
+.form_notice a,
+.form_warning a,
+.form_confirmation a:hover,
+.form_notice a:hover,
+.form_warning a:hover,
+.form_confirmation a:visited,
+.form_notice a:visited,
+.form_warning a:visited,
+.form_confirmation a:active,
+.form_notice a:active,
+.form_warning a:active{
+color:#fff !important;
+font-weight:bold !important;
+}
+
+.form_confirmation{
+border:5px solid #5c9302;
+background-color:#5c9302;
+}
+
+.form_notice{
+border:5px solid #3B5998;
+background-color:#3B5998;
+}
+
+.form_warning{
+border:5px solid #f00;
+background-color:#f00;
+}
+
+
+.half_width_form fieldset{
+padding:10px;
+}
+
+.heart{
+color:#f00;
+}
+
+
+.br{
+clear:both;font-size:1px;height:1px;
+}
+
+input[type=submit].delete {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #ffdfdf) );
+	background:-moz-linear-gradient( center top, #ededed 5%, #ffdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#ffdfdf');
+	background-color:#ffeded;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #ffdcdc;
+	display:inline-block;
+	color:#ff7777;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #ffffff;
+}
+
+input[type=submit].delete:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffdfdf), color-stop(1, #ffeded) );
+	background:-moz-linear-gradient( center top, #ffdfdf 5%, #ededed 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdfdf', endColorstr='#ffeded');
+	background-color:#ffdfdf;
+}
+
+
+header {overflow:hidden; height:70px; background:url(../img/navbg2.png) top repeat-x;}
+
+a,
+a:visited
+{
+color:#ef3d23;
+}
+a:hover {color:#3781c4;}
+
+h2{
+font-family: 'Josefin Sans', sans-serif;
+font-weight:100;
+font-size:28px;
+}
+
+h3{
+font-family: 'Josefin Sans', sans-serif;
+font-weight:100;
+font-size:22px;
+}
+
+legend, h4{
+font-family: 'Nothing You Could Do', cursive;
+color:#000;
+font-size:18px;
+font-weight:100;
+}
+

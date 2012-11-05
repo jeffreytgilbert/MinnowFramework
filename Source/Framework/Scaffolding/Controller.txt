@@ -1,0 +1,35 @@
+<?php
+
+/*
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ */
+
+class PageNamePage extends TemplatedPageRequest{
+	protected function loadIncludedFiles(){
+		// Ex: $this->loadModels(array('PageName'));
+		// Ex: $this->loadActions(array('PageNameActions'));
+		/* page dependencies */
+	}
+	
+	protected function handleRequest(){
+		/* business logic */
+	}
+	
+	public function renderPage(){
+		$this->addCss('pages/FolderPagePath');
+		$this->addJs('pages/FolderPagePath');
+		
+		/* page logic */
+		
+		/*
+		// Use HTML templates for widgets shared by javascript ui and php ui
+		$this->_tpl->load('pages/FolderPagePath/layout.htm');
+		$this->_page_body = $this->_tpl->parse(array(
+			'BR'=>BR // array of key value pairs for replacing variables in the HTML template
+		));
+		*/
+		
+		// or if you're running a page that uses PHP instead of HTML templates, run it this way
+		$this->_page_body = $this->runCodeReturnOutput('pages/FolderPagePath/layout.php');
+	}
+}

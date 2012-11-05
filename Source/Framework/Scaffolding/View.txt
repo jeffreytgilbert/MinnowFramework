@@ -1,0 +1,10 @@
+<h1>PageName</h1>
+
+<?php 
+pr($GLOBALS['Page']);
+if(isset($GLOBALS['Page'])){
+	$data = $GLOBALS['Page']->data();
+	pr($data);
+}
+?>
+
