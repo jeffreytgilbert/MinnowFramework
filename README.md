@@ -18,7 +18,7 @@ Minnow Framework Goals:
 * Eliminate use of global variables in methods and functions, so code is more maintainable and more portable, and preventing possible conflicts with other libraries.
 * Enhance code completion in Eclipse IDEs to allow faster authoring of well written code. This should cut down on using arrays as parameter lists, allowing for clear to read and understand code and better code completion options in the future.
 * Create easily portable data objects which can be exported in various formats from web controllers without rewriting code to provide APIs faster and more standardized in implementation.
-* Enhance security through the use of prepared queries for escaping data and default output filter types for different data formats (e.g. $o->getHTML('field_name'), $o->boolean('field_name') ).
+* Enhance security through the use of prepared queries for escaping data and default output filter types for different data formats (e.g. $o->getHTML('field_name'), $o->getBoolean('field_name') ).
 * Reduce the need for developers to alter the framework by allow developers to extend native functionality of classes like Model & ModelCollections as part of the customization layer.
 * Provide GUI tools for generating site files, forms, SQL requests, and controller logic in a way that makes them easily understandable and customizable without having to know what kind of "magic" is happening behind the scenes.
 * Limit dependencies on Pear and PHP add ons to allow for easy deployment of the framework without tons of server administration and configuration time.
