@@ -1,0 +1,54 @@
+
+www
+	.htaccess
+	index.php
+	static.php
+	humans.txt
+	robots.txt
+	favicon.ico
+	crossdomain.xml
+	apple-touch-icon*.png
+Source
+	Applications
+		Your application
+			Actions
+				Required
+				Optional
+				Actions.php
+			Models
+				Required
+				Optional
+				DataObject.php
+				DataCollection.php
+			Controllers
+				Pages
+				PageController.php
+			Views
+				Pages
+				Emails
+				Themes
+				Fragments
+	AddOns
+		Connections
+			Connections.php
+			Example
+				Requirements
+				ExampleConnection.php
+				ExampleActions.php
+				example.ini
+		Helpers
+			Helpers.php
+			Example
+				Requirements
+				ExampleHelper.php
+				example.ini
+		Formats
+			SampleFormat.php
+		Widgets
+			tbd...
+	Framework
+Temp
+js
+css
+db
+img
