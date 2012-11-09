@@ -17,4 +17,5 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 	public function renderJSON(){ parent::renderJSON(); }
 	public function renderXML(){ parent::renderXML(); }
 	public function renderPage(){ parent::renderPage(); }
+	
 }

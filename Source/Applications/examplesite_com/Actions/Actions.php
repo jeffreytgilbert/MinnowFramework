@@ -34,7 +34,7 @@ abstract class Actions{
 				$s3->inputFile($local_file_path),
 				RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'public_bucket_name'),
 				$file_name,
-				AmazonS3::ACL_PUBLIC_READ
+				S3::ACL_PUBLIC_READ
 			);
 		} catch(S3Exception $e){
 			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
@@ -49,7 +49,7 @@ abstract class Actions{
 				$s3->inputFile($local_file_path), 
 				RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'private_bucket_name'), 
 				$file_name, 
-				AmazonS3::ACL_PRIVATE
+				S3::ACL_PRIVATE
 			);
 		} catch(S3Exception $e){
 			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }

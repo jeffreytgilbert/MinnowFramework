@@ -48,20 +48,17 @@ echo $css;
 
 <body>		
 
-<div id="bgwrap">
-	<div id="bgimg">			
-			<header>
+		
+	<header>
+		
+	</header>
 				
-			</header>
-						
-					
-			<div id="container">
-				
-				<?= $Page->getPageBody() ?>
-				
-			</div> <!--! end of #container -->
-		</div> <!--  end #bgimg -->				
-	</div> <!--  end #bgwrap -->
+			
+	<div id="container">
+		
+		<?= $Page->getPageBody() ?>
+		
+	</div>
 	
 
 	<footer>
