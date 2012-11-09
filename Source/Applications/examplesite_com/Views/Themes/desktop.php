@@ -3,7 +3,7 @@
 /////////////////////
 // shorthand 
 //
-$Page = PageController::cast($this);
+$Page = $this;
 $this_path=dirname(__FILE__).'/../../../../..';
 //
 /////////////////////
@@ -47,19 +47,25 @@ echo $css;
 
 
 <body>		
+
+<div id="bgwrap">
+	<div id="bgimg">			
+			<header>
+				
+			</header>
+						
+					
+			<div id="container">
+				
+				<?php Run::fromHelpers($source_path)?>
+				
+			</div> <!--! end of #container -->
+		</div> <!--  end #bgimg -->				
+	</div> <!--  end #bgwrap -->
 	
-	<header>
-		
-	</header>
-	
-	<div id="container">
-		
-		<?= $Page->getPageBody() ?>
-		
-	</div> <!--! end of #container -->
-	
+
 	<footer>
-		
+				
 	</footer>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>

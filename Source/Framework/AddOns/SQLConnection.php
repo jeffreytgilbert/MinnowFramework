@@ -143,7 +143,6 @@ abstract class SQLConnection
 	 */
 	final public function getSlowQueries() { return $this->slow_queries; }
 	
-	
 	/**
 	 * Force the string entered into a var of type bool
 	 * @param int $str

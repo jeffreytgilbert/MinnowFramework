@@ -46,5 +46,4 @@ abstract class PageController extends Controller{
 	public static function cast(PageController $PageController){
 		return $PageController;
 	}
-	
 }
