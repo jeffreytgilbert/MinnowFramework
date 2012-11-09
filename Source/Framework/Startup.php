@@ -156,90 +156,6 @@ final class Startup{
 		// initialize helpers container
 		$this->_helpers = new Helpers();
 		
-		// this is test code for connections 
-		
-// 		$query='SELECT NOW() AS henceforth';
-// 		$master = $this->connections()->MySQL('master');
-// 		$slave1 = $this->connections()->MySQL('slave1');
-// 		$sqlite = $this->connections()->SQLite();
-		
-// 		$master->query($query);
-// 		$master->read();
-// 		pr($master->all_data);
-		
-// 		$query='SELECT * FROM item_category WHERE item_category_id > :item_category_id';
-// 		$slave1->prepare($query);
-// 		$slave1->execute(array(':item_category_id'=>18),array(':item_category_id'));
-// 		$slave1->read();
-// 		pr($slave1->all_data);
-		
-// 		$query='SELECT date("now") AS henceforth';
-// 		$sqlite->query($query);
-// 		$sqlite->read();
-// 		pr($sqlite->all_data);
-		
-		//$this->connections()->Postmark();
-		
-		//$this->connections()->AmazonS3();
-		//phpinfo();die;
-		
-// 		try {
-// 			// Initialize
-// 			$cache = $this->connections()->Memcached();
-			
-// 			// Create test resource
-// 			$resource = new stdClass();
-// 			$resource->name = 'Test';
-		
-// 			// Attempt to retrieve previously cached result from pool (run this twice)
-			
-// 			$key = 'TestingMemcache';
-			
-// 			if(!$cache->get($key)) {
-// 				print "Key was not found in our cache pool!\n";
-		
-		
-// 				// If nothing was found during our cache look up, save resource to cache pool
-// 				if ($cache->set($key, $resource)) {
-// 					print "Stored resource in cache pool!\n";
-// 				} else {
-// 					print "Failed to store resource in cache pool!\n";
-// 				}
-// 			} else {
-// 				print "Key was found in our cache pool!\n";
-		
-// 				// We retrieved resource from cache, let's make sure delete works
-// 				if ($cache->delete($key)) {
-// 					print "Deleted resource from cache!\n";
-// 				} else {
-// 					print "Failed to delete resource from cache!\n";
-// 				}
-// 			}
-		
-// 			print "Resource: \n";
-		
-// 			print_r($resource);
-		
-// 		} catch (Exception $exception) {
-// 			echo "Error happened during memcache startup: ";
-// 			print $exception->getMessage();
-// 		}
-		
-// 		$instagram = $this->connections()->Instagram();
-		
-// 		echo "<a href='{$instagram->getLoginUrl()}'>Login with Instagram</a>";
-		
-// 		pr($instagram);
-
-		// now test code for helpers
-		
-// 		$ImageHelper = $this->helpers()->Image();
-// 		$ImageHelper->load('http://static.php.net/www.php.net/images/php.gif')->flip(ImageAbstraction::FLIP_HORIZONAL)->resize(100, 100)->show('jpg',70);
-		
-//		$VideoHelper = $this->helpers()->Video()->load('path')->saveAsH264('outputpath.m4v');
-
-		//$this->helpers()->Session()->flushMessages();
-		
 		// start the official page time after majority of startup tasks have been completed
 		$this->_pageTimer = new Timer();
 		$this->_pageTimer->start();
@@ -293,16 +209,16 @@ final class Startup{
 			require_once($path);
 		}
 		
+		// Load the sugar methods in actions so the actions accessors can better format the output to DataObjects and DataCollections
+		Run::fromActions('Actions.php');
+		
+		// Load the PageController which is the base of all page requests and allows the user to override controller behaviors for things like themes, logins, etc
 		Run::fromControllers('PageController.php');
 	}
 	
 	// This should be sensitive to the type of output the page should be rendering, but currently isn't
 	public function handlePageRequest(){
 		// This is a multilingual framework which supports utf8 as its base. might need to consider if this breaks images though.
-		
-// 		$ModelTest = new DataObject(array('utf8-text'=>file_get_contents(dirname(__FILE__).'/utf8.txt')));
-// 		echo $ModelTest->getString('utf8-text');
-// 		die;
 		
 		$app_path = Path::toApplication();
 		$controller_path = Path::toControllers();
@@ -372,83 +288,3 @@ final class Startup{
 		echo $Page->getOutput();
 	}
 }
-
-
-/*
- * depricated code
- * 
- 		// start session support /////// this is going to work through a lazy loader
-//		$this->initializeSessions();
-		
-		// get the site config before logging in so we know if users even allowed to log in ///////// this needs to happen from the ini not the db
-//		$this->initializeSiteConfig();
-		
-		// test the various authentication types (sessions, cookies, forms, apis) //////////// this also needs to be initialized outside of the framework startup by the controller. logins shouldnt always be required
-//		$this->authenticateUser(); 
-
-	private function initializeSessions(){ // sessions shouldnt be initialized until they're needed / called through the handler
-		// If this is a bot, don't start a session
-		if((BrowserDetection::detectBrowser('type') === 'bot') === false){
-			// start the session handler
-			Sessions::initialize();
-		
-			// @TODO this use to have functionality to prevent session stagnation which is a potential security risk. changing the session id every request helps prevent hackers from hijacking sessions. right now, though, all this does is create a ton of duplicate sessions
-			
-			// do not delete the session here. it will happen at the closing of the file
-// 			$tmp = $_SESSION;
-// 			define('OLD_SESSION_ID', session_id());
-// 			session_regenerate_id(); // destroy the session in the destructor so we can count guests 
-// 			define('CURRENT_SESSION_ID', session_id());
-// 			$_SESSION = $tmp;
-		}	
-	}
-	
-	private function authenticateUser(){
-//		global $ID, $UserId;
-		
-		$db = $this->mysql();
-		
-		if(isset($_REQUEST['API_USR_KEY']) && isset($_REQUEST['API_APP_KEY'])){
-			$this->_userId = $UserId = new IdentifyApplication();
-		} else {
-			$this->_userId = $UserId = new IdentifyUser();
-		}
-		
-		$this->_id = $ID = $UserId->loginCheck();
-		
-		// if(isset($_SESSION['ComMgr']))
-		// {
-		// 	$ComMgr=unserialize($_SESSION['ComMgr']);
-		// 	if(isset($_POST['community_manager']['logout']))
-		// 	{
-		// 		$ComMgr->logout();
-		// 		$ComMgr = new CommunityManager();
-		// 	}
-		// }
-		// else { $ComMgr = new CommunityManager(); }
-		
-		if($ID->isOnline())
-		{
-			// For sessions debugging only
-			$_my_id_=$ID->get('user_id');
-			
-			$my_history=HistoryActions::traceUser($ID->get('user_id'), 0, 10);
-		}
-
-		if(isset($_GET['framework']) && isset($_GET['framework']['folder_name']) && !empty($_GET['framework']['folder_name'])){
-			$remote_request = $_SERVER['PHP_SELF'].'?folder_name='.$_GET['framework']['folder_name'].'&controller_name='.$_GET['framework']['controller_name'];
-		} else if(isset($_GET['framework']) && isset($_GET['framework']['controller_name']) && !empty($_GET['framework']['controller_name'])) {
-			$remote_request = $_SERVER['PHP_SELF'].'?controller_name='.$_GET['framework']['controller_name'];
-		} else {
-			$remote_request = $_SERVER['PHP_SELF'];
-		}
-		
-		// this all needs to be moved into initialization handler that developers can author themselves. inserting page hits is not a core requirement for startup
-		// page stats 
-// 		if($ID->isOnline()) 										 { PageHitActions::insertMemberHit($remote_request); }
-// 		else if((BrowserDetection::detectBrowser('type') === 'bot')) { PageHitActions::insertBotHit($remote_request); }
-// 		else 														 { PageHitActions::insertGuestHit($remote_request); }
-//		echo "\n\n<br><br>";
-	}
- 
- */
