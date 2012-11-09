@@ -22,8 +22,7 @@ abstract class PageController extends Controller{
 		$this->_extra_js = array_merge(array(
 				// jquery is hardcoded in as a remote js include from cdn and if it fails, it will revert to the local copy
 				'plugins',
-				'script',
-				'jquery-impromptu.4.0.min'
+				'script'
 		),$this->_extra_js);
 		
 		// add all the css files you want loaded every html page request here
