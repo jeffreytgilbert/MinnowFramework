@@ -7,7 +7,7 @@ interface JSONCapable{
 trait JSONFormat{
 	
 	public function renderJSON(){
-		return $this->renderStatusMessageAsJSON();
+		$this->_output = $this->renderStatusMessagesAsJSON();
 	}
 	
 	public function renderStatusMessagesAsJSON(){

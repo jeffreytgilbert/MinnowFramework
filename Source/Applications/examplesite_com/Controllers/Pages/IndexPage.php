@@ -6,23 +6,18 @@
 
 class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLCapable{
 	protected function loadIncludedFiles(){
-// 		$this->loadModels(array(
-// 		));
-// 		$this->loadActions(array(
-// 		));
-//		echo 'this gets called';
+// 		$this->loadModels(array());
+// 		$this->loadActions(array());
 	}
 	
 	protected function handleRequest(){
-//		echo 'this gets called 2';
-		
+		// business logic here
 	}
 	
-	public function renderJSON(){ self::renderJSON(); }
-	public function renderXML(){ self::renderXML(); }
+ 	public function renderJSON(){ parent::renderJSON(); }
+ 	public function renderXML(){ parent::renderXML(); }
 	
 	public function renderPage(){
-//		echo 'this gets called 3';
  		$this->addCss('Pages/Index');
  		$this->addJs('Pages/Index');
 		

@@ -330,7 +330,7 @@ final class Startup{
 						$Page = new Err404Page();
 					}
 				} else if(file_exists(File::osPath($controller_path.'Pages/'.$script_name.'Page.php'))){
-					Run::fromControllers($script_name.'Page.php');
+					Run::fromControllers('Pages/'.$script_name.'Page.php');
 					if(class_exists($script_name.'Page')){
 						$class_name = $script_name.'Page';
 						$Page = new $class_name();
