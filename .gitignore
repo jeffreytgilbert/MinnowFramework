@@ -12,3 +12,21 @@ Source/Applications/examplesite_com/.DS_Store
 *.container
 
 *.name
+
+*.DS_Store
+
+.DS_Store
+
+.DS_Store?
+
+._*
+
+.Spotlight-V100
+
+.Trashes
+
+Icon?
+
+ehthumbs.db
+
+Thumbs.db
