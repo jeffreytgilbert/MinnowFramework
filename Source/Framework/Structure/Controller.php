@@ -13,6 +13,8 @@
 
 abstract class Controller {
 	protected $_data = array();
+	protected $_tpl;
+	protected $_page_body;
 	protected $page_result_start = 0;
 	protected $page_result_limit = 20;
 	protected $cache_results = false;
@@ -21,38 +23,40 @@ abstract class Controller {
 	/*
 	 * @depricated
 	 */
+	public $SystemNotifications;
 	public $Messages; // depricated
 	// All ok.
 	public $Errors;
 	public $Notices;
 	public $Confirmations;
 	public $Input;
+	public $script;
+	public $format;
 	
 	public function __construct(){
+		$this->_tpl = new TemplateParser();
+		
+		// all of these variables need to be reconciled and finalized///////
+		
 		// depricated
 		$this->Messages = new DataObject();			// generic messages (a combination of confirmations and notices) which has been depricated
 		// all ok
+		$this->SystemNotifications = new DataObject();	// store confirmations of an action
 		$this->Errors = new DataObject();			// store errors when processing
 		$this->Confirmations = new DataObject();	// store confirmations of an action
 		$this->Notices = new DataObject();			// store info notices  
 		$this->Input = new DataObject();			// store data from the form
+		
 		$this->RuntimeInfo = RuntimeInfo::instance();
 	}
+	
+	public function getPageBody(){ return $this->_page_body; }
+	public function getTemplateEngine(){ return $this->_tpl; }
 	
 	public function getRuntimeInfo(){ return $this->RuntimeInfo; }
 	
 	abstract protected function loadIncludedFiles();
 	abstract protected function handleRequest();	
-	
-	public function requires($requirement_or_array_of_requirements = array()){
-		$ID = RuntimeInfo::instance()->id();
-		
-		if(is_array($requirement_or_array_of_requirements)){
-			foreach($requirement_or_array_of_requirements as $requirement){
-				$result = $ID->checkRequirement($requirement);
-			}
-		}
-	}
 	
 	private $_models = array();
 	private $_actions = array();
@@ -111,7 +115,7 @@ abstract class Controller {
 	public function getOutput(){ return $this->_output; }
 		
 	public function runCodeReturnOutput($path){
-		$ID = RuntimeInfo::instance()->id();
+//		$ID = RuntimeInfo::instance()->id();
 		
 		ob_start();
 		

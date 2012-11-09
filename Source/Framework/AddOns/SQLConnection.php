@@ -142,4 +142,116 @@ abstract class SQLConnection
 	 * @return array
 	 */
 	final public function getSlowQueries() { return $this->slow_queries; }
+	
+	/**
+	 * Force the string entered into a var of type bool
+	 * @param int $str
+	 * @return int
+	 */
+	public static function boolean($str)
+	{
+		if(!isset($str) || empty($str)) { return 'NULL'; }
+		return '1';
+	}
+	
+	/**
+	 * Force the string entered into a var of type int within the span declared
+	 * also can return NULL if $str is not set
+	 * @param int $str
+	 * @param int $min
+	 * @param int $max
+	 * @return int
+	 */
+	public static function integer($str, $min=null, $max=null)
+	{
+		$int = (int)$str;
+		if(isset($min) && $int < $min)		{ return (int)$min; }
+		else if(isset($max) && $int > $max)	{ return (int)$max; }
+		return $int;
+	}
+	
+	/**
+	 * Force the string entered into a var of type int within the span declared
+	 * Like Filter::integer, but always returns type int, returns default if set and $str is not
+	 * @param int $str
+	 * @param int $min
+	 * @param int $max
+	 * @return int
+	 */
+	public static function range($str, $min=-2147483648, $max=2147483647, $default=null) //32 bit values
+	{
+	
+		if(isset($default) && !isset($str))	{ $int= (int)$default; }
+		else 									{ $int= (int)$str; }
+	
+		$min= (int)$min;
+		$max= (int)$max;
+		if($int < $min)		{ return $min; }
+		elseif($int > $max)	{ return $max; }
+		return $int;
+	}
+	
+	/**
+	 * Filters the raw text path to an image or file for articles and such.
+	 * @param string $str
+	 * @return string
+	 */
+	public static function filename($str)
+	{
+		if(!isset($str)) { return ''; }
+		$str = preg_replace('/[?*<>|]/','', $str);
+		return $str;
+	}
+	
+	/**
+	 * Filter text into only letters, numbers, and underscores to prevent sql injection attacks
+	 * @param array $string
+	 * @return string
+	 */
+	public static function column($str)
+	{
+		if(!isset($str)) { return ''; }
+		return preg_replace('/([^a-zA-Z0-9_\-])/s','',$str);
+	}
+	
+	public static function string($str, $max=null)
+	{
+		if(empty($str)) { return ''; }
+		$str=strval($str);
+	
+		if(isset($max)) { $str = substr($str,0,$max); }
+	
+		return self::escape($str);
+	}
+	
+	/**
+	 * Filter an array of strings into a WHERE blah IN ready format
+	 * @param array $array
+	 * @return string
+	 */
+	public static function strings($array)
+	{
+		$array=array_unique($array);
+		sort($array);
+		$array=array_filter($array,'SQLConnection::string');
+		$string=implode('","',$array);
+		return '("'.$string.'")';
+	}
+	
+	/**
+	 * Filter an array of ints into a WHERE blah IN ready format
+	 * @param array $array
+	 * @return string
+	 */
+	public static function integers($array)
+	{
+		if(!is_array($array)) { $array=array($array); }
+	
+		$array=array_unique($array);
+		sort($array);
+		$array=array_filter($array,'intval');
+		$string=implode('","',$array);
+		return '("'.$string.'")';
+	}
+	
 }
