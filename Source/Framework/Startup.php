@@ -259,13 +259,17 @@ final class Startup{
 			require_once $path;
 		}
 		
-		// Load addon dependencies
+		// Load dependencies for addons
 		$files = File::filesInFolderToArray(Path::toFramework().'AddOns/');
 		foreach($files as $path => $file){
 			require_once $path;
 		}
 		
 		// Load add ons
+		$files = File::filesInFolderToArray(Path::toAddOns().'Formats/');
+		foreach($files as $path => $file){
+			require_once $path;
+		}
 		
 		// Load the connectors container. It can load all the dependencies lazy load style
 		Run::fromConnections('Connections.php');
@@ -285,65 +289,67 @@ final class Startup{
 			require_once($path);
 		}
 		
+		Run::fromControllers('PageController.php');
 	}
 	
 	// This should be sensitive to the type of output the page should be rendering, but currently isn't
 	public function handlePageRequest(){
 		// This is a multilingual framework which supports utf8 as its base. might need to consider if this breaks images though.
 		
-		$ModelTest = new DataObject(array('utf8-text'=>file_get_contents(dirname(__FILE__).'/utf8.txt')));
-		echo $ModelTest->getString('utf8-text');
-		die;
+// 		$ModelTest = new DataObject(array('utf8-text'=>file_get_contents(dirname(__FILE__).'/utf8.txt')));
+// 		echo $ModelTest->getString('utf8-text');
+// 		die;
 		
-		$app = Path::toRoot().'/source/Applications/'.$this->_application_name;
+		$app_path = Path::toApplication();
+		$controller_path = Path::toControllers();
 		
 		if(!isset($_GET['framework']) || !is_array($_GET['framework'])){
-			Run::fromControllers('IndexPage.php');
+			Run::fromControllers('Pages/IndexPage.php');
 			$Page = new IndexPage();
 		} else {
 			$f = $_GET['framework'];
 			
 			if(isset($f['script_name']) && $f['script_name'] == ''){
-				Run::fromControllers('IndexPage.php');
+				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			} else if(isset($f['script_name'])) {
-				$script_name = Filter::column($f['script_name']);
+				$script_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['script_name']);
 				if(isset($f['folder_name'])){
-					$folder_name = Filter::column($f['folder_name']);
-					if(file_exists(File::osPath($app.'/Controllers/'.$folder_name.'/'.$script_name.'Page.php'))){
-						Run::fromControllers($folder_name.'/'.$script_name.'Page.php');
+					$folder_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['folder_name']);
+					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_name.'/'.$script_name.'Page.php'))){
+						Run::fromControllers('Pages/'.$folder_name.'/'.$script_name.'Page.php');
 						if(class_exists($script_name.'Page')){
 							$class_name = $script_name.'Page';
 							$Page = new $class_name();
 						} else {
-							Run::fromControllers('Err404Page.php');
+							Run::fromControllers('Pages/Err404Page.php');
 							$Page = new Err404Page();
 						}
 					} else {
-						Run::fromControllers('Err404Page.php');
+						Run::fromControllers('Pages/Err404Page.php');
 						$Page = new Err404Page();
 					}
-				} else if(file_exists(File::osPath($app.'/Controllers/'.$script_name.'Page.php'))){
+				} else if(file_exists(File::osPath($controller_path.'Pages/'.$script_name.'Page.php'))){
 					Run::fromControllers($script_name.'Page.php');
 					if(class_exists($script_name.'Page')){
 						$class_name = $script_name.'Page';
 						$Page = new $class_name();
 					} else {
-						Run::fromControllers('Err404Page.php');
+						Run::fromControllers('Pages/Err404Page.php');
 						$Page = new Err404Page();
 					}
 				} else {
-					Run::fromControllers('Err404Page.php');
+					Run::fromControllers('Pages/Err404Page.php');
 					$Page = new Err404Page();
 				}
 			} else {
-				Run::fromControllers('IndexPage.php');
+				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			}
 		}
 		
 		$not_rendered = true;
-		if(isset($f['output_format']) && $f['output_format'] != 'Page'){ //  && $f['output_format'] != 'html' // for optional link formatting
+		if(isset($f['output_format']) && (strtolower($f['output_format']) != 'page' || strtolower($f['output_format']) != 'html')){ //  && $f['output_format'] != 'html' // for optional link formatting
 			$output_method = 'render'.$f['output_format'];
 			if(method_exists($Page,$output_method)){
 				$Page->$output_method();
@@ -352,11 +358,10 @@ final class Startup{
 		}
 		
 		if($not_rendered) {
-			if($Page instanceof TemplatedPageRequest){
+			if($Page instanceof PageController){
 				$Page->renderPage();
-				$Page->prepareTemplate();
-				$Page->renderTemplatedPage();
-			} else if($Page instanceof PageRequest){
+				$Page->renderHtmlPage();
+			} else if($Page instanceof PageController){
 				$Page->renderPage();
 			}
 		}

@@ -112,59 +112,6 @@ function get_load_average(){
 	return $load_average;
 }
 
-function get_url_params($params) {
-	$post_params = array();
-	foreach ($params as $key => &$val) {
-		if (is_array($val)){
-			$val = implode(',', $val);
-		}
-		$post_params[] = $key.'='.urlencode($val);
-	}
-	return implode('&', $post_params);
-}
-
-/**
- * Safe way to exit from a log out or prompt a login for users who are accessing 
- * content which requires membership
- * @param string $reason
- */
-function prompt_login($reason=0) 
-{
-	global $skip_redirect;
-	$RuntimeInfo = RuntimeInfo::instance();
-	if(!isset($_POST['dont_redirect']))
-	{
-		if(strpos($_SERVER['REQUEST_URI'],'/api/') || strpos($_SERVER['REQUEST_URI'],'pages/account/login') || (isset($skip_redirect) && $skip_redirect===true))
-		{
-			switch($reason)
-			{
-				case 0: $RuntimeInfo->setConfirmation(MSG_MANUAL_LOG_OUT); break;
-				case 1: $RuntimeInfo->setNotice(MSG_PASSWORD_CHANGED); break;
-				case 2: $RuntimeInfo->setNotice(MSG_SESSION_EXPIRED); break;
-				case 3: $RuntimeInfo->setError(MSG_INVALID_ACCOUNT); break;
-				case 4: $RuntimeInfo->setNotice(MSG_IP_MATCH_ERROR); break;
-				case 5: $RuntimeInfo->setError(MSG_INVALID_PASSWORD); break;
-				case 6: $RuntimeInfo->setError(MSG_TOKEN_MATCH_ERROR); break;
-				case 7: $RuntimeInfo->setError(MSG_IP_BAN); break;
-				case 8: $RuntimeInfo->setError(MSG_FORGOTTEN_PASSWORD_ERROR); break;
-				case 9: $RuntimeInfo->setConfirmation(MSG_PASSWORD_CHANGE_REQUEST); break;
-				case 10: $RuntimeInfo->setError(MSG_ACCOUNT_KILLED_BY_ADMIN); break;
-				case 11: $RuntimeInfo->setConfirmation(MSG_REOPENED_ACCOUNT); break;
-				case 12: $RuntimeInfo->setError(MSG_LOGIN_REQUIRED); break;
-				case 13: $RuntimeInfo->setError(MSG_KNOWN_ERROR); break;
-				case 14: $RuntimeInfo->setNotice(MSG_SYSTEM_ERROR); break;
-				default: $RuntimeInfo->setNotice(MSG_UNKNOWN_ERROR); break;
-			}
-		}
-		else if((!isset($_GET['msg']) || $_GET['msg'] != $reason) && !strpos($_SERVER['REQUEST_URI'],'pages/Account/Login'))
-		{
-			//echo strpos($_SERVER['REQUEST_URI'],'pages/Account/Login');
-			redirect('/Account/Login/?msg='.(int)$reason);
-		}
-	}
-	//else { (int)$reason; }
-}
-
 // this only works for ipv4. ip2long breaks on large ints so this is a workaround to phps bugginess
 function ip_to_long($ip){
 	$ips = explode('.',$ip); // why is this period escaped?

@@ -1,13 +1,14 @@
 <?php
 
-abstract class JSONRequest extends Controller{
-	public function __construct(){
-		parent::__construct();
-		$this->loadIncludedFiles();
-		$this->handleRequest();
-	}
+interface JSONCapable{
+	public function renderJSON();
+}
+
+trait JSONFormat{
 	
-	abstract public function renderJSON();
+	public function renderJSON(){
+		return $this->renderStatusMessageAsJSON();
+	}
 	
 	public function renderStatusMessagesAsJSON(){
 		return json_encode(array(

@@ -1,7 +1,10 @@
 <?php
 
-abstract class PageRequest extends Controller{
-	protected $_tpl;
+interface HTMLCapable{
+	public function renderPage();
+}
+
+trait HTMLFormat{
 	
 	protected $_page_title = '';
 	protected $_page_keywords='';
@@ -13,24 +16,9 @@ abstract class PageRequest extends Controller{
 	protected $_remote_css=array();
 	protected $output_template = '';
 	
-	// All ok.
-	public $SystemNotifications;
-	
-	public function __construct(){
-		$this->SystemNotifications = new DataObject();	// store confirmations of an action
-		$this->_tpl = new TemplateParser();
+	public function renderPage(){
 		
-		parent::__construct();
-		$this->loadIncludedFiles();
-		
-		$script = isset($_GET['framework']['script_name'])?$_GET['framework']['script_name']:null;
-		$format = isset($_GET['framework']['output_format'])?$_GET['framework']['output_format']:null;
-		
-		$this->handleRequest();
-//		$this->renderPage();
 	}
-	
-	abstract public function renderPage();
 	
 	public function setPageTitle($page_title){ $this->_page_title = $page_title; }
 	public function getPageTitle(){ return $this->_page_title; }
@@ -72,8 +60,6 @@ abstract class PageRequest extends Controller{
 	}
 	public function getRemoteJs(){ return $this->_remote_js; }
 	
-	public function getTemplateEngine(){ return $this->_tpl; }
-
 	public function redirect($url, $status = null, $exit = true){
 		if (!empty($status)) {
 			$codes = array(
