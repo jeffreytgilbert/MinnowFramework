@@ -112,6 +112,17 @@ function get_load_average(){
 	return $load_average;
 }
 
+function get_url_params($params) {
+	$post_params = array();
+	foreach ($params as $key => &$val) {
+		if (is_array($val)){
+			$val = implode(',', $val);
+		}
+		$post_params[] = $key.'='.urlencode($val);
+	}
+	return implode('&', $post_params);
+}
+
 // this only works for ipv4. ip2long breaks on large ints so this is a workaround to phps bugginess
 function ip_to_long($ip){
 	$ips = explode('.',$ip); // why is this period escaped?
