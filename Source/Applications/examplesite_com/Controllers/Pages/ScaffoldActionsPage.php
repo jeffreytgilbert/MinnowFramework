@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 */
 
-class ScaffoldActionsPage extends TemplatedPageRequest{
+class ScaffoldActionsPage extends PageController implements HTMLCapable{
 	
 	protected function loadIncludedFiles(){
 	}
@@ -13,7 +13,7 @@ class ScaffoldActionsPage extends TemplatedPageRequest{
 		$RuntimeInfo = RuntimeInfo::instance();
 		$db = $RuntimeInfo->mysql();
 		
-		$blank_action = file_get_contents(os_path(dirname(__FILE__).'/../../../Framework/Scaffold/Action.txt'));
+		$blank_action = file_get_contents(File::osPath(dirname(__FILE__).'/../../../Framework/Scaffold/Action.txt'));
 		
 		$table_names = array();
 		$object_names = array();
@@ -135,7 +135,7 @@ class ScaffoldActionsPage extends TemplatedPageRequest{
 				}
 			}
 			
-			$file_path = os_path(dirname(__FILE__).'/../Actions/'.$object_names[$key].'Actions.php');
+			$file_path = File::osPath(dirname(__FILE__).'/../Actions/'.$object_names[$key].'Actions.php');
 			
 			if(	isset($_POST['list']) && 
 				in_array($object_names[$key],array_keys($_POST['list'])) && 

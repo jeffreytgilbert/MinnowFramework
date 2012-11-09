@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 */
 
-class ScaffoldFormsPage extends TemplatedPageRequest{
+class ScaffoldFormsPage extends PageController implements HTMLCapable{
 	
 	public $forms;
 	public $dummy_forms;
@@ -21,7 +21,7 @@ class ScaffoldFormsPage extends TemplatedPageRequest{
 			$page = isset($_POST['page_name'])?$_POST['page_name']:'';
 			$full_page_path = Is::set($_POST['folder_name'])?$_POST['folder_name'].'/'.$page:$page;
 			
-			$controller = file_get_contents(os_path(dirname(__FILE__).'/../../../Framework/Scaffold/Controller.txt'));
+			$controller = file_get_contents(File::osPath(dirname(__FILE__).'/../../../Framework/Scaffold/Controller.txt'));
 			$view = '';
 			
 			$page_dependencies = '';
@@ -264,9 +264,9 @@ class ScaffoldFormsPage extends TemplatedPageRequest{
 		<ul>
 ';
 			
-			$li_template = file_get_contents(os_path(dirname(__FILE__).'/../Views/fragments/form/line.htm'));
+			$li_template = file_get_contents(File::osPath(dirname(__FILE__).'/../Views/fragments/form/line.htm'));
 			foreach($_POST['o'] as $key => $config_option){
-				$option_template = file_get_contents(os_path(dirname(__FILE__).'/../Views/fragments/form/fields/'.$config_option['field_type'].'.htm'));
+				$option_template = file_get_contents(File::osPath(dirname(__FILE__).'/../Views/fragments/form/fields/'.$config_option['field_type'].'.htm'));
 //				die($option_template);
 				$li = str_replace('{% detail %}',$config_option['detail'],$li_template);
 				$li = str_replace('{% input_type %}',$config_option['field_type'],$li);
@@ -312,7 +312,7 @@ class ScaffoldFormsPage extends TemplatedPageRequest{
 		} else { // handle page request 
 		
 			$FormParser = new TemplateParser();
-			$form_types = File::filesInFolderToArray(os_path(dirname(__FILE__).'/../Views/fragments/form/fields'));
+			$form_types = File::filesInFolderToArray(File::osPath(dirname(__FILE__).'/../Views/fragments/form/fields'));
 			$this->forms = array();
 			$this->dummy_forms = array();
 			$this->field_vars = array();

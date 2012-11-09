@@ -13,7 +13,7 @@ RewriteCond %{QUERY_STRING} ^(.*)$
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^(.*)$ $1?%1 [L]
 
-RewriteRule ^sitemap.xml$ index.php?framework[script_name]=SitemapXML&framework[output_format]=XML [L]
+RewriteRule ^sitemap.xml$ index.php?framework[controller_name]=SitemapXML&framework[controller_format]=XML [L]
 
 RewriteRule ^css/(.*)$ static.php?type=css&path=$1 [L]
 RewriteRule ^js/(.*)$ static.php?type=js&path=$1 [L]
@@ -21,19 +21,19 @@ RewriteRule ^img/(.*)$ static.php?type=img&path=$1 [L]
 
 # catch /FolderName/ScriptName.FormatType?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[folder_name]=$1&framework[script_name]=$2&framework[output_format]=$3&%1 [L]
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[folder_name]=$1&framework[controller_name]=$2&framework[controller_format]=$3&%1 [L]
 
 # catch /ScriptName.FormatType?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[script_name]=$1&framework[output_format]=$2&%1 [L]
+RewriteRule ^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[controller_name]=$1&framework[controller_format]=$2&%1 [L]
 
 # catch /FolderName/ScriptName?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?framework[folder_name]=$1&framework[script_name]=$2&framework[output_format]=html&%1 [L]
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?framework[folder_name]=$1&framework[controller_name]=$2&framework[controller_format]=html&%1 [L]
 
 # catch /ScriptName?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?framework[script_name]=$1&framework[output_format]=html&%1 [L]
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?framework[controller_name]=$1&framework[controller_format]=html&%1 [L]
 
 
 

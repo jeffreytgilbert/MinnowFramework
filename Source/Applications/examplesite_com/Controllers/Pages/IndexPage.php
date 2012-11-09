@@ -14,13 +14,7 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 		// business logic here
 	}
 	
- 	public function renderJSON(){ parent::renderJSON(); }
- 	public function renderXML(){ parent::renderXML(); }
-	
-	public function renderPage(){
- 		$this->addCss('Pages/Index');
- 		$this->addJs('Pages/Index');
-		
-		$this->_page_body = $this->runCodeReturnOutput('Pages/Index/layout.php');
-	}
+	public function renderJSON(){ parent::renderJSON(); }
+	public function renderXML(){ parent::renderXML(); }
+	public function renderPage(){ parent::renderPage(); }
 }

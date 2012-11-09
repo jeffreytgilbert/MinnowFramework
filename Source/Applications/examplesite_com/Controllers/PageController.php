@@ -18,9 +18,6 @@ abstract class PageController extends Controller{
 		parent::__construct();
 		$this->loadIncludedFiles();
 	
-		$this->script = isset($_GET['framework']['script_name'])?$_GET['framework']['script_name']:null;
-		$this->format = isset($_GET['framework']['output_format'])?$_GET['framework']['output_format']:null;
-		
 		// add all the javascript files you want loaded every html page request here
 		$this->_extra_js = array_merge(array(
 				// jquery is hardcoded in as a remote js include from cdn and if it fails, it will revert to the local copy

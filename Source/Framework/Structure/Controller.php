@@ -4,37 +4,37 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 
-
-// When a trait is called, it will run functions based on its name. 
-// Example:
-// initializeJSON(){ ... }
-// renderJSON(){ ... }
-// and the Page that uses these traits can override this functionality, or they can roll with it, but this way, inheritance is still supported, collisions are avoided, and dynamic format handling is also handled and easily added with a 1 liner use declaration
-
 abstract class Controller {
-	protected $_data = array();
-	protected $_tpl;
-	protected $_page_body;
-	protected $page_result_start = 0;
-	protected $page_result_limit = 20;
-	protected $cache_results = false;
-	protected $RuntimeInfo;
+	protected 
+		$_data = array(),
+		$_tpl,
+		$_page_body,
+		$_controller_name,
+		$_controller_format,
+		
+		// well these aren't cased appropriately are they
+		$page_result_start = 0,
+		$page_result_limit = 20,
+		$cache_results = false,
+		$RuntimeInfo;
 	
 	/*
 	 * @depricated
 	 */
-	public $SystemNotifications;
-	public $Messages; // depricated
-	// All ok.
-	public $Errors;
-	public $Notices;
-	public $Confirmations;
-	public $Input;
-	public $script;
-	public $format;
+	public 
+		$SystemNotifications,
+		$Messages, // depricated
+		// All ok.
+		$Errors,
+		$Notices,
+		$Confirmations,
+		$Input;
 	
 	public function __construct(){
 		$this->_tpl = new TemplateParser();
+		
+		$this->_controller_name = isset($_GET['framework']['controller_name'])?$_GET['framework']['controller_name']:'Index'; // default to Index
+		$this->_controller_format = isset($_GET['framework']['controller_format'])?$_GET['framework']['controller_format']:'html'; // default to HTML
 		
 		// all of these variables need to be reconciled and finalized///////
 		
@@ -53,7 +53,7 @@ abstract class Controller {
 	public function getRuntimeInfo(){ return $this->RuntimeInfo; }
 	
 	abstract protected function loadIncludedFiles();
-	abstract protected function handleRequest();	
+	abstract protected function handleRequest();
 	
 	private $_models = array();
 	private $_actions = array();
@@ -61,6 +61,9 @@ abstract class Controller {
 	// read only models and actions arrays
 	public function getLoadedModels(){ return $this->_models; }
 	public function getLoadedActions(){ return $this->_actions; }
+	
+	public function getControllerName(){ return $this->_controller_name; }
+	public function getControllerFormat(){ return $this->_controller_format; }
 	
 	public function loadModels($models_array = array()){
 		if(is_array($models_array)){

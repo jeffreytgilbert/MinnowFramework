@@ -15,7 +15,15 @@ trait HTMLFormat{
 	protected $_remote_js=array();
 	protected $_remote_css=array();
 	protected $output_template = '';
-		
+	
+	public function renderPage(){
+		$Page = PageController::cast($this);
+		$this->addCss('Pages/'.$Page->getControllerName());
+		$this->addJs('Pages/'.$Page->getControllerName());
+	
+		$this->_page_body = $this->runCodeReturnOutput('Pages/'.$Page->getControllerName().'/layout.php');
+	}
+	
 	public function setPageTitle($page_title){ $this->_page_title = $page_title; }
 	public function getPageTitle(){ return $this->_page_title; }
 	

@@ -1,6 +1,6 @@
 <?php
 
-class SitemapXMLPage extends PageRequest{
+class SitemapXMLPage extends PageController implements HTMLCapable{
 	protected function loadIncludedFiles(){
 		// Ex: $this->loadModels(array(''));
 		// Ex: $this->loadActions(array(''));

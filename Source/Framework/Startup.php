@@ -277,6 +277,10 @@ final class Startup{
 		// Same for helpers
 		Run::fromHelpers('Helpers.php');
 		
+		// Load the Models customization layer
+		Run::fromModels('DataObject.php');
+		Run::fromModels('DataCollection.php');
+		
 		// Load application requirements
 		$files = File::filesInFolderToArray(Path::toModels($this->_application_name).'Required/');
 		foreach($files as $path => $file){
@@ -309,17 +313,17 @@ final class Startup{
 		} else {
 			$f = $_GET['framework'];
 			
-			if(isset($f['script_name']) && $f['script_name'] == ''){
+			if(isset($f['controller_name']) && $f['controller_name'] == ''){
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
-			} else if(isset($f['script_name'])) {
-				$script_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['script_name']);
+			} else if(isset($f['controller_name'])) {
+				$controller_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['controller_name']);
 				if(isset($f['folder_name'])){
 					$folder_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['folder_name']);
-					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_name.'/'.$script_name.'Page.php'))){
-						Run::fromControllers('Pages/'.$folder_name.'/'.$script_name.'Page.php');
-						if(class_exists($script_name.'Page')){
-							$class_name = $script_name.'Page';
+					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_name.'/'.$controller_name.'Page.php'))){
+						Run::fromControllers('Pages/'.$folder_name.'/'.$controller_name.'Page.php');
+						if(class_exists($controller_name.'Page')){
+							$class_name = $controller_name.'Page';
 							$Page = new $class_name();
 						} else {
 							Run::fromControllers('Pages/Err404Page.php');
@@ -329,10 +333,10 @@ final class Startup{
 						Run::fromControllers('Pages/Err404Page.php');
 						$Page = new Err404Page();
 					}
-				} else if(file_exists(File::osPath($controller_path.'Pages/'.$script_name.'Page.php'))){
-					Run::fromControllers('Pages/'.$script_name.'Page.php');
-					if(class_exists($script_name.'Page')){
-						$class_name = $script_name.'Page';
+				} else if(file_exists(File::osPath($controller_path.'Pages/'.$controller_name.'Page.php'))){
+					Run::fromControllers('Pages/'.$controller_name.'Page.php');
+					if(class_exists($controller_name.'Page')){
+						$class_name = $controller_name.'Page';
 						$Page = new $class_name();
 					} else {
 						Run::fromControllers('Pages/Err404Page.php');
@@ -349,8 +353,8 @@ final class Startup{
 		}
 		
 		$not_rendered = true;
-		if(isset($f['output_format']) && (strtolower($f['output_format']) != 'page' || strtolower($f['output_format']) != 'html')){ //  && $f['output_format'] != 'html' // for optional link formatting
-			$output_method = 'render'.$f['output_format'];
+		if(isset($f['controller_format']) && (strtolower($f['controller_format']) != 'page' || strtolower($f['controller_format']) != 'html')){ //  && $f['controller_format'] != 'html' // for optional link formatting
+			$output_method = 'render'.$f['controller_format'];
 			if(method_exists($Page,$output_method)){
 				$Page->$output_method();
 				$not_rendered = false;
@@ -432,9 +436,9 @@ final class Startup{
 		}
 
 		if(isset($_GET['framework']) && isset($_GET['framework']['folder_name']) && !empty($_GET['framework']['folder_name'])){
-			$remote_request = $_SERVER['PHP_SELF'].'?folder_name='.$_GET['framework']['folder_name'].'&script_name='.$_GET['framework']['script_name'];
-		} else if(isset($_GET['framework']) && isset($_GET['framework']['script_name']) && !empty($_GET['framework']['script_name'])) {
-			$remote_request = $_SERVER['PHP_SELF'].'?script_name='.$_GET['framework']['script_name'];
+			$remote_request = $_SERVER['PHP_SELF'].'?folder_name='.$_GET['framework']['folder_name'].'&controller_name='.$_GET['framework']['controller_name'];
+		} else if(isset($_GET['framework']) && isset($_GET['framework']['controller_name']) && !empty($_GET['framework']['controller_name'])) {
+			$remote_request = $_SERVER['PHP_SELF'].'?controller_name='.$_GET['framework']['controller_name'];
 		} else {
 			$remote_request = $_SERVER['PHP_SELF'];
 		}
