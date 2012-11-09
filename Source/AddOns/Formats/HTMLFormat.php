@@ -15,11 +15,7 @@ trait HTMLFormat{
 	protected $_remote_js=array();
 	protected $_remote_css=array();
 	protected $output_template = '';
-	
-	public function renderPage(){
 		
-	}
-	
 	public function setPageTitle($page_title){ $this->_page_title = $page_title; }
 	public function getPageTitle(){ return $this->_page_title; }
 	

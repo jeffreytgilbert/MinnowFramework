@@ -50,9 +50,6 @@ abstract class Controller {
 		$this->RuntimeInfo = RuntimeInfo::instance();
 	}
 	
-	public function getPageBody(){ return $this->_page_body; }
-	public function getTemplateEngine(){ return $this->_tpl; }
-	
 	public function getRuntimeInfo(){ return $this->RuntimeInfo; }
 	
 	abstract protected function loadIncludedFiles();
@@ -110,6 +107,9 @@ abstract class Controller {
 	public function getCacheResults(){ return $this->cache_results; }
 	
 	public function data(){ return $this->_data; }
+
+	public function getPageBody(){ return $this->_page_body; }
+	public function getTemplateEngine(){ return $this->_tpl; }
 	
 	protected $_output='';
 	public function getOutput(){ return $this->_output; }

@@ -1,2 +1,14 @@
 
 Source/Applications/examplesite_com/.DS_Store
+
+.buildpath
+
+.project
+
+.settings/.jsdtscope
+
+*.prefs
+
+*.container
+
+*.name

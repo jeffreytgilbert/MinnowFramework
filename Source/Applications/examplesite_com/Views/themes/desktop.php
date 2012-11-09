@@ -3,7 +3,7 @@
 /////////////////////
 // shorthand 
 //
-$Page = $this;
+$Page = PageController::cast($this);
 $this_path=dirname(__FILE__).'/../../../../..';
 //
 /////////////////////
@@ -57,7 +57,7 @@ echo $css;
 					
 			<div id="container">
 				
-				<?php Run::fromHelpers($source_path)?>
+				<?= $Page->getPageBody() ?>
 				
 			</div> <!--! end of #container -->
 		</div> <!--  end #bgimg -->				
