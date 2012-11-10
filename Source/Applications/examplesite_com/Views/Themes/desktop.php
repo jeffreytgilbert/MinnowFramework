@@ -7,27 +7,30 @@ $Page = PageController::cast($this);
 $this_path=dirname(__FILE__).'/../../../../..';
 //
 /////////////////////
-?><!doctype html>
-<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
-<!--[if IE 7]>	<html class="no-js ie7 oldie" lang="en"> <![endif]-->
-<!--[if IE 8]>	<html class="no-js ie8 oldie" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+?><!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
+	
 	<title><?= $Page->getPageTitle() ?></title>
 	<meta name="keywords" content="<?= $Page->getPageKeywords() ?>">
 	<meta name="description" content="<?= $Page->getPageDescription() ?>">
 	<meta name="author" content="<?= $Page->getPageAuthor() ?>">
-
-	<meta name="viewport" content="width=device-width,initial-scale=1">
 	
-	<? 	// Home Page CSS
-		if ($_SERVER['REQUEST_URI'] == '/') { ?><link rel="stylesheet" type="text/css" href="/css/home.css" /><? }
-		
-		else { ?><link rel="stylesheet" type="text/css" href="/css/inner.css" /><? } 
-	?>
+	<meta name="viewport" content="width=device-width">
+	<link href="/css/Libraries/Bootstrap/bootstrap.min.css" rel="stylesheet">
+	<style>
+	body {
+		padding-top: 60px;
+		padding-bottom: 40px;
+	}
+	</style>
+	<link rel="stylesheet" href="/css/Libraries/Bootstrap/bootstrap-responsive.min.css">
+	
 	<!-- CSS Links <?php 
 	
 $css = '-->';
@@ -42,33 +45,93 @@ $css .= '<!-- End CSS Links ';
 
 echo $css;
 	?> -->
-	<script src="/js/libs/modernizr-2.5.3.min.js"></script>	
+	<script src="/js/Libraries/Modernizr/modernizr-2.6.1-respond-1.1.0.min.js"></script>	
 </head>
 
+<body>
 
-<body>		
+	<!--[if lt IE 7]>
+		<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+	<![endif]-->
 
-		
-	<header>
-		
-	</header>
-				
-			
-	<div id="container">
-		
-		<?= $Page->getPageBody() ?>
-		
+	<!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="#">Project name</a>
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Action</a></li>
+								<li><a href="#">Another action</a></li>
+								<li><a href="#">Something else here</a></li>
+								<li class="divider"></li>
+								<li class="nav-header">Nav header</li>
+								<li><a href="#">Separated link</a></li>
+								<li><a href="#">One more separated link</a></li>
+							</ul>
+						</li>
+					</ul>
+					<form class="navbar-form pull-right">
+						<input class="span2" type="text" placeholder="Email">
+						<input class="span2" type="password" placeholder="Password">
+						<button type="submit" class="btn">Sign in</button>
+					</form>
+				</div><!--/.nav-collapse -->
+			</div>
+		</div>
 	</div>
-	
 
-	<footer>
-				
-	</footer>
+	<div class="container">
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script>
-window.jQuery || document.write('<script src="/js/libs/jquery-1.7.1.min.js"><\/script>')
-</script>
+		<!-- Main hero unit for a primary marketing message or call to action -->
+		<div class="hero-unit">
+			<h1>Hello, world!</h1>
+			<?= $Page->getPageBody() ?>
+			<p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+		</div>
+
+		<!-- Example row of columns -->
+		<div class="row">
+			<div class="span4">
+				<h2>Heading</h2>
+				<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				<p><a class="btn" href="#">View details &raquo;</a></p>
+			</div>
+			<div class="span4">
+				<h2>Heading</h2>
+				<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				<p><a class="btn" href="#">View details &raquo;</a></p>
+		   </div>
+			<div class="span4">
+				<h2>Heading</h2>
+				<p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+				<p><a class="btn" href="#">View details &raquo;</a></p>
+			</div>
+		</div>
+
+		<hr>
+
+		<footer>
+			<p>&copy; Company 2012</p>
+		</footer>
+
+	</div> <!-- /container -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/Libraries/jQuery/jquery-1.8.2.min.js"><\/script>');</script>
+<script src="/js/Libraries/Bootstrap/bootstrap.min.js"></script>
 
 <!-- JS Templates <?php 
 
@@ -97,23 +160,19 @@ $js .= '<!-- End JS ';
 echo $js;
 
 ?> -->
-
 <script>
-window._gaq = [['_setAccount','UA-99266-5'],['_trackPageview'],['_trackPageLoadTime']];
-Modernizr.load({
-  load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
-});
+var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview'],['_trackPageLoadTime']];
+(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+s.parentNode.insertBefore(g,s)}(document,'script'));
 </script>
+</body>
+</html>
 
-<!--[if lt IE 7 ]>
-	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
-	<script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
-<![endif]-->
 <?php
 $RuntimeInfo = RuntimeInfo::instance();
 ?>
 <!-- 
 since: <?= CalculateDate::returnSimpleDatetimeStringSinceNow('1/3/2012 14:55:00') ?>
 l <?= $RuntimeInfo->pageTimer()->toString(); ?>
---></body>
-</html>
+-->

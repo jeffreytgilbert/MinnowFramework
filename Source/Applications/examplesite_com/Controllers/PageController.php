@@ -19,16 +19,14 @@ abstract class PageController extends Controller{
 		$this->loadIncludedFiles();
 	
 		// add all the javascript files you want loaded every html page request here
-		$this->_extra_js = array_merge(array(
-				// jquery is hardcoded in as a remote js include from cdn and if it fails, it will revert to the local copy
-				'plugins',
-				'script'
-		),$this->_extra_js);
+		$this->_extra_js = array_merge($this->_extra_js,array(
+			'default'
+		));
 		
 		// add all the css files you want loaded every html page request here
-		$this->_extra_css = array_merge(array(
-				'structure'
-		),$this->_extra_css);
+		$this->_extra_css = array_merge($this->_extra_css,array(
+			'default'
+		));
 		
 		$this->handleRequest();
 	}

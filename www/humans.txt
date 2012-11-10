@@ -1,12 +1,16 @@
-/* the humans responsible & colophon */
-/* humanstxt.org */
+# humanstxt.org/
+# The humans responsible & technology colophon
 
-/* TEAM */
-  Site: 
+# TEAM
 
-/* THANKS */
-  Names (& URL): 
+    <name> -- <role> -- <twitter>
 
-/* SITE */
-  Standards: HTML5, CSS3
-  Components: Modernizr, jQuery
+# THANKS
+
+    <name>
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    jQuery, Modernizr
+    MinnowFramework
