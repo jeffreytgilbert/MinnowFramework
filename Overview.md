@@ -58,15 +58,18 @@
 **js**: Contains all js and is linked to by the static.php file.
 
 * **Pages**: Contains javascript files mapped to the View folder and controller folder structures.
-* **libs**: A folder created by HTML5Boilerplate which includes jquery, modernizr, etc. 
-* **scripts.js**: Boilerplate stuff
-* **plugins.js**: Boilerplate stuff
-* **scaffold.js**: Used on the scaffolding pages to build forms and controller logic dynamically.
+* * **Index.js**: Sample js for the index page.
+* * **Scaffold.js**: Used on the scaffolding pages to build forms and controller logic dynamically.
+* **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
+* **default.js**: Included with every page request
 
 **css**: Contains all css and is linked to by the static.php file
 
 * **Pages**: Contains css files mapped to the View folder an	d controller folder structures.
-* **scaffold.css**: Used by the scaffolding pages
+* * **Index.css**: Sample style for the index page.
+* * **Scaffold.css**: Used by the scaffolding pages
+* **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
+* **default.css**: Included with every page request
 
 **db**: A folder for storing the database schemas and files. SQLite databases can also be stored here.
 
