@@ -11,6 +11,7 @@ abstract class Controller {
 		$_page_body,
 		$_controller_name,
 		$_controller_format,
+		$_appSettings,
 		
 		// well these aren't cased appropriately are they
 		$page_result_start = 0,
@@ -48,8 +49,17 @@ abstract class Controller {
 		$this->Input = new DataObject();			// store data from the form
 		
 		$this->RuntimeInfo = RuntimeInfo::instance();
+		
+		$this->_appSettings = new DataObject($this->RuntimeInfo->appSettings());
+		
+		$initialize_method = 'initialize'.$this->_controller_format;
+		if(method_exists($this,$initialize_method)){
+			$this->$initialize_method();
+		}
+		
 	}
 	
+	public function getAppSettings(){ return DataObject::cast($this->_appSettings); }
 	public function getRuntimeInfo(){ return $this->RuntimeInfo; }
 	
 	abstract protected function loadIncludedFiles();

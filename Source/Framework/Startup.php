@@ -31,33 +31,6 @@ final class Startup{
 	
 	use ConfigReader;
 	
-	////////////////////
-	// Relocate these settings to an authentication class
-	/*	
-	private $_id;
-	public function id(){
-		// just doing this for code completetion purposes
-		if(isset($this->_id)){ return $this->_id; }
-		else { $id = new Guest(); }
-		return $id;
-	}
-	
-	public function idAsMember(){
-		// just doing this for code completetion purposes
-		if($this->_id instanceof Member){ return $this->_id; }
-		return new Member();
-	}
-	
-	private $_userId;
-	public function userSession(){
-		if(isset($this->_userId)){ return $this->_userId; }
-		return new IdentifyUser();
-	}
-	*/
-	//
-	/////////////////
-	
-	
 	public static function shutdownHandler(){
 		$RuntimeInfo = RuntimeInfo::instance();
 		if($RuntimeInfo instanceof Startup){
@@ -85,6 +58,8 @@ final class Startup{
 	
 	private $_helpers;
 	public function helpers(){ return $this->_helpers; }
+	
+	public function appSettings(){ return current($this->_config); }
 	
 // 	private $_systemCache;
 // 	public function systemCache(){ return $this->_systemCache; }
@@ -269,7 +244,7 @@ final class Startup{
 		}
 		
 		$not_rendered = true;
-		if(isset($f['controller_format']) && (strtolower($f['controller_format']) != 'page' || strtolower($f['controller_format']) != 'html')){ //  && $f['controller_format'] != 'html' // for optional link formatting
+		if(isset($f['controller_format']) && strtolower($f['controller_format']) != 'page' && strtolower($f['controller_format']) != 'html'){ //  && $f['controller_format'] != 'html' // for optional link formatting
 			$output_method = 'render'.$f['controller_format'];
 			if(method_exists($Page,$output_method)){
 				$Page->$output_method();
@@ -278,11 +253,9 @@ final class Startup{
 		}
 		
 		if($not_rendered) {
-			if($Page instanceof PageController){
-				$Page->renderPage();
-				$Page->renderHtmlPage();
-			} else if($Page instanceof PageController){
-				$Page->renderPage();
+			if($Page instanceof HTMLCapable){
+				$Page->renderHTML();
+				$Page->renderThemedHTMLPage();
 			}
 		}
 		echo $Page->getOutput();

@@ -1,7 +1,7 @@
 <?php
 
 interface HTMLCapable{
-	public function renderPage();
+	public function renderHTML();
 }
 
 trait HTMLFormat{
@@ -16,11 +16,27 @@ trait HTMLFormat{
 	protected $_remote_css=array();
 	protected $output_template = '';
 	
+	public function initializeHTML(){
+		$Page = PageController::cast($this);
+		
+		$this->_page_title = $Page->getAppSettings()->getString('default_page_title');
+		$this->_page_keywords = $Page->getAppSettings()->getString('default_page_keywords');
+		$this->_page_description = $Page->getAppSettings()->getString('default_page_description');
+		$this->_page_author = $Page->getAppSettings()->getString('default_page_author');
+	}
+	
+	/*
+	 * @depricated
+	 */
 	public function renderPage(){
+		self::renderHTML();
+	}
+	
+	public function renderHTML(){
 		$Page = PageController::cast($this);
 		$this->addCss('Pages/'.$Page->getControllerName());
 		$this->addJs('Pages/'.$Page->getControllerName());
-	
+		
 		$this->_page_body = $this->runCodeReturnOutput('Pages/'.$Page->getControllerName().'/layout.php');
 	}
 	

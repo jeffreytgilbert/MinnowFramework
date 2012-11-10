@@ -334,7 +334,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 		
 	}
 	
-	public function renderPage(){
+	public function renderHTML(){
 		$this->addCss('scaffold');
 		$this->addJs('scaffold');
 		

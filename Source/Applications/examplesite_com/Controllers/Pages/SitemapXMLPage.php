@@ -11,7 +11,7 @@ class SitemapXMLPage extends PageController implements HTMLCapable{
 		/* business logic */
 	}
 	
-	public function renderPage(){
+	public function renderHTML(){
 		require(dirname(__FILE__).'/../Views/pages/SitemapXML/layout.php');
 		exit;
 	}

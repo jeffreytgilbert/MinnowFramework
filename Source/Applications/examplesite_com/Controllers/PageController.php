@@ -17,7 +17,7 @@ abstract class PageController extends Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->loadIncludedFiles();
-	
+		
 		// add all the javascript files you want loaded every html page request here
 		$this->_extra_js = array_merge($this->_extra_js,array(
 			'default'
@@ -31,7 +31,7 @@ abstract class PageController extends Controller{
 		$this->handleRequest();
 	}
 	
-	public function renderHtmlPage(){
+	public function renderThemedHTMLPage(){
 		header('Content-Type: text/html; charset=UTF-8');
 		
 		$this->_output = $this->runCodeReturnOutput('Themes/desktop.php');

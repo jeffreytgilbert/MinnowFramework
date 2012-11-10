@@ -203,7 +203,7 @@ class ScaffoldPagesPage extends PageController implements HTMLCapable{
 		} // endif
 	}
 	
-	public function renderPage(){
+	public function renderHTML(){
 		die(file_get_contents(File::osPath(dirname(__FILE__).'/../../../Framework/Scaffold/simple_setup_form.htm')));
 	}
 }

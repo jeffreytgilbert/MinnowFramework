@@ -301,7 +301,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 		
 	}
 	
-	public function renderPage(){
+	public function renderHTML(){
 		die();
 	}
 }
