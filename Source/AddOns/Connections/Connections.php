@@ -14,6 +14,8 @@
 
 class Connections{
 	
+	public static function cast(Connections $Connections){ return $Connections; }
+	
 	use ConfigReader;
 	private $_connections = array();
 	

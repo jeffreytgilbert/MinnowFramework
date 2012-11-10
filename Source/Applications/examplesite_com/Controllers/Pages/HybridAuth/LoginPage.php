@@ -9,7 +9,7 @@ class LoginPage extends PageController implements HTMLCapable{
 	}
 	
 	protected function handleRequest(){
-		$this->_page_body = $this->RuntimeInfo->helpers()->HybridAuth()->authenticate();
+		$this->_page_body = $this->getHelpers()->HybridAuth()->authenticate('Facebook');
 	}
 
 	public function renderHTML(){ $this->_output = $this->_page_body; }

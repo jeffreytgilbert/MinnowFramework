@@ -30,9 +30,9 @@ abstract class PageController extends Controller{
 			'default'
 		));
 		
-		$this->Session = $this->RuntimeInfo->helpers()->Session();
+		$this->Session = $this->getHelpers()->Session();
 		
-		$HybridAuth = $this->RuntimeInfo->helpers()->HybridAuth();
+		$HybridAuth = $this->getHelpers()->HybridAuth();
 		
 		$this->handleRequest();
 	}

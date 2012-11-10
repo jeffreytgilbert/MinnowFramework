@@ -7,8 +7,6 @@
  */
 class DataObject extends Model{
 
-	public static function cast(DataObject $DataObject){
-		return ($DataObject instanceof DataObject)?$DataObject:new DataObject($DataObject->toArray());
-	}
+	public static function cast(DataObject $DataObject){ return $DataObject; }
 	
 }

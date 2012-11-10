@@ -31,6 +31,8 @@ final class Startup{
 	
 	use ConfigReader;
 	
+	public static function cast(Startup $Startup){ return $Startup; }
+	
 	public static function shutdownHandler(){
 		$RuntimeInfo = RuntimeInfo::instance();
 		if($RuntimeInfo instanceof Startup){

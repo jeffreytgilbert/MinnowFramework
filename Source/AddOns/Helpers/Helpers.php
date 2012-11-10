@@ -16,6 +16,8 @@ class Helpers{
 	
 	use ConfigReader;
 	
+	public static function cast(Helpers $Helpers){ return $Helpers; }
+	
 	private $_helpers = array();
 	
 	// make sure connections are freed at the end of a process execution

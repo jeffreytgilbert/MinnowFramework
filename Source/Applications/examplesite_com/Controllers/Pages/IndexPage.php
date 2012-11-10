@@ -12,7 +12,12 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 	
 	protected function handleRequest(){
 		// business logic here
-		//pr($_SESSION);
+// 		pr($this->getHelpers()->HybridAuth()->getConnectedStates());
+// 		pr($this->getHelpers()->HybridAuth()->getConnectedProfiles());
+// 		pr($this->getHelpers()->HybridAuth()->getConnectedContacts());
+// 		pr($this->getHelpers()->HybridAuth()->getConnectedActivity());
+// 		pr($this->getHelpers()->HybridAuth()->getConnectedTimelines());
+// 		pr($this->getHelpers()->HybridAuth()->setConnectedStatuses('http://www.youtube.com/watch?v=ENXvZ9YRjbo'));
 	}
 	
 	public function renderJSON(){ parent::renderJSON(); }

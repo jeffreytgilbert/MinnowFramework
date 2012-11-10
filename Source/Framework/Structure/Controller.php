@@ -5,19 +5,24 @@
  */
 
 abstract class Controller {
+	// these all have getters and shouldn't be manipulated once set
+	private 
+		$_AppSettings,
+		$_RuntimeInfo,
+		$_Helpers,
+		$_Connections;
+	
 	protected 
 		$_data = array(),
 		$_tpl,
 		$_page_body,
 		$_controller_name,
 		$_controller_format,
-		$_appSettings,
 		
 		// well these aren't cased appropriately are they
 		$page_result_start = 0,
 		$page_result_limit = 20,
-		$cache_results = false,
-		$RuntimeInfo;
+		$cache_results = false;
 	
 	/*
 	 * @depricated
@@ -48,9 +53,10 @@ abstract class Controller {
 		$this->Notices = new DataObject();			// store info notices  
 		$this->Input = new DataObject();			// store data from the form
 		
-		$this->RuntimeInfo = RuntimeInfo::instance();
-		
-		$this->_appSettings = new DataObject($this->RuntimeInfo->appSettings());
+		$this->_RuntimeInfo = RuntimeInfo::instance();
+		$this->_AppSettings = new DataObject($this->_RuntimeInfo->appSettings());
+		$this->_Helpers = $this->_RuntimeInfo->helpers();
+		$this->_Connections = $this->_RuntimeInfo->connections();
 		
 		$initialize_method = 'initialize'.$this->_controller_format;
 		if(method_exists($this,$initialize_method)){
@@ -59,8 +65,10 @@ abstract class Controller {
 		
 	}
 	
-	public function getAppSettings(){ return DataObject::cast($this->_appSettings); }
-	public function getRuntimeInfo(){ return $this->RuntimeInfo; }
+	public function getAppSettings(){ return DataObject::cast($this->_AppSettings); }
+	public function getRuntimeInfo(){ return Startup::cast($this->_RuntimeInfo); }
+	public function getHelpers(){ return Helpers::cast($this->_Helpers); }
+	public function getConnections(){ return Connections::cast($this->_Connections); }
 	
 	abstract protected function loadIncludedFiles();
 	abstract protected function handleRequest();
@@ -135,7 +143,7 @@ abstract class Controller {
 		extract($this->data());
 		
 		try{
-			require(File::osPath(dirname(__FILE__).'/../../Applications/'.$this->RuntimeInfo->getApplicationName().'/Views/').$path);
+			require(File::osPath(dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/').$path);
 		} catch (Exception $e){
 			echo 'Error: '.$e->getCode()."\n<br>";
 			echo 'File: '.$e->getFile()."\n<br>";
