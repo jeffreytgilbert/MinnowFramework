@@ -12,6 +12,8 @@ abstract class PageController extends Controller{
 	
 	use HTMLFormat, JSONFormat, XMLFormat;
 	
+	protected $Session;
+	
 	// define the logic that happens on every page for your application
 	
 	public function __construct(){
@@ -27,6 +29,10 @@ abstract class PageController extends Controller{
 		$this->_extra_css = array_merge($this->_extra_css,array(
 			'default'
 		));
+		
+		$this->Session = $this->RuntimeInfo->helpers()->Session();
+		
+		$HybridAuth = $this->RuntimeInfo->helpers()->HybridAuth();
 		
 		$this->handleRequest();
 	}

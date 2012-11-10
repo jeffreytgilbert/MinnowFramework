@@ -31,7 +31,27 @@ class Helpers{
 	// RuntimeInfo->Helpers->Video('default')->prepare($query);
 	
 	// 	this is how connector/drivers should be installed. This code can be reused identically while just changing the instance name of each connection type
-
+	
+	public function Authentication(){
+		if(isset($this->_helpers['Authentication'])
+				&& $this->_helpers['Authentication'] instanceof AuthenticationHelper){
+			return $this->_helpers['Authentication']->getInstance();
+		}
+		Run::fromHelpers('Authentication/AuthenticationHelper.php');
+		$this->_helpers['Authentication'] = $AuthenticationHelper = new AuthenticationHelper($this->config('Helpers/Authentication/'));
+		return $AuthenticationHelper->getInstance();
+	}
+	
+	public function HybridAuth(){
+		if(isset($this->_helpers['HybridAuth'])
+				&& $this->_helpers['HybridAuth'] instanceof HybridAuthHelper){
+			return $this->_helpers['HybridAuth']->getInstance();
+		}
+		Run::fromHelpers('HybridAuth/HybridAuthHelper.php');
+		$this->_helpers['HybridAuth'] = $HybridAuthHelper = new HybridAuthHelper($this->config('Helpers/HybridAuth/'));
+		return $HybridAuthHelper->getInstance();
+	}
+	
 	public function Image(){
 		if(isset($this->_helpers['Image'])
 				&& $this->_helpers['Image'] instanceof ImageHelper){

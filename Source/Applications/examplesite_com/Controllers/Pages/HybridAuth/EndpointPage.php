@@ -4,19 +4,14 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 */
 
-class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLCapable{
+class EndPointPage extends PageController implements HTMLCapable{
 	protected function loadIncludedFiles(){
-// 		$this->loadModels(array());
-// 		$this->loadActions(array());
 	}
 	
 	protected function handleRequest(){
-		// business logic here
-		//pr($_SESSION);
+		$this->RuntimeInfo->helpers()->HybridAuth()->endpoint();
 	}
-	
-	public function renderJSON(){ parent::renderJSON(); }
-	public function renderXML(){ parent::renderXML(); }
+
 	public function renderHTML(){ parent::renderHTML(); }
 	
 }
