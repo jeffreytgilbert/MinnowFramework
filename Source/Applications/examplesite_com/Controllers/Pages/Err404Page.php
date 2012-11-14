@@ -14,6 +14,8 @@ class Err404Page extends PageController implements HTMLCapable, JSONCapable, XML
 
 	public function renderJSON(){ parent::renderJSON(); }
 	public function renderXML(){ parent::renderXML(); }
-	public function renderHTML(){ parent::renderHTML(); }
+	public function renderHTML(){ 
+		$this->_page_body = $this->runCodeReturnOutput('Pages/Err404/layout.php');
+	}
 	
 }

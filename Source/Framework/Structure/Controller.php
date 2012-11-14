@@ -143,7 +143,9 @@ abstract class Controller {
 		extract($this->data());
 		
 		try{
-			require(File::osPath(dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/').$path);
+			$file = File::osPath(dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/').$path;
+			if(file_exists($file)){ require($file); }
+			else { exit('Could not load required file:'. $file); }
 		} catch (Exception $e){
 			echo 'Error: '.$e->getCode()."\n<br>";
 			echo 'File: '.$e->getFile()."\n<br>";

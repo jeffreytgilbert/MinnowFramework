@@ -200,46 +200,64 @@ final class Startup{
 		$app_path = Path::toApplication();
 		$controller_path = Path::toControllers();
 		
+//		pr($_GET);
+		
 		if(!isset($_GET['framework']) || !is_array($_GET['framework'])){
 			Run::fromControllers('Pages/IndexPage.php');
 			$Page = new IndexPage();
 		} else {
 			$f = $_GET['framework'];
 			
+			// if this is a request for the webroot
 			if(isset($f['controller_name']) && $f['controller_name'] == ''){
+// 				echo 'This is a request for the webroot';
+				
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			} else if(isset($f['controller_name'])) {
+// 				echo 'This is a request for the '.$f['controller_name']." Controller\n";
+				
 				$controller_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['controller_name']);
 				if(isset($f['folder_name'])){
+// 					echo 'This is a request for the '.$f['controller_name']." Controller in the folder ".$f['folder_name']."\n";
+					
 					$folder_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['folder_name']);
 					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_name.'/'.$controller_name.'Page.php'))){
+// 						echo 'This file was found'."\n";
 						Run::fromControllers('Pages/'.$folder_name.'/'.$controller_name.'Page.php');
 						if(class_exists($controller_name.'Page')){
+// 							echo 'This class exists'."\n";
 							$class_name = $controller_name.'Page';
 							$Page = new $class_name();
 						} else {
+// 							echo 'This class does not exist'."\n";
 							Run::fromControllers('Pages/Err404Page.php');
 							$Page = new Err404Page();
 						}
 					} else {
+// 						echo 'The file is missing'."\n";
 						Run::fromControllers('Pages/Err404Page.php');
 						$Page = new Err404Page();
 					}
 				} else if(file_exists(File::osPath($controller_path.'Pages/'.$controller_name.'Page.php'))){
+// 					echo 'There is no folder in the request name, but the file exists'."\n";
 					Run::fromControllers('Pages/'.$controller_name.'Page.php');
 					if(class_exists($controller_name.'Page')){
+// 						echo 'The class exists too.'."\n";
 						$class_name = $controller_name.'Page';
 						$Page = new $class_name();
 					} else {
+// 						echo 'There is no class.'."\n";
 						Run::fromControllers('Pages/Err404Page.php');
 						$Page = new Err404Page();
 					}
 				} else {
+// 					echo 'There is no file.'."\n";
 					Run::fromControllers('Pages/Err404Page.php');
 					$Page = new Err404Page();
 				}
 			} else {
+// 				echo 'Failsafe so something is always rendered'."\n";
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			}
