@@ -189,6 +189,12 @@ final class Startup{
 		// Load the sugar methods in actions so the actions accessors can better format the output to DataObjects and DataCollections
 		Run::fromActions('Actions.php');
 		
+		// Load remainder of framework requirements which can now inherit developer level changes to object base, customized outputs, etc
+		$files = File::filesInFolderToArray(Path::toActions($this->_application_name).'Required/');
+		foreach($files as $path => $file){
+			require_once($path);
+		}
+		
 		// Load the PageController which is the base of all page requests and allows the user to override controller behaviors for things like themes, logins, etc
 		Run::fromControllers('PageController.php');
 	}
