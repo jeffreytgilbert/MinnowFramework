@@ -19,9 +19,8 @@ class Model implements Iterator, Serializable{
 	* @param array $data
 	* @param string $default_filter
 	*/
-	public function __construct(Array $data=array(), $default_filter='Parse::decode'){
+	public function __construct(Array $data=array()){
 		$this->setDataFromArray($data);
-		$this->_default_filter=$default_filter;
 	}
 	
 	public function set($key_name, $data_value){
@@ -29,7 +28,7 @@ class Model implements Iterator, Serializable{
 			$this->_data[$key_name] = $data_value;
 			return true;
 		} else {
-			if(RuntimeInfo::instance()->getSiteConfig()->get('is_dev_site')){
+			if(RuntimeInfo::instance()->appSettings('debug')){
 				echo "\nWarning: tried to set property \"{$key_name}\" on object \"".get_class($this)."\" where not allowed by model definition.\n<br>";
 			}
 		}

@@ -4,14 +4,6 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 */
 
-// What if each of the plugins loaded is a trait that can be used, then things could just access them through the action class dependant on the trait needed.
-// i like this idea, but each trait needs to have some way to be identified (installed as it were) or would it, since all I'd need to do is autoload them and wait for their use in actions
-// but then the connectors could all be required to have config readers and common methods.
-
-// Each connector should be allowed to have a trait or an interface it can inherit from where certain methods and properties are defined that help identify it and allow it to read its own config
-
-// @todo make outputs on DataObject/Models trait savvy so they can output to common html / parser / filter functions
-
 class Helpers{
 	
 	use ConfigReader;
@@ -30,18 +22,18 @@ class Helpers{
 	}
 	
 	// example usage: 
-	// RuntimeInfo->Helpers->Video('default')->prepare($query);
+	// RuntimeInfo->Helpers->Video('default')->load($file)->etc;
 	
 	// 	this is how connector/drivers should be installed. This code can be reused identically while just changing the instance name of each connection type
 	
-	public function Authentication(){
-		if(isset($this->_helpers['Authentication'])
-				&& $this->_helpers['Authentication'] instanceof AuthenticationHelper){
-			return $this->_helpers['Authentication']->getInstance();
+	public function BrowserDetection(){
+		if(isset($this->_helpers['BrowserDetection'])
+				&& $this->_helpers['BrowserDetection'] instanceof BrowserDetectionHelper){
+			return $this->_helpers['BrowserDetection']->getInstance();
 		}
-		Run::fromHelpers('Authentication/AuthenticationHelper.php');
-		$this->_helpers['Authentication'] = $AuthenticationHelper = new AuthenticationHelper($this->config('Helpers/Authentication/'));
-		return $AuthenticationHelper->getInstance();
+		Run::fromHelpers('BrowserDetection/BrowserDetectionHelper.php');
+		$this->_helpers['BrowserDetection'] = $BrowserDetectionHelper = new BrowserDetectionHelper($this->config('Helpers/BrowserDetection/'));
+		return $BrowserDetectionHelper->getInstance();
 	}
 	
 	public function HybridAuth(){
@@ -64,17 +56,16 @@ class Helpers{
 		return $ImageHelper->getInstance();
 	}
 	
-	public function Video(){
-		if(isset($this->_helpers['Video'])
-				&& $this->_helpers['Video'] instanceof VideoHelper){
-			return $this->_helpers['Video']->getInstance();
+	public function Location(){
+		if(isset($this->_helpers['Location'])
+				&& $this->_helpers['Location'] instanceof LocationHelper){
+			return $this->_helpers['Location']->getInstance();
 		}
-		Run::fromHelpers('Video/VideoHelper.php');
-		$this->_helpers['Video'] = $VideoHelper = new VideoHelper($this->config('Helpers/Video/'));
-		return $VideoHelper->getInstance();
+		Run::fromHelpers('Location/LocationHelper.php');
+		$this->_helpers['Location'] = $LocationHelper = new LocationHelper($this->config('Helpers/Location/'));
+		return $LocationHelper->getInstance();
 	}
-
-
+	
 	public function Session(){
 		if(isset($this->_helpers['Session'])
 				&& $this->_helpers['Session'] instanceof SessionHelper){
@@ -85,6 +76,16 @@ class Helpers{
 		return $SessionHelper->getInstance();
 	}
 	
+	public function Video(){
+		if(isset($this->_helpers['Video'])
+				&& $this->_helpers['Video'] instanceof VideoHelper){
+			return $this->_helpers['Video']->getInstance();
+		}
+		Run::fromHelpers('Video/VideoHelper.php');
+		$this->_helpers['Video'] = $VideoHelper = new VideoHelper($this->config('Helpers/Video/'));
+		return $VideoHelper->getInstance();
+	}
+
 }
 
 

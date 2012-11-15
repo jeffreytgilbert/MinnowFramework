@@ -4,14 +4,6 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 */
 
-// What if each of the plugins loaded is a trait that can be used, then things could just access them through the action class dependant on the trait needed.
-// i like this idea, but each trait needs to have some way to be identified (installed as it were) or would it, since all I'd need to do is autoload them and wait for their use in actions
-// but then the connectors could all be required to have config readers and common methods.
-
-// Each connector should be allowed to have a trait or an interface it can inherit from where certain methods and properties are defined that help identify it and allow it to read its own config
-
-// @todo make outputs on DataObject/Models trait savvy so they can output to common html / parser / filter functions
-
 class Connections{
 	
 	public static function cast(Connections $Connections){ return $Connections; }

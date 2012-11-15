@@ -147,8 +147,23 @@ s.parentNode.insertBefore(g,s)}(document,'script'));
 
 <?php
 $RuntimeInfo = RuntimeInfo::instance();
+$format = function ($bytes, $precision = 2) { 
+    $units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+   
+    $bytes = max($bytes, 0); 
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+    $pow = min($pow, count($units) - 1); 
+   
+    $bytes /= pow(1024, $pow); 
+   
+    return round($bytes, $precision) . ' ' . $units[$pow]; 
+}
 ?>
 <!-- 
-since: <?= CalculateDate::returnSimpleDatetimeStringSinceNow('1/3/2012 14:55:00') ?>
-l <?= $RuntimeInfo->pageTimer()->toString(); ?>
+execution time: <?= $RuntimeInfo->pageTimer()->toString(); ?>
+
+ram usage: <?php echo $format(memory_get_usage(true)); ?>
+
+peak ram usage: <?php echo $format(memory_get_peak_usage(true)); ?>
+
 -->

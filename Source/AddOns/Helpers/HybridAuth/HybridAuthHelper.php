@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+*/
+
 // this one needs to have the sessions config stored in the config (which should extend model) and then call its settings from within if using db as the config
 
 final class HybridAuthHelper extends Helper{

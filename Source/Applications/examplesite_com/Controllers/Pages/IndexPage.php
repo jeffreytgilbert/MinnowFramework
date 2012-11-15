@@ -18,6 +18,10 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 // 		pr($this->getHelpers()->HybridAuth()->getConnectedActivity());
 // 		pr($this->getHelpers()->HybridAuth()->getConnectedTimelines());
 // 		pr($this->getHelpers()->HybridAuth()->setConnectedStatuses('http://www.youtube.com/watch?v=ENXvZ9YRjbo'));
+//		pr($this->getHelpers()->BrowserDetection()->isStandardBrowser());
+//		$loc = $this->getHelpers()->Location();
+//		pr($loc->getLocationFromYahoo($loc->guessIP()));
+//		pr($loc->getLocationFromServices('74.125.225.96'));
 	}
 	
 	public function renderJSON(){ parent::renderJSON(); }
