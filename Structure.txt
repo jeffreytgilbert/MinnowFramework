@@ -12,16 +12,15 @@ Source
 	Applications
 		Your application
 			Actions
-				Required
-				Optional
+				Custom
 				Actions.php
 			Models
-				Required
-				Optional
+				Custom
 				DataObject.php
 				DataCollection.php
 			Controllers
 				Pages
+				Components
 				PageController.php
 			Views
 				Pages
@@ -44,8 +43,6 @@ Source
 				example.ini
 		Formats
 			SampleFormat.php
-		Widgets
-			tbd...
 	Framework
 Temp
 js

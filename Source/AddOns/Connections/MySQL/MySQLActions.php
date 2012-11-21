@@ -126,9 +126,9 @@ trait MySQLActions{
 	}
 	
 	protected static function MySQLTotalRows(){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 		$query='SELECT FOUND_ROWS()';
-		$db->query($query,__LINE__,__FILE__);
+		$db->query($query);
 		$db->readRow('NUM');
 		return (int)$db->row_data[0];
 	}
@@ -139,7 +139,7 @@ trait MySQLActions{
 	 * @return string
 	 */
 	protected static function MySQLEscapeLikeWildCard($string, $sql_connection_escape_type){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 		return $db->like($string,$sql_connection_escape_type);
 	}
 }

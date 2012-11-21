@@ -18,6 +18,10 @@ abstract class PageController extends Controller{
 	
 	public function __construct(){
 		parent::__construct();
+		
+		// load components needed on every page manually. These may have object dependencies / inheritance issues if auto loaded
+		Run::fromComponents('AuthenticationComponent.php');
+		
 		$this->loadIncludedFiles();
 		
 		// add all the javascript files you want loaded every html page request here

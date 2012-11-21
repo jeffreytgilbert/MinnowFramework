@@ -28,7 +28,7 @@ class Model implements Iterator, Serializable{
 			$this->_data[$key_name] = $data_value;
 			return true;
 		} else {
-			if(RuntimeInfo::instance()->appSettings('debug')){
+			if(RuntimeInfo::instance()->appSettings()->get('debug')){
 				echo "\nWarning: tried to set property \"{$key_name}\" on object \"".get_class($this)."\" where not allowed by model definition.\n<br>";
 			}
 		}
@@ -226,32 +226,61 @@ class Model implements Iterator, Serializable{
 	}
 	
 	public function searchField($field_name, $needle){
-		return (strstr($this->data[$field_name], $needle))?$this->data[$field_name]:false;
+		return (strstr($this->_data[$field_name], $needle))?$this->_data[$field_name]:false;
 	}
 	
 	/**
 	 * Returns original data entered into filtered object in an unfiltered array
 	 * @return array
 	 */
-	public function toArray() { return $this->_data; }
+	public function toArray($blacklist=array()) { 
+		$return_array = $this->_data;
+		if(count($this->_allowed_data)>0){
+			$object_fields_array = $this->_allowed_data;
+			$field_list = array_keys($this->_allowed_data);
+			$object_fields_array = array_combine(
+				$field_list, // field names
+				array_fill(0,count($object_fields_array),null) // null values
+			);
+			$return_array = $this->_data + $object_fields_array; // the syntax for combining arrays and overwriting keys
+		} else {
+			$field_list = array_keys($this->_data);
+		}
+		
+		foreach($blacklist as $key_name){
+			if(is_array($key_name)) { continue; } // if its an array, this is likely a hierarchy of blacklists so ignore this one
+			if(in($key_name,$field_list)){
+				unset($return_array[$key_name]);
+			}
+		}
+		return $return_array;
+	}
+	
+	/**
+	 * Returns original data entered into filtered object in an unfiltered array
+	 * @return array
+	 */
+	public function toArrayOfSetValues() { return $this->_data; }
 	
 	// recursive limiting so that object chains don't get infinite and kill the process
-	public function toArrayRecursive($limit=10){
+	public function toArrayRecursive($limit=10, $blacklist=array()){
 		if($limit < 0){ return array(); }
-	
-		$array_to_return = array();
-	
-		foreach($this->_data as $key => $value){
+		
+		$array_to_return = $this->toArray($blacklist);
+//		pr($array_to_return);
+		
+		foreach($array_to_return as $key => $value){
+			
 			if($value instanceof Model){
-				$array_to_return[$key] = $value->toArrayRecursive($limit-1);
+				$array_to_return[$key] = $value->toArrayRecursive($limit-1, isset($blacklist[$key])?$blacklist[$key]:array());
 			} else if($value instanceof ModelCollection) {
-				$array_to_return[$key] = $value->toArrayRecursive($limit-1);
+				$array_to_return[$key] = $value->toArrayRecursive($limit-1, isset($blacklist[$key])?$blacklist[$key]:array());
 			} else if(is_array($value)) {
 				$array_to_return[$key] = $value;
 			} else if(is_object($value)){
 				$array_to_return[$key] = get_class_vars($value);
-			} else {
-				$array_to_return[$key] = $value;
+// 			} else { // done in initial blacklisted dump. 
+// 				$array_to_return[$key] = $value;
 			}
 		}
 	

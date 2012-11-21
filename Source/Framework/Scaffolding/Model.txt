@@ -5,24 +5,36 @@
  */
 
 class ObjectName extends DataObject{
-	public function __construct($data=array(), $default_filter='Parse::decode'){
+	public function __construct(Array $data=array()){
 		$this->addAllowedData(array());
-		parent::__construct($data, $default_filter);
+		parent::__construct($data);
 	}
 
 	public static function cast(DataObject $DataObject){
 		return ($DataObject instanceof ObjectName)?$DataObject:new ObjectName($DataObject->toArray());
-	}	
+	}
+	
 	// Static typed child methods for autocomplete on object
+	
+	/* Foreign Keyed Object Calls */
 }
 
 class ObjectNameCollection extends DataCollection{
-	public function __construct(){
+	public function __construct(Array $array_of_objects=null){
 		$this->setCollectionType('ObjectName');
+		parent::__construct($array_of_objects);
 	}
 	
-	public static function cast(ObjectNameCollection $ObjectNameCollection){
-		return $ObjectNameCollection;
+	// Add autocomplete helper methods to the only two ModelCollection methods that return an object
+	
+	public function getObjectNameByFieldValue($column_name, $data_value, $return_blank_object_if_null=true){
+		$return = parent::getObjectByFieldValue($column_name, $data_value, $return_blank_object_if_null);
+		return ($return instanceof ObjectName)?$return:new ObjectName($return->toArray());
+	}
+	
+	public function getObjectNameByIndex($index, $return_blank_object_if_null=true){
+		$return = parent::getObjectByIndex($index, $return_blank_object_if_null);
+		return ($return instanceof ObjectName)?$return:new ObjectName($return->toArray());
 	}
 	
 	// Static typed child methods for autocomplete on collection

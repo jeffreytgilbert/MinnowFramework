@@ -50,7 +50,6 @@
 * * **Formats**: Easily add support for other data formats to export from your controllers. 
 * * **SampleFormat.php**: Includes a trait class and an interface for defining which methods are needed for each data format, and how they'll be called. These can be overwritten by each controller.
 * * **Widgets**: tbd...
-* * tbd...
 * **Framework**: Contains all files in the framework. These files should not be changed by developers. Changing these potentially breaks compatibility with future framework updates.
 
 **Temp**: A temp folder included as a convenience for devs to store files. Currently has no ties to the framework so it can be ignored or removed.

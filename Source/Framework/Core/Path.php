@@ -35,6 +35,10 @@ final class Path{
 		return self::toRoot().File::osPath('Source/Framework/');
 	}
 
+	public static function toComponents($app_name=null){
+		return self::toApplication($app_name).File::osPath('Controllers/Components/');
+	}
+
 	public static function toControllers($app_name=null){
 		return self::toApplication($app_name).File::osPath('Controllers/');
 	}

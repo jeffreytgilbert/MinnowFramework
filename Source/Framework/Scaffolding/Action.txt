@@ -12,7 +12,20 @@ final class ObjectNameActions extends Actions{
 	
 	public static function selectByObjectNameId($id){
 		// Return one object by primary key selection
-		return parent::MySQLReadAction(/* select */)->getItemAt(0);
+		return new ObjectName(parent::MySQLReadReturnSingleResultAsArrayAction(/* select */));
+	}
+	
+	public static function selectList(PagingConfig $PagingConfig=null){
+		// Return an object collection
+		$ObjectNameCollection = new ObjectNameCollection(parent::MySQLReadReturnArrayOfObjectsAction(/* list */,
+			$PagingConfig
+		));
+		
+		if($PagingConfig instanceof PagingConfig){
+			$ObjectNameCollection->setPaginationData($PagingConfig->getStart(), $PagingConfig->getLimit(), self::MySQLTotalRows());
+		}
+		
+		return $ObjectNameCollection;
 	}
 	
 	// Placeholder function for creating lists and linking objects.
@@ -22,17 +35,17 @@ final class ObjectNameActions extends Actions{
 		$primary_keys = array();
 		foreach($DataCollection->toArray() as $DataObject){
 			$DataObject->set('ObjectName', new ObjectName());
-			if($DataObject->get('primary_key') > 0){
-				$primary_keys[] = $DataObject->get('primary_key');
+			if($DataObject->getInteger('primary_key') > 0){
+				$primary_keys[] = $DataObject->getInteger('primary_key');
 			}
 		}
 		
 		$primary_keys = array_unique($primary_keys);
 		
-		$ObjectNameCollection = parent::MySQLReadAction(/* list */);
+		$ObjectNameCollection = new ObjectNameCollection(parent::MySQLReadReturnArrayOfObjectsAction(/* list */));
 		
 		foreach($ObjectNameCollection->toArray() as $ObjectName){
-			$array = $DataCollection->getItemsBy('primary_key',$ObjectName->get('primary_key'));
+			$array = $DataCollection->getItemsBy('primary_key',$ObjectName->getInteger('primary_key'));
 			foreach($array as $DataObject){
 				$DataObject->set('ObjectName',$ObjectName);
 			}

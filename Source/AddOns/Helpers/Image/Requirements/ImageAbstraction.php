@@ -47,6 +47,44 @@ class ImageAbstraction {
 	}
 	
 	public function create($width, $height, $background_color=0, $background_alpha=100){
+		
+// 		$total_size = 0;
+		
+// 		// I'm confused why this memory management doesnt work because the script only needs 25165824 bytes, 
+// 		// but wouldnt work without allocating ~ 43349391 bytes. 
+// 		/*
+// 		 * 
+// this is the current memory usage
+// 2359296
+// this is the total memory about to be allocated
+// 43349391.36
+// this is the total memory usage after the canvas has been drawn
+// 25165824
+// this is the total memory about to be allocated after calculating the size of the images to be merged
+// 61279432
+// this is the total memory usage after the images have been merged
+// 48234496
+// 		 * 
+// 		 */
+		
+// 		$total_size = ($width * $height * 4); // height x width x rgba
+// 		pr('this is the total memory that needs to be allocated to just the canvas');
+// 		pr($total_size);
+		
+// 		$total_size = ($width * $height * 4) * 2.28; 
+// 		pr('this is the amount of memory the canvas thinks it needs');
+// 		pr($total_size);
+		
+// 		pr('this is the current memory usage');
+// 		pr(memory_get_usage(true));
+		
+// 		$total_size += memory_get_usage(true);
+		
+// 		pr('this is the total memory about to be allocated');
+// 		pr($total_size);
+		
+// 		ini_set('memory_limit', $total_size);
+		
 		switch($this->_interface){
 			case 'Gd':
 				$this->_imagine_instance = new Imagine\Gd\Imagine();
@@ -67,6 +105,97 @@ class ImageAbstraction {
 				new Imagine\Image\Color($background_color, $background_alpha)
 			);
 		}
+		
+// 		pr('this is the total memory usage after the canvas has been drawn');
+// 		pr(memory_get_usage(true));
+		
+		return $this;
+	}
+	
+	public function layerImagesFromBinary($images = array(), $starting_positions = array()){
+		
+		if(!($this->_image_instance instanceof Imagine\Image\ImageInterface)){ die('Base image must be created to use layering. Call create method first.'); }
+		
+		$image_objects = array();
+		
+		foreach($images as $pos => $binary){
+			$image_objects[$pos] = $this->_imagine_instance->load($binary);
+			if(isset($starting_positions[$pos])){
+				if(isset($starting_positions[$pos]['x'])){
+					$starting_positions[$pos]['x'] = 0;
+				}
+				if(isset($starting_positions[$pos]['y'])){
+					$starting_positions[$pos]['y'] = 0;
+				}
+			} else {
+				$starting_positions[$pos] = array('x'=>0,'y'=>0);
+			}
+		}
+		
+		foreach($image_objects as $pos => $Image){
+			$this->_image_instance->paste($Image, new Imagine\Image\Point($starting_positions[$pos]['x'], $starting_positions[$pos]['y']));
+		}
+		
+		return $this;
+	}
+	
+	public function layerImagesFromPaths($paths = array(), $starting_positions = array()){
+		
+		if(!($this->_image_instance instanceof Imagine\Image\ImageInterface)){ die('Base image must be created to use layering. Call create method first.'); }
+		
+		$image_objects = array();
+		
+// 		$total_size = 0;
+// 		$size = array();
+// 		foreach($paths as $pos => $path){
+// 			$size = getimagesize($path);
+// 			$total_size += ($size[0] * $size[1] * 4);
+// 		}
+		
+// 		$ImageArea = $this->_image_instance->getSize();
+// 		$total_size += ($ImageArea->getHeight() * $ImageArea->getWidth() * 4);
+		
+// 		$total_size += memory_get_usage(true);
+		
+// 		pr('this is the total memory about to be allocated after calculating the size of the images to be merged');
+// 		pr($total_size);
+		
+// 		ini_set('memory_limit', $total_size);
+		
+		foreach($paths as $pos => $path){
+			$image_objects[$pos] = $this->_imagine_instance->open($path);
+			if(isset($starting_positions[$pos])){
+				if(isset($starting_positions[$pos]['x'])){
+					$starting_positions[$pos]['x'] = 0;
+				}
+				if(isset($starting_positions[$pos]['y'])){
+					$starting_positions[$pos]['y'] = 0;
+				}
+			} else {
+				$starting_positions[$pos] = array('x'=>0,'y'=>0);
+			}
+		}
+		
+		foreach($image_objects as $pos => $Image){
+			$this->_image_instance->paste($Image, new Imagine\Image\Point($starting_positions[$pos]['x'], $starting_positions[$pos]['y']));
+		}
+		
+// 		pr('this is the total memory usage after the images have been merged');
+// 		pr(memory_get_usage(true));
+				
+		return $this;
+	}
+	
+	public function merge($top_image_path, $bottom_image_path, $top_x=0, $top_y=0, $bottom_x=0, $bottom_y=0){
+		
+		if(!($this->_image_instance instanceof Imagine\Image\ImageInterface)){ die('Base image must be created to use layering. Call create method first.'); }
+		
+		$top_image = $this->_imagine_instance->open($top_image_path);
+		$bottom_image = $this->_imagine_instance->open($bottom_image_path);
+		
+		$this->_image_instance
+			->paste($bottom_image, new Imagine\Image\Point($bottom_x, $bottom_y))
+			->paste($bottom_image, new Imagine\Image\Point($top_x, $top_y));
 		
 		return $this;
 	}

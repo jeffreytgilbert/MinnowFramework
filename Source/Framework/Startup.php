@@ -61,7 +61,10 @@ final class Startup{
 	private $_helpers;
 	public function helpers(){ return $this->_helpers; }
 	
-	public function appSettings(){ return current($this->_config); }
+	public function appSettings(){
+		static $appSettings = null;
+		return (!is_null($appSettings))?$appSettings:new DataObject(current($this->_config));
+	}
 	
 // 	private $_systemCache;
 // 	public function systemCache(){ return $this->_systemCache; }
@@ -174,26 +177,8 @@ final class Startup{
 		Run::fromModels('DataObject.php');
 		Run::fromModels('DataCollection.php');
 		
-		// Load application requirements
-		$files = File::filesInFolderToArray(Path::toModels($this->_application_name).'Required/');
-		foreach($files as $path => $file){
-			require_once($path);
-		}
-		
-		// Load remainder of framework requirements which can now inherit developer level changes to object base, customized outputs, etc
-		$files = File::filesInFolderToArray(Path::toFramework().'Requirements/');
-		foreach($files as $path => $file){
-			require_once($path);
-		}
-		
 		// Load the sugar methods in actions so the actions accessors can better format the output to DataObjects and DataCollections
 		Run::fromActions('Actions.php');
-		
-		// Load remainder of framework requirements which can now inherit developer level changes to object base, customized outputs, etc
-		$files = File::filesInFolderToArray(Path::toActions($this->_application_name).'Required/');
-		foreach($files as $path => $file){
-			require_once($path);
-		}
 		
 		// Load the PageController which is the base of all page requests and allows the user to override controller behaviors for things like themes, logins, etc
 		Run::fromControllers('PageController.php');

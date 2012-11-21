@@ -76,6 +76,16 @@ class Helpers{
 		return $SessionHelper->getInstance();
 	}
 	
+	public function SecureHash(){
+		if(isset($this->_helpers['SecureHash'])
+				&& $this->_helpers['SecureHash'] instanceof SecureHashHelper){
+			return $this->_helpers['SecureHash']->getInstance();
+		}
+		Run::fromHelpers('SecureHash/SecureHashHelper.php');
+		$this->_helpers['SecureHash'] = $SecureHashHelper = new SecureHashHelper($this->config('Helpers/SecureHash/'));
+		return $SecureHashHelper->getInstance();
+	}
+	
 	public function Video(){
 		if(isset($this->_helpers['Video'])
 				&& $this->_helpers['Video'] instanceof VideoHelper){

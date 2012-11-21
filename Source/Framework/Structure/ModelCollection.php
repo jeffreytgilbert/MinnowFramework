@@ -32,7 +32,7 @@ class ModelCollection implements Iterator{
 	
 	public function addAll(Array $data_array){
 		foreach($data_array as $DataObject){
-			$this->addItem($DataObject);
+			$this->addObject($DataObject);
 		}
 	}
 		
@@ -67,7 +67,7 @@ class ModelCollection implements Iterator{
 		// go through childs array of results
 		foreach($this->_data_object_array as $ChildObject){
 			// grab the parent objects that have a match for this childs data
-			$array = $ParentObjectCollection->getItemsBy($parent_field, $ChildObject->get($child_field));
+			$array = $ParentObjectCollection->getObjectArrayByFieldValue($parent_field, $ChildObject->get($child_field));
 			
 			foreach($array as $ParentObject){
 				// set the parents data with this child object, for each of  the objects found matching this child data
@@ -191,6 +191,26 @@ class ModelCollection implements Iterator{
 		return $return;
 	}
 	
+	public function searchObjects($needle){
+		$return = array();
+		foreach($this->_data_object_array as $DataObject){
+			if($DataObject->searchFields($needle)){
+				$return[] = $DataObject;
+			}
+		}
+		return $return;
+	}
+	
+	public function searchObjectByField($field_name, $needle){
+		$return = array();
+		foreach($this->_data_object_array as $DataObject){
+			if($DataObject->searchField($field_name, $needle)){
+				$return[] = $DataObject;
+			}
+		}
+		return $return;
+	}
+	
 	public function removeAll(){
 		$this->_data_object_array = array();
 	}
@@ -216,16 +236,16 @@ class ModelCollection implements Iterator{
 	}
 	
 	// recursive limiting so that object chains don't get infinite and kill the process
-	public function toArrayRecursive($limit=10){
+	public function toArrayRecursive($limit=10, $blacklist=array()){
 		if($limit < 0){ return array(); }
 		
 		$array_to_return = array();
 		
 		foreach($this->_data_object_array as $key => $value){
 			if($value instanceof Model){
-				$array_to_return[$key] = $value->toArray();
+				$array_to_return[$key] = $value->toArrayRecursive($limit-1,$blacklist);
 			} else if($value instanceof ModelCollection) {
-				$array_to_return[$key] = $value->toArrayRecursive($limit-1);
+				$array_to_return[$key] = $value->toArrayRecursive($limit-1,$blacklist);
 			} else if(is_array($value)) {
 				$array_to_return[$key] = $value;
 			} else if(is_object($value)){

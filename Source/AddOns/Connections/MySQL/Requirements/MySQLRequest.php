@@ -9,7 +9,7 @@ class MySQLRequest extends Request{
 	private $_is_prepared = false;
 	
 	public function runAndReturnId(Array $data=array(), Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 		$this->query($data, $integer_fields);
 		return $db->insertId();
 	}
@@ -42,7 +42,7 @@ class MySQLRequest extends Request{
 	}
 	
 	public function runAndReturnAffectedRows(Array $data=array(), Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 		$this->query($data, $integer_fields);
 		return $db->affectedRows();
 	}
@@ -54,10 +54,10 @@ class MySQLRequest extends Request{
 	}
 
 	private function queryOneResult(Array $data, Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 //		pr($this->_command);
 		if($this->_is_prepared === false){
-			$db->prepare($this->_command,__LINE__,__FILE__);
+			$db->prepare($this->_command);
 		}
 		
 		//$keys = array_keys($this->_map);
@@ -68,10 +68,10 @@ class MySQLRequest extends Request{
 	}
 	
 	private function query(Array $data, Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 //		pr($this->_command);
 		if($this->_is_prepared === false){
-			$db->prepare($this->_command,__LINE__,__FILE__);
+			$db->prepare($this->_command);
 		}
 		
 		//$keys = array_keys($this->_map);
@@ -80,10 +80,10 @@ class MySQLRequest extends Request{
 	}
 	
 	private function queryAndReturnData(Array $data, Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 //		pr($this->_command);
 		if($this->_is_prepared === false){
-			$db->prepare($this->_command,__LINE__,__FILE__);
+			$db->prepare($this->_command);
 		}
 		
 		//$keys = array_keys($this->_map);
@@ -96,10 +96,10 @@ class MySQLRequest extends Request{
 	}
 	
 	private function queryAndReturnObjectArray(Array $data, Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 //		pr($this->_command);
 		if($this->_is_prepared === false){
-			$db->prepare($this->_command,__LINE__,__FILE__);
+			$db->prepare($this->_command);
 		}
 		
 		//$keys = array_keys($this->_map);
@@ -112,10 +112,10 @@ class MySQLRequest extends Request{
 	}
 	
 	private function queryAndReturnObjectCollection(Array $data, Array $integer_fields=array()){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->MySQL();
 //		pr($this->_command);
 		if($this->_is_prepared === false){
-			$db->prepare($this->_command,__LINE__,__FILE__);
+			$db->prepare($this->_command);
 		}
 		
 		//$keys = array_keys($this->_map);

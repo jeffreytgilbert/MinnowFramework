@@ -4,9 +4,6 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 
-//////////////////////////////////
-// BEGIN DATA VALIDATION FUNCTIONS
-
 /**
  * This Library returns boolean values based on conditions passed to it.
  * @package Sanitize
@@ -130,25 +127,6 @@ class Is
 	}
 	
 	/**
-	* Returns true if the string contains valid characters and spaces
-	* @param string $str
-	* @param int $min
-	* @param int $max
-	* @return bool
-	*/
-	public static function clean($str, $a_min=null, $a_max=null)
-	{
-		$SetReg = RuntimeInfo::instance()->settings();
-		if(isset($a_min)) { $min = $a_min; }
-		else { $min = $SetReg->getCurrent('min'); }
-		if(isset($a_max)) { $max = $a_max; }
-		else { $max = $SetReg->getCurrent('max'); }
-		
-		return Is::valid($str, $min, $max,
-			'[A-Za-z0-9_[:space:]??????????????????????????????????????????????????????????????\']+');
-	}
-	
-	/**
 	* Returns true if the given text is is formed of word characters and fits in the required length
 	* @param string $str
 	* @param int $min
@@ -236,7 +214,7 @@ class Is
 	 * @param string $str
 	 * @return bool
 	 */
-	public static function name($str, $minimum_characters=2, $maximum_characters=25) 
+	public static function name($str, $minimum_characters=2, $maximum_characters=30) 
 	{
 		// Definitely fail if you see these coming
 		if(preg_match('/[^a-zA-Z_0-9\- ]+/si',$str)) { return false; }
@@ -264,30 +242,3 @@ class Is
 		return (isset($var) && !empty($var)); 
 	}
 }
-
-// END DATA VALIDATION FUNCTIONS
-////////////////////////////////
-
-
-// /**
-//  * Returns true if the username entered is between 1 and 25 valid characters long
-//  * @param string $str
-//  * @return bool
-//  */
-// public static function username($str)
-// {
-// 	// Definitely fail if you see these coming
-// 	if(preg_match('/[^a-zA-Z_0-9\- ]+/si',$str)) { return false; }
-// 	// otherwise make sure the string is long enough and has all the chars it needs
-// 	return (bool)(Is::valid($str, 6, 20, '[a-zA-Z_0-9\-\[\] ]+'));
-// }
-
-// /**
-//  * Returns true if the password entered is between 6 and 100 valid characters long
-//  * @param string $str
-//  * @return bool
-//  */
-// public static function password($str)
-// {
-// 	return (Is::valid($str, 6, 50, '[a-zA-Z_0-9\-\[\] ]+'));
-// }

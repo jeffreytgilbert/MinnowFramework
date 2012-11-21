@@ -46,12 +46,21 @@ final class Run{
 		}
 	}
 
-	public static function fromViews($source_path, $app_name=null){
+	public static function fromComponents($source_path, $app_name=null){
 		if(is_null($app_name)){
 			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Actions/'.$source_path);
+			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Controllers/Components/'.$source_path);
 		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Actions/'.$source_path);
+			self::fromRoot('Source/Applications/'.$app_name.'/Controllers/Components/'.$source_path);
+		}
+	}
+
+	public static function fromControllers($source_path, $app_name=null){
+		if(is_null($app_name)){
+			$RuntimeInfo = RuntimeInfo::instance();
+			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Controllers/'.$source_path);
+		} else {
+			self::fromRoot('Source/Applications/'.$app_name.'/Controllers/'.$source_path);
 		}
 	}
 
@@ -63,13 +72,13 @@ final class Run{
 			self::fromRoot('Source/Applications/'.$app_name.'/Models/'.$source_path);
 		}
 	}
-
-	public static function fromControllers($source_path, $app_name=null){
+	
+	public static function fromViews($source_path, $app_name=null){
 		if(is_null($app_name)){
 			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Controllers/'.$source_path);
+			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Actions/'.$source_path);
 		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Controllers/'.$source_path);
+			self::fromRoot('Source/Applications/'.$app_name.'/Actions/'.$source_path);
 		}
 	}
 

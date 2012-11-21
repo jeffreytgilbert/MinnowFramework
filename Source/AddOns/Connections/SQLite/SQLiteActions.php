@@ -3,41 +3,41 @@
 trait SQLiteActions{
 
 	protected static function SQLiteCreateAction($command, $data=array(), $integer_fields=array()){
-		static $mysql_actions = array();
-		if(!isset($mysql_actions[$command]) || !$mysql_actions[$command] instanceOf SQLiteRequest){
-			$mysql_actions[$command] = new SQLiteRequest($command);
+		static $sqlite_actions = array();
+		if(!isset($sqlite_actions[$command]) || !$sqlite_actions[$command] instanceOf SQLiteRequest){
+			$sqlite_actions[$command] = new SQLiteRequest($command);
 		}
-		return $mysql_actions[$command]->runAndReturnId($data, $integer_fields);
+		return $sqlite_actions[$command]->runAndReturnId($data, $integer_fields);
 	}
 	
 	protected static function SQLiteReadReturnSingleResultAsArrayAction($command, $data=array(), $integer_fields=array()){
-		static $mysql_actions = array();
+		static $sqlite_actions = array();
 	
-		if(!isset($mysql_actions[$command.'SingleResult']) || !$mysql_actions[$command.'SingleResult'] instanceOf SQLiteRequest){
-			$mysql_actions[$command.'SingleResult'] = new SQLiteRequest($command);
+		if(!isset($sqlite_actions[$command.'SingleResult']) || !$sqlite_actions[$command.'SingleResult'] instanceOf SQLiteRequest){
+			$sqlite_actions[$command.'SingleResult'] = new SQLiteRequest($command);
 		} else {
-			$mysql_actions[$command.'SingleResult']->reconstruct();
+			$sqlite_actions[$command.'SingleResult']->reconstruct();
 		}
 	
-		$return = $mysql_actions[$command.'SingleResult']->runAndReturnOneRow($data,$integer_fields);
+		$return = $sqlite_actions[$command.'SingleResult']->runAndReturnOneRow($data,$integer_fields);
 		return $return;
 	}
 	
 	protected static function SQLiteReadReturnUnmappedAction($command, $data=array(), $integer_fields=array()){
-		static $mysql_actions = array();
+		static $sqlite_actions = array();
 	
-		if(!isset($mysql_actions[$command.'raw']) || !$mysql_actions[$command.'raw'] instanceOf SQLiteRequest){
-			$mysql_actions[$command.'raw'] = new SQLiteRequest($command);
+		if(!isset($sqlite_actions[$command.'raw']) || !$sqlite_actions[$command.'raw'] instanceOf SQLiteRequest){
+			$sqlite_actions[$command.'raw'] = new SQLiteRequest($command);
 		} else {
-			$mysql_actions[$command.'raw']->reconstruct();
+			$sqlite_actions[$command.'raw']->reconstruct();
 		}
 	
-		$return = $mysql_actions[$command.'raw']->runAndReturnRawData($data,$integer_fields);
+		$return = $sqlite_actions[$command.'raw']->runAndReturnRawData($data,$integer_fields);
 		return $return;
 	}
 	
 	protected static function SQLiteReadReturnArrayOfObjectsAction($command, $data=array(), $integer_fields=array(), $return_object_type='Model', PagingConfig $PagingConfig=null, Array $map=array()){
-		static $mysql_actions = array();
+		static $sqlite_actions = array();
 	
 		if($PagingConfig instanceof PagingConfig && $PagingConfig->isQueryUpdatingOk()){
 			$position_of_select = stripos($command, 'select ');
@@ -62,17 +62,17 @@ trait SQLiteActions{
 			}
 		}
 	
-		if(!isset($mysql_actions[$command.'ArrayOfObjects']) || !$mysql_actions[$command.'ArrayOfObjects'] instanceOf SQLiteRequest){
-			$mysql_actions[$command.'ArrayOfObjects'] = new SQLiteRequest($command, $return_object_type, $map);
+		if(!isset($sqlite_actions[$command.'ArrayOfObjects']) || !$sqlite_actions[$command.'ArrayOfObjects'] instanceOf SQLiteRequest){
+			$sqlite_actions[$command.'ArrayOfObjects'] = new SQLiteRequest($command, $return_object_type, $map);
 		} else {
-			$mysql_actions[$command.'ArrayOfObjects']->reconstruct($return_object_type);
+			$sqlite_actions[$command.'ArrayOfObjects']->reconstruct($return_object_type);
 		}
 	
-		return $mysql_actions[$command.'ArrayOfObjects']->runAndReturnMappedDataArray($data,$integer_fields);
+		return $sqlite_actions[$command.'ArrayOfObjects']->runAndReturnMappedDataArray($data,$integer_fields);
 	}
 	
 	protected static function SQLiteReadReturnObjectCollectionAction($command, $data=array(), $integer_fields=array(), $return_object_type='Model', PagingConfig $PagingConfig=null, Array $map=array()){
-		static $mysql_actions = array();
+		static $sqlite_actions = array();
 	
 		if($PagingConfig instanceof PagingConfig && $PagingConfig->isQueryUpdatingOk()){
 			$position_of_select = stripos($command, 'select ');
@@ -97,12 +97,12 @@ trait SQLiteActions{
 			}
 		}
 	
-		if(!isset($mysql_actions[$command.'ObjectCollection']) || !$mysql_actions[$command.'ObjectCollection'] instanceOf SQLiteRequest){
-			$mysql_actions[$command.'ObjectCollection'] = new SQLiteRequest($command, $return_object_type, $map);
+		if(!isset($sqlite_actions[$command.'ObjectCollection']) || !$sqlite_actions[$command.'ObjectCollection'] instanceOf SQLiteRequest){
+			$sqlite_actions[$command.'ObjectCollection'] = new SQLiteRequest($command, $return_object_type, $map);
 		} else {
-			$mysql_actions[$command.'ObjectCollection']->reconstruct($return_object_type);
+			$sqlite_actions[$command.'ObjectCollection']->reconstruct($return_object_type);
 		}
-		$ResultCollection = $mysql_actions[$command.'ObjectCollection']->runAndReturnMappedDataCollection($data,$integer_fields);
+		$ResultCollection = $sqlite_actions[$command.'ObjectCollection']->runAndReturnMappedDataCollection($data,$integer_fields);
 	
 		if($PagingConfig instanceof PagingConfig){
 			$ResultCollection->setPaginationData($PagingConfig->getStart(), $PagingConfig->getLimit(), self::SQLiteTotalRows());
@@ -118,20 +118,21 @@ trait SQLiteActions{
 	}
 	
 	protected static function SQLiteUpdateAction($command, $data=array(), $integer_fields=array()){
-		static $mysql_actions = array();
-		if(!isset($mysql_actions[$command]) || !$mysql_actions[$command] instanceOf SQLiteRequest){
-			$mysql_actions[$command] = new SQLiteRequest($command);
+		static $sqlite_actions = array();
+		if(!isset($sqlite_actions[$command]) || !$sqlite_actions[$command] instanceOf SQLiteRequest){
+			$sqlite_actions[$command] = new SQLiteRequest($command);
 		}
-		return $mysql_actions[$command]->runAndReturnAffectedRows($data,$integer_fields);
+		return $sqlite_actions[$command]->runAndReturnAffectedRows($data,$integer_fields);
 	}
 	
-	protected static function SQLiteTotalRows(){
-		$db = RuntimeInfo::instance()->mysql();
-		$query='SELECT FOUND_ROWS()';
-		$db->query($query,__LINE__,__FILE__);
-		$db->readRow('NUM');
-		return (int)$db->row_data[0];
-	}
+	// 100% positive this doesnt work currently as scripted here since this is mysql code
+// 	protected static function SQLiteTotalRows(){
+// 		$db = RuntimeInfo::instance()->connections()->SQLite();
+// 		$query='SELECT FOUND_ROWS()';
+// 		$db->query($query);
+// 		$db->readRow('NUM');
+// 		return (int)$db->row_data[0];
+// 	}
 	
 	/**
 	 * @param string $string
@@ -139,7 +140,7 @@ trait SQLiteActions{
 	 * @return string
 	 */
 	protected static function SQLiteEscapeLikeWildCard($string, $sql_connection_escape_type){
-		$db = RuntimeInfo::instance()->mysql();
+		$db = RuntimeInfo::instance()->connections()->SQLite();
 		return $db->like($string,$sql_connection_escape_type);
 	}
 }

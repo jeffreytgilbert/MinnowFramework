@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 
-// @todo rip out all of the line/file location stuff and put in proper error logging with stack trace 
+// @todo put in proper error logging with stack trace 
 
 final class MySQLConnection extends Connection{
 
@@ -26,13 +26,8 @@ final class MySQLConnection extends Connection{
 		);
 		
 		$sql = 'SET time_zone = :time_zone';
-		$MySQLAbstraction->prepare($sql,__LINE__,__FILE__);
+		$MySQLAbstraction->prepare($sql);
 		$MySQLAbstraction->execute(array(':time_zone'=>RuntimeInfo::instance()->config(null,null,'base_time'))); 
-		
-// 		$sql = 'SELECT NOW() AS right_now_gmt';
-// 		$MySQLAbstraction->query($sql,__LINE__,__FILE__);
-// 		$MySQLAbstraction->readRow();
-		//define('RIGHT_NOW_GMT', $connection->row_data['right_now_gmt']);
 		
 		return $MySQLAbstraction;
 	}

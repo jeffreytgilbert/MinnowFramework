@@ -11,13 +11,13 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 	
 	protected function handleRequest(){
 		$RuntimeInfo = RuntimeInfo::instance();
-		$db = $RuntimeInfo->mysql();
+		$db = $RuntimeInfo->connections()->MySQL();
 		
-		$blank_action = file_get_contents(File::osPath(dirname(__FILE__).'/../../../Framework/Scaffold/Action.txt'));
+		$blank_action = file_get_contents(Path::toFramework().File::osPath('Scaffolding/Action.txt'));
 		
 		$table_names = array();
 		$object_names = array();
-		$db->query('SHOW TABLES', __LINE__, __FILE__);
+		$db->query('SHOW TABLES');
 		$x=0;
 		while($db->readRow()){
 			$table_name = array_pop($db->row_data);
@@ -37,8 +37,15 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 		foreach($table_names as $key => $table_name){
 			
 			$object_fields = array();
+			
 			$int_array = array(); // all integers must be handled differently for proper sanitizing and math functionality
 			$boolean_array = array(); // match all columns with is_ as the first bit
+			$string_array = array(); 
+			$binary_array = array(); 
+			$date_array = array(); 
+			$datetime_array = array(); 
+			$time_array = array(); 
+			
 			$primary_key = 'id'; // if table_name_id is matched, uses this as primary key. default to id even if it doesnt exist. Query would error anyway
 			$update_columns = array(); // contains modified_datetime if it exists
 			$insert_columns = array(); // contains created_datetime if it exists
@@ -50,7 +57,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 			$update = '';
 			$delete = '';
 			
-			$db->query('DESC '.$table_name, __LINE__, __FILE__);
+			$db->query('DESC '.$table_name);
 			
 			$first_id_found = false;
 			
@@ -69,10 +76,6 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					$primary_key = $db->row_data['Field'];
 					$first_id_found = true;
 				} else {
-					if(substr($db->row_data['Field'],0,3) == $table_name.'is_'){
-						$boolean_array[] = $db->row_data['Field'];
-					}
-					
 					if($db->row_data['Field'] == 'created_datetime' || $db->row_data['Field'] == 'created'){
 						$insert_columns[] = $db->row_data['Field'];
 					} else if($db->row_data['Field'] == 'modified_datetime' || $db->row_data['Field'] == 'modified') {
@@ -80,6 +83,12 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					} else {
 						$insert_columns[] = $db->row_data['Field'];
 						$update_columns[] = $db->row_data['Field'];
+					}
+					
+					if(substr($db->row_data['Field'],0,3) == 'is_'){
+						$object_fields[$db->row_data['Field']] = 'boolean';
+						$boolean_array[] = $db->row_data['Field'];
+						continue;
 					}
 				}
 				
@@ -93,6 +102,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					case 'longtext': 
 					case 'set': 
 						$object_fields[$db->row_data['Field']] = 'text';
+						$string_array[] = $db->row_data['Field'];
 					break;
 					case 'blob': 
 					case 'varblob': 
@@ -103,10 +113,14 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					case 'binary': 
 					case 'varbinary': 
 						$object_fields[$db->row_data['Field']] = 'binary';
+						$binary_array[] = $db->row_data['Field'];
 					break;
 					case 'bit': 
 					case 'bool': 
 					case 'boolean': 
+						$object_fields[$db->row_data['Field']] = 'boolean';
+						$boolean_array[] = $db->row_data['Field'];
+					break;
 					case 'int': 
 					case 'tinyint': 
 					case 'smallint': 
@@ -124,18 +138,36 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 						$int_array[] = $db->row_data['Field'];
 					break;
 					case 'date': 
-					case 'datetime': 
-					case 'time': 
 					case 'year': 
 						$object_fields[$db->row_data['Field']] = 'date';
+						$date_array[] = $db->row_data['Field'];
+					break;
+					case 'datetime': 
+						$object_fields[$db->row_data['Field']] = 'datetime';
+						$datetime_array[] = $db->row_data['Field'];
+					break;
+						case 'time': 
+						$object_fields[$db->row_data['Field']] = 'time';
+						$time_array[] = $db->row_data['Field'];
 					break;
 					case 'timestamp': 
 						$object_fields[$db->row_data['Field']] = 'timestamp';
+						$int_array[] = $db->row_data['Field']; // these get filtered as integers really
 					break;
 				}
 			}
 			
-			$file_path = File::osPath(dirname(__FILE__).'/../Actions/'.$object_names[$key].'Actions.php');
+			// get uniques so there aren't duplications for booleans and such
+			$int_array = array_unique($int_array);
+			$boolean_array = array_unique($boolean_array);
+			$string_array = array_unique($string_array); 
+			$binary_array = array_unique($binary_array); 
+			$date_array = array_unique($date_array); 
+			$datetime_array = array_unique($datetime_array); 
+			$time_array = array_unique($time_array); 
+			
+			
+			$file_path = Path::toActions().File::osPath('Custom/'.$object_names[$key].'Actions.php');
 			
 			if(	isset($_POST['list']) && 
 				in_array($object_names[$key],array_keys($_POST['list'])) && 
@@ -148,15 +180,26 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 				$value_columns = array();
 				$data_to_columns = array();
 				$integer_columns = array();
+				
 				foreach($insert_columns as $field){
 					$set_columns[] = "{$field}";
 					$value_columns[] = ":{$field}";
 					if($field == 'created_datetime' || $field == 'created'){
 						$data_to_columns[] = "':{$field}' => RIGHT_NOW_GMT";
+					} else if(in_array($field, $date_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('date')";
+					} else if(in_array($field, $datetime_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('datetime')";
+					} else if(in_array($field, $time_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('time')";
+					} else if(in_array($field, $binary_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBinary('{$field}')";
+					} else if(in_array($field, $int_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getInteger('{$field}')";
 					} else if(in_array($field, $boolean_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getData('{$field}','Filter::boolean')";
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBoolean('{$field}')";
 					} else {
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getData('{$field}')";
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getString('{$field}')";
 					}
 					if(in_array($field, $int_array) || $field == $primary_key){
 						$integer_columns[] = "':{$field}'";
@@ -172,7 +215,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 			// bind data to sql variables
 			array(
 				'.implode(",\n\t\t\t\t",$data_to_columns).',
-				\':'.$primary_key.'\' => (int)$'.$object_names[$key].'->getData(\''.$primary_key.'\')
+				\':'.$primary_key.'\' => $'.$object_names[$key].'->getInteger(\''.$primary_key.'\')
 			),
 			// which fields are integers
 			array(
@@ -228,10 +271,20 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					$set_columns[] = "{$field}=:{$field}";
 					if($field == 'modified_datetime' || $field == 'modified'){
 						$data_to_columns[] = "':{$field}' => RIGHT_NOW_GMT";
+					} else if(in_array($field, $date_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('date')";
+					} else if(in_array($field, $datetime_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('datetime')";
+					} else if(in_array($field, $time_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('time')";
+					} else if(in_array($field, $binary_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBinary('{$field}')";
+					} else if(in_array($field, $int_array)){
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getInteger('{$field}')";
 					} else if(in_array($field, $boolean_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getData('{$field}','Filter::boolean')";
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBoolean('{$field}')";
 					} else {
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getData('{$field}')";
+						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getString('{$field}')";
 					}
 					if(in_array($field, $int_array) || $field == $primary_key){
 						$integer_columns[] = "':{$field}'";
@@ -246,7 +299,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 			// bind data to sql variables
 			array(
 				'.implode(",\n\t\t\t\t",$data_to_columns).',
-				\':'.$primary_key.'\' => (int)$'.$object_names[$key].'->getData(\''.$primary_key.'\')
+				\':'.$primary_key.'\' => $'.$object_names[$key].'->getInteger(\''.$primary_key.'\')
 			),
 			// which fields are integers
 			array(
@@ -285,6 +338,9 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 				$action = str_replace('ObjectName', $object_names[$key], $action);
 				file_put_contents($file_path, $action);
 				chmod($file_path, 0755);
+				
+				echo '<li>Created '.$file_path.'</li>';
+				echo '<li><pre>'.htmlentities($action).'</pre></li>';
 			}
 			
 			if(file_exists($file_path)){

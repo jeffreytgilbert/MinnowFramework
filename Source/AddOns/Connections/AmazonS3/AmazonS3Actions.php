@@ -2,96 +2,109 @@
 
 trait AmazonS3Actions{
 	
-	protected static function S3PublicFileUpload($local_file_path, $file_name){
+	protected static function AmazonS3PublicFileUpload($local_file_path, $file_name, $connection_name='default'){
+		$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();;
+		$settings = RuntimeInfo::instance()->connections($connection_name)->config('Connections/AmazonS3/',$connection_name);
+
 		try{
-			$s3 = RuntimeInfo::instance()->s3();
 			return $s3->putObject(
-					$s3->inputFile($local_file_path),
-					RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'public_bucket_name'),
-					$file_name,
-					S3::ACL_PUBLIC_READ
+				$s3->inputFile($local_file_path),
+				$settings->get('bucket_name'),
+				$file_name,
+				S3::ACL_PUBLIC_READ
 			);
 		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
+			if($settings->get('debug')){ pr($e); }
 			return false;
 		}
 	}
 	
-	protected static function S3PrivateFileUpload($local_file_path, $file_name){
+	protected static function AmazonS3PrivateFileUpload($local_file_path, $file_name, $connection_name='default'){
+		$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+		$settings = RuntimeInfo::instance()->connections($connection_name)->config('Connections/AmazonS3/',$connection_name);
+
 		try{
-			$s3 = RuntimeInfo::instance()->s3();
 			return $s3->putObject(
-					$s3->inputFile($local_file_path),
-					RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'private_bucket_name'),
-					$file_name,
-					S3::ACL_PRIVATE
+				$s3->inputFile($local_file_path),
+				$settings->get('bucket_name'),
+				$file_name,
+				S3::ACL_PRIVATE
 			);
 		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
+			if($settings->get('debug')){ pr($e); }
 			return false;
 		}
 	}
 	
-	protected static function S3GetBucketList($return_object_type='Model'){
+	protected static function AmazonS3GetBucketList($return_object_type='Model', $connection_name='default'){
+		$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+		$settings = RuntimeInfo::instance()->connections($connection_name)->config('Connections/AmazonS3/',$connection_name);
+
 		try{
-			$s3 = RuntimeInfo::instance()->s3();
+			$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
 			$buckets = $s3->listBuckets();
-				
-//			pr($buckets);die;
 			
 			return $buckets;
 		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
+			if($settings->get('debug')){ pr($e); }
 			return false;
 		}
 	}
 	
-	protected static function S3GetBucket($bucket_name,$return_object_type='Model'){
+	protected static function AmazonS3GetBucket($bucket_name, $return_object_type='Model', $connection_name='default'){
+		$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+		$settings = RuntimeInfo::instance()->connections($connection_name)->config('Connections/AmazonS3/',$connection_name);
+
 		try{
-			$s3 = RuntimeInfo::instance()->s3();
-			return $s3->getBucket($bucket_name);
+			$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+			
+			$files = $s3->getBucket($bucket_name);
+			$FileCollection = new DataCollection();
+			foreach($files as $file){
+				$FileCollection->addObject(new DataObject($file));
+			}
+			
+			return $FileCollection;
 		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
+			if($settings->get('debug')){ pr($e); }
 			return false;
 		}
 	}
 	
-	protected static function S3GetPublicFile($uri){
+	protected static function AmazonS3GetFile($uri, $connection_name='default'){
+		$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+		$settings = RuntimeInfo::instance()->connections($connection_name)->config('Connections/AmazonS3/',$connection_name);
+
 		try{
-			$s3 = RuntimeInfo::instance()->s3();
-			return $s3->getObject(RuntimeInfo::instance()->getApplicationName().'-public', $uri);
+			$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+			
+			$FileObject = $s3->getObject($settings->get('bucket_name'), $uri);
+			return new DataObject(array(
+				'error' => $FileObject->error,
+				'name' => $uri,
+				'code' => $FileObject->code,
+				'time' => $FileObject->headers['time'],
+				'hash' => $FileObject->headers['hash'],
+				'type' => $FileObject->headers['type'],
+				'size' => $FileObject->headers['size'],
+				'body' => $FileObject->body,
+			));
 		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
+			if($settings->get('debug')){ pr($e); }
 			return false;
 		}
 	}
 	
-	protected static function S3GetPrivateFile($uri){
+	protected static function AmazonS3DeleteFile($uri, $connection_name='default'){
+		$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+		$settings = RuntimeInfo::instance()->connections($connection_name)->config('Connections/AmazonS3/',$connection_name);
+
 		try{
-			$s3 = RuntimeInfo::instance()->s3();
-			return $s3->getObject(RuntimeInfo::instance()->getApplicationName().'-private', $uri);
+			$s3 = RuntimeInfo::instance()->connections($connection_name)->AmazonS3();
+			
+			return $s3->deleteObject($settings->get('bucket_name'), $uri);
 		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
-			return false;
-		}
-	}
-	
-	protected static function S3DeletePublicFile($uri){
-		try{
-			$s3 = RuntimeInfo::instance()->s3();
-			return $s3->deleteObject(RuntimeInfo::instance()->getApplicationName().'-public', $uri);
-		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
-			return false;
-		}
-	}
-	
-	protected static function S3DeletePrivateFile($uri){
-		try{
-			$s3 = RuntimeInfo::instance()->s3();
-			return $s3->deleteObject(RuntimeInfo::instance()->getApplicationName().'-private', $uri);
-		} catch(S3Exception $e){
-			if(RuntimeInfo::instance()->config('aws', $s3->getConnectionName(), 'debug')){ pr($e); }
+			if($settings->get('debug')){ pr($e); }
 			return false;
 		}
 	}

@@ -77,3 +77,59 @@ function vd($obj, $return=false) {
 		echo '<pre>'; var_dump($obj); echo '</pre>';
 	}
 }
+
+/*
+ * Functions that make it easier to calculate sizes from ini's in human readable form
+ */
+
+function format_bytes_to_human_readable($a_bytes)
+{
+    if ($a_bytes < 1024) {
+        return $a_bytes .' B';
+    } elseif ($a_bytes < 1048576) {
+        return round($a_bytes / 1024, 2) .' KiB';
+    } elseif ($a_bytes < 1073741824) {
+        return round($a_bytes / 1048576, 2) . ' MiB';
+    } elseif ($a_bytes < 1099511627776) {
+        return round($a_bytes / 1073741824, 2) . ' GiB';
+    } elseif ($a_bytes < 1125899906842624) {
+        return round($a_bytes / 1099511627776, 2) .' TiB';
+    } elseif ($a_bytes < 1152921504606846976) {
+        return round($a_bytes / 1125899906842624, 2) .' PiB';
+    } elseif ($a_bytes < 1180591620717411303424) {
+        return round($a_bytes / 1152921504606846976, 2) .' EiB';
+    } elseif ($a_bytes < 1208925819614629174706176) {
+        return round($a_bytes / 1180591620717411303424, 2) .' ZiB';
+    } else {
+        return round($a_bytes / 1208925819614629174706176, 2) .' YiB';
+    }
+}
+
+function format_human_readable_to_bytes($str) { 
+    $bytes = 0; 
+
+    $bytes_array = array( 
+        'B' => 1, 
+        'K' => 1024, 
+        'M' => 1024 * 1024, 
+        'G' => 1024 * 1024 * 1024, 
+        'T' => 1024 * 1024 * 1024 * 1024, 
+        'P' => 1024 * 1024 * 1024 * 1024 * 1024, 
+    ); 
+
+    $bytes = floatval($str);
+    
+//     pr($str);
+// 	preg_match('#([KMGTP]?)B?$#si', $str, $matches);
+//     pr($matches);
+//     pr($bytes_array[$matches[1]]);
+    if(preg_match('#([KMGTP]?)B?$#si', $str, $matches) 
+    && !empty($bytes_array[$matches[1]])) { 
+        $bytes *= $bytes_array[$matches[1]];
+//        pr($bytes);
+    } 
+
+    $bytes = intval(round($bytes, 2)); 
+
+    return $bytes; 
+} 

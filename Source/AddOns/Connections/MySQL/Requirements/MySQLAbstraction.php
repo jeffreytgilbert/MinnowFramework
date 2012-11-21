@@ -86,7 +86,7 @@ final class MySQLAbstraction extends SQLConnection{
 		$explosion=explode(' ', strtolower(trim(str_replace('(','',$query))));
 		$this->last_type=array_shift($explosion);
 
-		$this->add_data=array();
+		$this->all_data=array();
 		$this->row_data=array();
 		try {
 			$time_start = microtime(true);

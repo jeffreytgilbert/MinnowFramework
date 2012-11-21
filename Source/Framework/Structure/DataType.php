@@ -10,6 +10,7 @@ class DataType{
 	const TEXT='text';
 	const DATE='date';
 	const DATETIME='datetime';
+	const TIME='time';
 	const NUMBER='number';
 	const CURRENCY='currency';
 	const OBJECT='object';

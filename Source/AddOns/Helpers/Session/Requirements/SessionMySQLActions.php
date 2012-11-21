@@ -39,7 +39,7 @@ class SessionMySQLActions {
 	public static function read($id){
 //		echo 'read'.$id."\n<br>";
 		$db = RuntimeInfo::instance()->connections()->MySQL(RuntimeInfo::instance()->helpers()->Session()->getSessionConfig()->getHosts());
-		$query='SELECT data FROM sessions WHERE id='.$db->escape($id);
+		$query='SELECT data FROM php_session WHERE id='.$db->escape($id);
 		$db->query($query);
 		if($db->readRow()) { return $db->row_data['data']; }
 		return false;
@@ -54,7 +54,7 @@ class SessionMySQLActions {
 	public static function write($id, $data){
 //		echo 'write'.$id."\n<br>";
 		$db = RuntimeInfo::instance()->connections()->MySQL(RuntimeInfo::instance()->helpers()->Session()->getSessionConfig()->getHosts());
-		$query='REPLACE INTO sessions VALUES ('.$db->escape($id).','.$db->escape(time()).','.$db->escape($data).')';
+		$query='REPLACE INTO php_session VALUES ('.$db->escape($id).','.$db->escape(time()).','.$db->escape($data).')';
 		return $db->query($query);
 	}
 	
@@ -66,7 +66,7 @@ class SessionMySQLActions {
 	public static function destroy($id){
 //		echo 'destroy'.$id."\n<br>";
 		$db = RuntimeInfo::instance()->connections()->MySQL(RuntimeInfo::instance()->helpers()->Session()->getSessionConfig()->getHosts());
-		$query='DELETE FROM sessions WHERE id='.$db->escape($id);
+		$query='DELETE FROM php_session WHERE id='.$db->escape($id);
 		return $db->query($query);
 	}
 	
@@ -78,7 +78,7 @@ class SessionMySQLActions {
 	public static function clean($max){
 //		echo 'clean'.$max."\n<br>";
 		$db = RuntimeInfo::instance()->connections()->MySQL(RuntimeInfo::instance()->helpers()->Session()->getSessionConfig()->getHosts());
-		$query='DELETE FROM sessions WHERE access < '.$db->escape((time()-$max));
+		$query='DELETE FROM php_session WHERE access < '.$db->escape((time()-$max));
 		return $db->query($query);
 	}
 }

@@ -54,7 +54,7 @@ abstract class Controller {
 		$this->Input = new DataObject();			// store data from the form
 		
 		$this->_RuntimeInfo = RuntimeInfo::instance();
-		$this->_AppSettings = new DataObject($this->_RuntimeInfo->appSettings());
+		$this->_AppSettings = $this->_RuntimeInfo->appSettings();
 		$this->_Helpers = $this->_RuntimeInfo->helpers();
 		$this->_Connections = $this->_RuntimeInfo->connections();
 		
@@ -87,13 +87,13 @@ abstract class Controller {
 		if(is_array($models_array)){
 			foreach($models_array as $model_path){
 				if(!in_array($model_path,$this->_models)) { 
-					Run::fromModels($model_path.'.php'); 
+					Run::fromModels('Custom/'.$model_path.'.php'); 
 					$this->_models[] = $model_path;
 				}
 			}
 		} else {
 			if(!in_array($models_array,$this->_models)) { 
-				Run::fromModels($models_array.'.php'); 
+				Run::fromModels('Custom/'.$models_array.'.php'); 
 				$this->_models[] = $models_array;
 			}
 		}
@@ -103,13 +103,13 @@ abstract class Controller {
 		if(is_array($actions_array)){
 			foreach($actions_array as $action_path){
 				if(!in_array($action_path,$this->_actions)) { 
-					Run::fromActions($action_path.'.php'); 
+					Run::fromActions('Custom/'.$action_path.'.php'); 
 					$this->_actions[] = $action_path;
 				}
 			}
 		} else {
 			if(!in_array($actions_array,$this->_actions)) { 
-				Run::fromActions($actions_array.'.php'); 
+				Run::fromActions('Custom/'.$actions_array.'.php'); 
 				$this->_actions[] = $actions_array;
 			}
 		}
