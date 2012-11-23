@@ -29,7 +29,7 @@ final class UserLoginHistoryActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':login' => $UserLoginHistory->getString('login'),
 				':user_agent' => $UserLoginHistory->getString('user_agent'),
 				':ip' => $UserLoginHistory->getString('ip'),
@@ -39,7 +39,7 @@ final class UserLoginHistoryActions extends Actions{
 				':success' => $UserLoginHistory->getInteger('success'),
 				':user_id' => $UserLoginHistory->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':success',
 				':user_id'
@@ -67,12 +67,10 @@ final class UserLoginHistoryActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserLoginHistory'
+			)
 		));
 	}
 	
@@ -95,7 +93,7 @@ final class UserLoginHistoryActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserLoginHistory'
@@ -141,14 +139,14 @@ final class UserLoginHistoryActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserLoginHistory'
 		));
 		
 		foreach($UserLoginHistoryCollection->toArray() as $UserLoginHistory){
-			$array = $DataCollection->getItemsBy('user_id',$UserLoginHistory->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserLoginHistory->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserLoginHistory',$UserLoginHistory);
 			}
@@ -172,7 +170,7 @@ final class UserLoginHistoryActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':login' => $UserLoginHistory->getString('login'),
 				':user_agent' => $UserLoginHistory->getString('user_agent'),
 				':ip' => $UserLoginHistory->getString('ip'),
@@ -182,7 +180,7 @@ final class UserLoginHistoryActions extends Actions{
 				':success' => $UserLoginHistory->getInteger('success'),
 				':user_id' => $UserLoginHistory->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':success',
 				':user_id'
@@ -199,7 +197,7 @@ final class UserLoginHistoryActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

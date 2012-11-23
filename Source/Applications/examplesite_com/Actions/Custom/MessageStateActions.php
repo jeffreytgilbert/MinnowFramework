@@ -21,15 +21,17 @@ final class MessageStateActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':participant_id' => $MessageState->getInteger('participant_id'),
 				':is_read' => $MessageState->getBoolean('is_read'),
 				':is_deleted' => $MessageState->getBoolean('is_deleted'),
 				':message_id' => $MessageState->getInteger('message_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':participant_id',
+				':is_read',
+				':is_deleted',
 				':message_id'
 			)
 		);
@@ -51,12 +53,10 @@ final class MessageStateActions extends Actions{
 			array(
 				':message_id' => (int)$message_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':message_id'
-			),
-			// return as this object collection type
-			'MessageState'
+			)
 		));
 	}
 	
@@ -75,7 +75,7 @@ final class MessageStateActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'MessageState'
@@ -117,14 +117,14 @@ final class MessageStateActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'MessageState'
 		));
 		
 		foreach($MessageStateCollection->toArray() as $MessageState){
-			$array = $DataCollection->getItemsBy('message_id',$MessageState->getInteger('message_id'));
+			$array = $DataCollection->getObjectByFieldValue('message_id',$MessageState->getInteger('message_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('MessageState',$MessageState);
 			}
@@ -144,13 +144,13 @@ final class MessageStateActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':participant_id' => $MessageState->getInteger('participant_id'),
 				':is_read' => $MessageState->getBoolean('is_read'),
 				':is_deleted' => $MessageState->getBoolean('is_deleted'),
 				':message_id' => $MessageState->getInteger('message_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':participant_id',
 				':message_id'
@@ -167,7 +167,7 @@ final class MessageStateActions extends Actions{
 			array(
 				':message_id' => (int)$message_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':message_id'
 			)

@@ -19,14 +19,14 @@ final class RoleGroupActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':group_name' => $RoleGroup->getString('group_name'),
 				':is_group_single_role_limited' => $RoleGroup->getBoolean('is_group_single_role_limited'),
 				':role_group_id' => $RoleGroup->getInteger('role_group_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				
+				':is_group_single_role_limited',
 				':role_group_id'
 			)
 		);
@@ -46,12 +46,10 @@ final class RoleGroupActions extends Actions{
 			array(
 				':role_group_id' => (int)$role_group_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_group_id'
-			),
-			// return as this object collection type
-			'RoleGroup'
+			)
 		));
 	}
 	
@@ -68,7 +66,7 @@ final class RoleGroupActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'RoleGroup'
@@ -108,14 +106,14 @@ final class RoleGroupActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'RoleGroup'
 		));
 		
 		foreach($RoleGroupCollection->toArray() as $RoleGroup){
-			$array = $DataCollection->getItemsBy('role_group_id',$RoleGroup->getInteger('role_group_id'));
+			$array = $DataCollection->getObjectByFieldValue('role_group_id',$RoleGroup->getInteger('role_group_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('RoleGroup',$RoleGroup);
 			}
@@ -137,7 +135,7 @@ final class RoleGroupActions extends Actions{
 				':is_group_single_role_limited' => $RoleGroup->getBoolean('is_group_single_role_limited'),
 				':role_group_id' => $RoleGroup->getInteger('role_group_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':role_group_id'
@@ -154,7 +152,7 @@ final class RoleGroupActions extends Actions{
 			array(
 				':role_group_id' => (int)$role_group_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_group_id'
 			)

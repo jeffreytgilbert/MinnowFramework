@@ -36,7 +36,7 @@ final class SitemapActions extends Actions{
 				':order_id' => $Sitemap->getInteger('order_id'),
 				':link_id' => $Sitemap->getInteger('link_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':parent',
 				':ignore_in_sitemap',
@@ -64,12 +64,10 @@ final class SitemapActions extends Actions{
 			array(
 				':link_id' => (int)$link_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':link_id'
-			),
-			// return as this object collection type
-			'Sitemap'
+			)
 		));
 	}
 	
@@ -90,7 +88,7 @@ final class SitemapActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Sitemap'
@@ -134,14 +132,14 @@ final class SitemapActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Sitemap'
 		));
 		
 		foreach($SitemapCollection->toArray() as $Sitemap){
-			$array = $DataCollection->getItemsBy('link_id',$Sitemap->getInteger('link_id'));
+			$array = $DataCollection->getObjectByFieldValue('link_id',$Sitemap->getInteger('link_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Sitemap',$Sitemap);
 			}
@@ -173,7 +171,7 @@ final class SitemapActions extends Actions{
 				':order_id' => $Sitemap->getInteger('order_id'),
 				':link_id' => $Sitemap->getInteger('link_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':parent',
 				':ignore_in_sitemap',
@@ -192,7 +190,7 @@ final class SitemapActions extends Actions{
 			array(
 				':link_id' => (int)$link_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':link_id'
 			)

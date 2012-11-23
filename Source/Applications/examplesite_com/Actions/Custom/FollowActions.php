@@ -17,11 +17,11 @@ final class FollowActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':target_user_id' => $Follow->getInteger('target_user_id'),
 				':my_user_id' => $Follow->getInteger('my_user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':target_user_id',
 				':my_user_id'
@@ -43,12 +43,10 @@ final class FollowActions extends Actions{
 			array(
 				':my_user_id' => (int)$my_user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':my_user_id'
-			),
-			// return as this object collection type
-			'Follow'
+			)
 		));
 	}
 	
@@ -65,7 +63,7 @@ final class FollowActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Follow'
@@ -105,14 +103,14 @@ final class FollowActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Follow'
 		));
 		
 		foreach($FollowCollection->toArray() as $Follow){
-			$array = $DataCollection->getItemsBy('my_user_id',$Follow->getInteger('my_user_id'));
+			$array = $DataCollection->getObjectByFieldValue('my_user_id',$Follow->getInteger('my_user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Follow',$Follow);
 			}
@@ -130,11 +128,11 @@ final class FollowActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':target_user_id' => $Follow->getInteger('target_user_id'),
 				':my_user_id' => $Follow->getInteger('my_user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':target_user_id',
 				':my_user_id'
@@ -151,7 +149,7 @@ final class FollowActions extends Actions{
 			array(
 				':my_user_id' => (int)$my_user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':my_user_id'
 			)

@@ -25,7 +25,7 @@ final class AchievementActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':modifed_datetime' => $Achievement->getDateTimeObject('modifed_datetime')->getMySQLFormat('datetime'),
 				':title' => $Achievement->getString('title'),
 				':description' => $Achievement->getString('description'),
@@ -33,7 +33,7 @@ final class AchievementActions extends Actions{
 				':unlocked_actions' => $Achievement->getString('unlocked_actions'),
 				':achievement_id' => $Achievement->getInteger('achievement_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':achievement_id'
@@ -58,12 +58,10 @@ final class AchievementActions extends Actions{
 			array(
 				':achievement_id' => (int)$achievement_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':achievement_id'
-			),
-			// return as this object collection type
-			'Achievement'
+			)
 		));
 	}
 	
@@ -83,7 +81,7 @@ final class AchievementActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Achievement'
@@ -126,14 +124,14 @@ final class AchievementActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Achievement'
 		));
 		
 		foreach($AchievementCollection->toArray() as $Achievement){
-			$array = $DataCollection->getItemsBy('achievement_id',$Achievement->getInteger('achievement_id'));
+			$array = $DataCollection->getObjectByFieldValue('achievement_id',$Achievement->getInteger('achievement_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Achievement',$Achievement);
 			}
@@ -161,7 +159,7 @@ final class AchievementActions extends Actions{
 				':unlocked_actions' => $Achievement->getString('unlocked_actions'),
 				':achievement_id' => $Achievement->getInteger('achievement_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':achievement_id'
@@ -178,7 +176,7 @@ final class AchievementActions extends Actions{
 			array(
 				':achievement_id' => (int)$achievement_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':achievement_id'
 			)

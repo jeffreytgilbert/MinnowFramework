@@ -39,12 +39,15 @@ final class SettingActions extends Actions{
 				':is_active' => $Setting->getBoolean('is_active'),
 				':is_on_by_default' => $Setting->getBoolean('is_on_by_default'),
 				':is_shown_at_signup' => $Setting->getBoolean('is_shown_at_signup'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':setting_id' => $Setting->getInteger('setting_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_group_id',
+				':is_active',
+				':is_on_by_default',
+				':is_shown_at_signup',
 				':setting_id'
 			)
 		);
@@ -70,12 +73,10 @@ final class SettingActions extends Actions{
 			array(
 				':setting_id' => (int)$setting_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_id'
-			),
-			// return as this object collection type
-			'Setting'
+			)
 		));
 	}
 	
@@ -98,7 +99,7 @@ final class SettingActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Setting'
@@ -144,14 +145,14 @@ final class SettingActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Setting'
 		));
 		
 		foreach($SettingCollection->toArray() as $Setting){
-			$array = $DataCollection->getItemsBy('setting_id',$Setting->getInteger('setting_id'));
+			$array = $DataCollection->getObjectByFieldValue('setting_id',$Setting->getInteger('setting_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Setting',$Setting);
 			}
@@ -185,7 +186,7 @@ final class SettingActions extends Actions{
 				':is_shown_at_signup' => $Setting->getBoolean('is_shown_at_signup'),
 				':setting_id' => $Setting->getInteger('setting_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_group_id',
 				':setting_id'
@@ -202,7 +203,7 @@ final class SettingActions extends Actions{
 			array(
 				':setting_id' => (int)$setting_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_id'
 			)

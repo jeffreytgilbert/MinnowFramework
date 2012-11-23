@@ -21,12 +21,12 @@ final class UserLoginProviderActions extends Actions{
 			array(
 				':provider_name' => $UserLoginProvider->getString('provider_name'),
 				':is_validation_required' => $UserLoginProvider->getBoolean('is_validation_required'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_login_provider_id' => $UserLoginProvider->getInteger('user_login_provider_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				
+				':is_validation_required',
 				':user_login_provider_id'
 			)
 		);
@@ -47,12 +47,10 @@ final class UserLoginProviderActions extends Actions{
 			array(
 				':user_login_provider_id' => (int)$user_login_provider_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_login_provider_id'
-			),
-			// return as this object collection type
-			'UserLoginProvider'
+			)
 		));
 	}
 	
@@ -70,7 +68,7 @@ final class UserLoginProviderActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserLoginProvider'
@@ -111,14 +109,14 @@ final class UserLoginProviderActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserLoginProvider'
 		));
 		
 		foreach($UserLoginProviderCollection->toArray() as $UserLoginProvider){
-			$array = $DataCollection->getItemsBy('user_login_provider_id',$UserLoginProvider->getInteger('user_login_provider_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_login_provider_id',$UserLoginProvider->getInteger('user_login_provider_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserLoginProvider',$UserLoginProvider);
 			}
@@ -139,10 +137,10 @@ final class UserLoginProviderActions extends Actions{
 			array(
 				':provider_name' => $UserLoginProvider->getString('provider_name'),
 				':is_validation_required' => $UserLoginProvider->getBoolean('is_validation_required'),
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_login_provider_id' => $UserLoginProvider->getInteger('user_login_provider_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':user_login_provider_id'
@@ -159,7 +157,7 @@ final class UserLoginProviderActions extends Actions{
 			array(
 				':user_login_provider_id' => (int)$user_login_provider_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_login_provider_id'
 			)

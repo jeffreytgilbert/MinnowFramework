@@ -19,14 +19,15 @@ final class ConversationParticipantActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':participant_id' => $ConversationParticipant->getInteger('participant_id'),
 				':is_deleted' => $ConversationParticipant->getBoolean('is_deleted'),
 				':conversation_id' => $ConversationParticipant->getInteger('conversation_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':participant_id',
+				':is_deleted',
 				':conversation_id'
 			)
 		);
@@ -47,12 +48,10 @@ final class ConversationParticipantActions extends Actions{
 			array(
 				':conversation_id' => (int)$conversation_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':conversation_id'
-			),
-			// return as this object collection type
-			'ConversationParticipant'
+			)
 		));
 	}
 	
@@ -70,7 +69,7 @@ final class ConversationParticipantActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'ConversationParticipant'
@@ -111,14 +110,14 @@ final class ConversationParticipantActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'ConversationParticipant'
 		));
 		
 		foreach($ConversationParticipantCollection->toArray() as $ConversationParticipant){
-			$array = $DataCollection->getItemsBy('conversation_id',$ConversationParticipant->getInteger('conversation_id'));
+			$array = $DataCollection->getObjectByFieldValue('conversation_id',$ConversationParticipant->getInteger('conversation_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('ConversationParticipant',$ConversationParticipant);
 			}
@@ -137,12 +136,12 @@ final class ConversationParticipantActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':participant_id' => $ConversationParticipant->getInteger('participant_id'),
 				':is_deleted' => $ConversationParticipant->getBoolean('is_deleted'),
 				':conversation_id' => $ConversationParticipant->getInteger('conversation_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':participant_id',
 				':conversation_id'
@@ -159,7 +158,7 @@ final class ConversationParticipantActions extends Actions{
 			array(
 				':conversation_id' => (int)$conversation_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':conversation_id'
 			)

@@ -18,10 +18,10 @@ final class UserPowerActions extends Actions{
 			// bind data to sql variables
 			array(
 				':power_id' => $UserPower->getInteger('power_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_id' => $UserPower->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':power_id',
 				':user_id'
@@ -42,12 +42,10 @@ final class UserPowerActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserPower'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class UserPowerActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserPower'
@@ -102,14 +100,14 @@ final class UserPowerActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserPower'
 		));
 		
 		foreach($UserPowerCollection->toArray() as $UserPower){
-			$array = $DataCollection->getItemsBy('user_id',$UserPower->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserPower->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserPower',$UserPower);
 			}
@@ -129,7 +127,7 @@ final class UserPowerActions extends Actions{
 				':power_id' => $UserPower->getInteger('power_id'),
 				':user_id' => $UserPower->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':power_id',
 				':user_id'
@@ -146,7 +144,7 @@ final class UserPowerActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

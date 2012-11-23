@@ -21,10 +21,10 @@ final class UnsubscribeRequestActions extends Actions{
 			array(
 				':email' => $UnsubscribeRequest->getString('email'),
 				':ip' => $UnsubscribeRequest->getString('ip'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':unsubscribe_request_id' => $UnsubscribeRequest->getInteger('unsubscribe_request_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':unsubscribe_request_id'
@@ -46,12 +46,10 @@ final class UnsubscribeRequestActions extends Actions{
 			array(
 				':unsubscribe_request_id' => (int)$unsubscribe_request_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':unsubscribe_request_id'
-			),
-			// return as this object collection type
-			'UnsubscribeRequest'
+			)
 		));
 	}
 	
@@ -68,7 +66,7 @@ final class UnsubscribeRequestActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UnsubscribeRequest'
@@ -108,14 +106,14 @@ final class UnsubscribeRequestActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UnsubscribeRequest'
 		));
 		
 		foreach($UnsubscribeRequestCollection->toArray() as $UnsubscribeRequest){
-			$array = $DataCollection->getItemsBy('unsubscribe_request_id',$UnsubscribeRequest->getInteger('unsubscribe_request_id'));
+			$array = $DataCollection->getObjectByFieldValue('unsubscribe_request_id',$UnsubscribeRequest->getInteger('unsubscribe_request_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UnsubscribeRequest',$UnsubscribeRequest);
 			}
@@ -137,7 +135,7 @@ final class UnsubscribeRequestActions extends Actions{
 				':ip' => $UnsubscribeRequest->getString('ip'),
 				':unsubscribe_request_id' => $UnsubscribeRequest->getInteger('unsubscribe_request_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':unsubscribe_request_id'
@@ -154,7 +152,7 @@ final class UnsubscribeRequestActions extends Actions{
 			array(
 				':unsubscribe_request_id' => (int)$unsubscribe_request_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':unsubscribe_request_id'
 			)

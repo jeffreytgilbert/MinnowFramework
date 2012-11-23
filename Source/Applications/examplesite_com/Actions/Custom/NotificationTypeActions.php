@@ -21,13 +21,13 @@ final class NotificationTypeActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':notification_type' => $NotificationType->getString('notification_type'),
 				':template' => $NotificationType->getString('template'),
 				':application_id' => $NotificationType->getInteger('application_id'),
 				':notification_type_id' => $NotificationType->getInteger('notification_type_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':application_id',
 				':notification_type_id'
@@ -51,12 +51,10 @@ final class NotificationTypeActions extends Actions{
 			array(
 				':notification_type_id' => (int)$notification_type_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':notification_type_id'
-			),
-			// return as this object collection type
-			'NotificationType'
+			)
 		));
 	}
 	
@@ -75,7 +73,7 @@ final class NotificationTypeActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'NotificationType'
@@ -117,14 +115,14 @@ final class NotificationTypeActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'NotificationType'
 		));
 		
 		foreach($NotificationTypeCollection->toArray() as $NotificationType){
-			$array = $DataCollection->getItemsBy('notification_type_id',$NotificationType->getInteger('notification_type_id'));
+			$array = $DataCollection->getObjectByFieldValue('notification_type_id',$NotificationType->getInteger('notification_type_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('NotificationType',$NotificationType);
 			}
@@ -144,13 +142,13 @@ final class NotificationTypeActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':notification_type' => $NotificationType->getString('notification_type'),
 				':template' => $NotificationType->getString('template'),
 				':application_id' => $NotificationType->getInteger('application_id'),
 				':notification_type_id' => $NotificationType->getInteger('notification_type_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':application_id',
 				':notification_type_id'
@@ -167,7 +165,7 @@ final class NotificationTypeActions extends Actions{
 			array(
 				':notification_type_id' => (int)$notification_type_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':notification_type_id'
 			)

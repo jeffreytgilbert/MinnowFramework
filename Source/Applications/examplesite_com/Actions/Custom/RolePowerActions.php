@@ -18,10 +18,10 @@ final class RolePowerActions extends Actions{
 			// bind data to sql variables
 			array(
 				':power_id' => $RolePower->getInteger('power_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':role_id' => $RolePower->getInteger('role_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':power_id',
 				':role_id'
@@ -42,12 +42,10 @@ final class RolePowerActions extends Actions{
 			array(
 				':role_id' => (int)$role_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_id'
-			),
-			// return as this object collection type
-			'RolePower'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class RolePowerActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'RolePower'
@@ -102,14 +100,14 @@ final class RolePowerActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'RolePower'
 		));
 		
 		foreach($RolePowerCollection->toArray() as $RolePower){
-			$array = $DataCollection->getItemsBy('role_id',$RolePower->getInteger('role_id'));
+			$array = $DataCollection->getObjectByFieldValue('role_id',$RolePower->getInteger('role_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('RolePower',$RolePower);
 			}
@@ -129,7 +127,7 @@ final class RolePowerActions extends Actions{
 				':power_id' => $RolePower->getInteger('power_id'),
 				':role_id' => $RolePower->getInteger('role_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':power_id',
 				':role_id'
@@ -146,7 +144,7 @@ final class RolePowerActions extends Actions{
 			array(
 				':role_id' => (int)$role_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_id'
 			)

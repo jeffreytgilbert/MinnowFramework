@@ -21,10 +21,10 @@ final class UserSettingActions extends Actions{
 			array(
 				':setting_id' => $UserSetting->getInteger('setting_id'),
 				':value' => $UserSetting->getString('value'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_id' => $UserSetting->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_id',
 				':user_id'
@@ -47,12 +47,10 @@ final class UserSettingActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserSetting'
+			)
 		));
 	}
 	
@@ -70,7 +68,7 @@ final class UserSettingActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserSetting'
@@ -111,14 +109,14 @@ final class UserSettingActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserSetting'
 		));
 		
 		foreach($UserSettingCollection->toArray() as $UserSetting){
-			$array = $DataCollection->getItemsBy('user_id',$UserSetting->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserSetting->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserSetting',$UserSetting);
 			}
@@ -139,10 +137,10 @@ final class UserSettingActions extends Actions{
 			array(
 				':setting_id' => $UserSetting->getInteger('setting_id'),
 				':value' => $UserSetting->getString('value'),
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_id' => $UserSetting->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_id',
 				':user_id'
@@ -159,7 +157,7 @@ final class UserSettingActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

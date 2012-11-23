@@ -17,11 +17,11 @@ final class SettingGroupActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':group_name' => $SettingGroup->getString('group_name'),
 				':setting_group_id' => $SettingGroup->getInteger('setting_group_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':setting_group_id'
@@ -42,12 +42,10 @@ final class SettingGroupActions extends Actions{
 			array(
 				':setting_group_id' => (int)$setting_group_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_group_id'
-			),
-			// return as this object collection type
-			'SettingGroup'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class SettingGroupActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'SettingGroup'
@@ -102,14 +100,14 @@ final class SettingGroupActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'SettingGroup'
 		));
 		
 		foreach($SettingGroupCollection->toArray() as $SettingGroup){
-			$array = $DataCollection->getItemsBy('setting_group_id',$SettingGroup->getInteger('setting_group_id'));
+			$array = $DataCollection->getObjectByFieldValue('setting_group_id',$SettingGroup->getInteger('setting_group_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('SettingGroup',$SettingGroup);
 			}
@@ -129,7 +127,7 @@ final class SettingGroupActions extends Actions{
 				':group_name' => $SettingGroup->getString('group_name'),
 				':setting_group_id' => $SettingGroup->getInteger('setting_group_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':setting_group_id'
@@ -146,7 +144,7 @@ final class SettingGroupActions extends Actions{
 			array(
 				':setting_group_id' => (int)$setting_group_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':setting_group_id'
 			)

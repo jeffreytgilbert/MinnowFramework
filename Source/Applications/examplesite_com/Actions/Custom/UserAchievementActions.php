@@ -18,10 +18,10 @@ final class UserAchievementActions extends Actions{
 			// bind data to sql variables
 			array(
 				':achievement_id' => $UserAchievement->getInteger('achievement_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_id' => $UserAchievement->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':achievement_id',
 				':user_id'
@@ -42,12 +42,10 @@ final class UserAchievementActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserAchievement'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class UserAchievementActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserAchievement'
@@ -102,14 +100,14 @@ final class UserAchievementActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserAchievement'
 		));
 		
 		foreach($UserAchievementCollection->toArray() as $UserAchievement){
-			$array = $DataCollection->getItemsBy('user_id',$UserAchievement->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserAchievement->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserAchievement',$UserAchievement);
 			}
@@ -129,7 +127,7 @@ final class UserAchievementActions extends Actions{
 				':achievement_id' => $UserAchievement->getInteger('achievement_id'),
 				':user_id' => $UserAchievement->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':achievement_id',
 				':user_id'
@@ -146,7 +144,7 @@ final class UserAchievementActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

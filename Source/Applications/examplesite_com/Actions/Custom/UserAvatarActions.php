@@ -19,12 +19,12 @@ final class UserAvatarActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':avatar_part_id' => $UserAvatar->getInteger('avatar_part_id'),
 				':layer' => $UserAvatar->getInteger('layer'),
 				':user_id' => $UserAvatar->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':avatar_part_id',
 				':layer',
@@ -48,12 +48,10 @@ final class UserAvatarActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserAvatar'
+			)
 		));
 	}
 	
@@ -71,7 +69,7 @@ final class UserAvatarActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserAvatar'
@@ -112,14 +110,14 @@ final class UserAvatarActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserAvatar'
 		));
 		
 		foreach($UserAvatarCollection->toArray() as $UserAvatar){
-			$array = $DataCollection->getItemsBy('user_id',$UserAvatar->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserAvatar->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserAvatar',$UserAvatar);
 			}
@@ -138,12 +136,12 @@ final class UserAvatarActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':avatar_part_id' => $UserAvatar->getInteger('avatar_part_id'),
 				':layer' => $UserAvatar->getInteger('layer'),
 				':user_id' => $UserAvatar->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':avatar_part_id',
 				':layer',
@@ -161,7 +159,7 @@ final class UserAvatarActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

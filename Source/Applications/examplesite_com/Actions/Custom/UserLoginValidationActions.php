@@ -20,11 +20,11 @@ final class UserLoginValidationActions extends Actions{
 			// bind data to sql variables
 			array(
 				':user_id' => $UserLoginValidation->getInteger('user_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':code' => $UserLoginValidation->getString('code'),
 				':user_login_id' => $UserLoginValidation->getInteger('user_login_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id',
 				':user_login_id'
@@ -47,12 +47,10 @@ final class UserLoginValidationActions extends Actions{
 			array(
 				':user_login_id' => (int)$user_login_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_login_id'
-			),
-			// return as this object collection type
-			'UserLoginValidation'
+			)
 		));
 	}
 	
@@ -70,7 +68,7 @@ final class UserLoginValidationActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserLoginValidation'
@@ -111,14 +109,14 @@ final class UserLoginValidationActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserLoginValidation'
 		));
 		
 		foreach($UserLoginValidationCollection->toArray() as $UserLoginValidation){
-			$array = $DataCollection->getItemsBy('user_login_id',$UserLoginValidation->getInteger('user_login_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_login_id',$UserLoginValidation->getInteger('user_login_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserLoginValidation',$UserLoginValidation);
 			}
@@ -138,11 +136,11 @@ final class UserLoginValidationActions extends Actions{
 			// bind data to sql variables
 			array(
 				':user_id' => $UserLoginValidation->getInteger('user_id'),
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':code' => $UserLoginValidation->getString('code'),
 				':user_login_id' => $UserLoginValidation->getInteger('user_login_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id',
 				':user_login_id'
@@ -159,7 +157,7 @@ final class UserLoginValidationActions extends Actions{
 			array(
 				':user_login_id' => (int)$user_login_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_login_id'
 			)

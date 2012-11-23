@@ -21,13 +21,13 @@ final class ThemeActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':theme_name' => $Theme->getString('theme_name'),
 				':thumb_path' => $Theme->getString('thumb_path'),
 				':css_file_path' => $Theme->getString('css_file_path'),
 				':theme_id' => $Theme->getInteger('theme_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':theme_id'
@@ -51,12 +51,10 @@ final class ThemeActions extends Actions{
 			array(
 				':theme_id' => (int)$theme_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':theme_id'
-			),
-			// return as this object collection type
-			'Theme'
+			)
 		));
 	}
 	
@@ -75,7 +73,7 @@ final class ThemeActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Theme'
@@ -117,14 +115,14 @@ final class ThemeActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Theme'
 		));
 		
 		foreach($ThemeCollection->toArray() as $Theme){
-			$array = $DataCollection->getItemsBy('theme_id',$Theme->getInteger('theme_id'));
+			$array = $DataCollection->getObjectByFieldValue('theme_id',$Theme->getInteger('theme_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Theme',$Theme);
 			}
@@ -144,13 +142,13 @@ final class ThemeActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':theme_name' => $Theme->getString('theme_name'),
 				':thumb_path' => $Theme->getString('thumb_path'),
 				':css_file_path' => $Theme->getString('css_file_path'),
 				':theme_id' => $Theme->getInteger('theme_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':theme_id'
@@ -167,7 +165,7 @@ final class ThemeActions extends Actions{
 			array(
 				':theme_id' => (int)$theme_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':theme_id'
 			)

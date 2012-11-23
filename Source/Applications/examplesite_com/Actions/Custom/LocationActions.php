@@ -33,7 +33,7 @@ final class LocationActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':name' => $Location->getString('name'),
 				':address' => $Location->getString('address'),
 				':latitude' => $Location->getInteger('latitude'),
@@ -45,7 +45,7 @@ final class LocationActions extends Actions{
 				':user_id' => $Location->getInteger('user_id'),
 				':location_id' => $Location->getInteger('location_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':latitude',
 				':longitude',
@@ -77,12 +77,10 @@ final class LocationActions extends Actions{
 			array(
 				':location_id' => (int)$location_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':location_id'
-			),
-			// return as this object collection type
-			'Location'
+			)
 		));
 	}
 	
@@ -107,7 +105,7 @@ final class LocationActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Location'
@@ -155,14 +153,14 @@ final class LocationActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Location'
 		));
 		
 		foreach($LocationCollection->toArray() as $Location){
-			$array = $DataCollection->getItemsBy('location_id',$Location->getInteger('location_id'));
+			$array = $DataCollection->getObjectByFieldValue('location_id',$Location->getInteger('location_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Location',$Location);
 			}
@@ -188,7 +186,7 @@ final class LocationActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':name' => $Location->getString('name'),
 				':address' => $Location->getString('address'),
 				':latitude' => $Location->getInteger('latitude'),
@@ -200,7 +198,7 @@ final class LocationActions extends Actions{
 				':user_id' => $Location->getInteger('user_id'),
 				':location_id' => $Location->getInteger('location_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':latitude',
 				':longitude',
@@ -219,7 +217,7 @@ final class LocationActions extends Actions{
 			array(
 				':location_id' => (int)$location_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':location_id'
 			)

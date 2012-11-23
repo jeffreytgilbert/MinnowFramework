@@ -24,13 +24,13 @@ final class MessageActions extends Actions{
 			// bind data to sql variables
 			array(
 				':conversation_id' => $Message->getInteger('conversation_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':sender_id' => $Message->getInteger('sender_id'),
 				':body' => $Message->getString('body'),
 				':location' => $Message->getString('location'),
 				':message_id' => $Message->getInteger('message_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':conversation_id',
 				':sender_id',
@@ -56,12 +56,10 @@ final class MessageActions extends Actions{
 			array(
 				':message_id' => (int)$message_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':message_id'
-			),
-			// return as this object collection type
-			'Message'
+			)
 		));
 	}
 	
@@ -81,7 +79,7 @@ final class MessageActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Message'
@@ -124,14 +122,14 @@ final class MessageActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Message'
 		));
 		
 		foreach($MessageCollection->toArray() as $Message){
-			$array = $DataCollection->getItemsBy('message_id',$Message->getInteger('message_id'));
+			$array = $DataCollection->getObjectByFieldValue('message_id',$Message->getInteger('message_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Message',$Message);
 			}
@@ -153,13 +151,13 @@ final class MessageActions extends Actions{
 			// bind data to sql variables
 			array(
 				':conversation_id' => $Message->getInteger('conversation_id'),
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':sender_id' => $Message->getInteger('sender_id'),
 				':body' => $Message->getString('body'),
 				':location' => $Message->getString('location'),
 				':message_id' => $Message->getInteger('message_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':conversation_id',
 				':sender_id',
@@ -177,7 +175,7 @@ final class MessageActions extends Actions{
 			array(
 				':message_id' => (int)$message_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':message_id'
 			)

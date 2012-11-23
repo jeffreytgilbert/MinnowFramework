@@ -28,7 +28,7 @@ final class CheckInActions extends Actions{
 			// bind data to sql variables
 			array(
 				':user_id' => $CheckIn->getInteger('user_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':location_id' => $CheckIn->getInteger('location_id'),
 				':check_in_image_url' => $CheckIn->getString('check_in_image_url'),
 				':check_in_link_id' => $CheckIn->getInteger('check_in_link_id'),
@@ -36,7 +36,7 @@ final class CheckInActions extends Actions{
 				':message' => $CheckIn->getString('message'),
 				':check_in_id' => $CheckIn->getInteger('check_in_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id',
 				':location_id',
@@ -64,12 +64,10 @@ final class CheckInActions extends Actions{
 			array(
 				':check_in_id' => (int)$check_in_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':check_in_id'
-			),
-			// return as this object collection type
-			'CheckIn'
+			)
 		));
 	}
 	
@@ -90,7 +88,7 @@ final class CheckInActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'CheckIn'
@@ -134,14 +132,14 @@ final class CheckInActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'CheckIn'
 		));
 		
 		foreach($CheckInCollection->toArray() as $CheckIn){
-			$array = $DataCollection->getItemsBy('check_in_id',$CheckIn->getInteger('check_in_id'));
+			$array = $DataCollection->getObjectByFieldValue('check_in_id',$CheckIn->getInteger('check_in_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('CheckIn',$CheckIn);
 			}
@@ -171,7 +169,7 @@ final class CheckInActions extends Actions{
 				':message' => $CheckIn->getString('message'),
 				':check_in_id' => $CheckIn->getInteger('check_in_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id',
 				':location_id',
@@ -190,7 +188,7 @@ final class CheckInActions extends Actions{
 			array(
 				':check_in_id' => (int)$check_in_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':check_in_id'
 			)

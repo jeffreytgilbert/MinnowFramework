@@ -21,7 +21,7 @@ final class PhpSessionActions extends Actions{
 				':data' => $PhpSession->getString('data'),
 				':id' => $PhpSession->getInteger('id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':access',
 				':id'
@@ -42,12 +42,10 @@ final class PhpSessionActions extends Actions{
 			array(
 				':id' => (int)$id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':id'
-			),
-			// return as this object collection type
-			'PhpSession'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class PhpSessionActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'PhpSession'
@@ -102,14 +100,14 @@ final class PhpSessionActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'PhpSession'
 		));
 		
 		foreach($PhpSessionCollection->toArray() as $PhpSession){
-			$array = $DataCollection->getItemsBy('id',$PhpSession->getInteger('id'));
+			$array = $DataCollection->getObjectByFieldValue('id',$PhpSession->getInteger('id'));
 			foreach($array as $DataObject){
 				$DataObject->set('PhpSession',$PhpSession);
 			}
@@ -131,7 +129,7 @@ final class PhpSessionActions extends Actions{
 				':data' => $PhpSession->getString('data'),
 				':id' => $PhpSession->getInteger('id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':access',
 				':id'
@@ -148,7 +146,7 @@ final class PhpSessionActions extends Actions{
 			array(
 				':id' => (int)$id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':id'
 			)

@@ -18,7 +18,7 @@ final class OnlineMemberActions extends Actions{
 				':last_active' => $OnlineMember->getDateTimeObject('last_active')->getMySQLFormat('datetime'),
 				':user_id' => $OnlineMember->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':user_id'
@@ -38,12 +38,10 @@ final class OnlineMemberActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'OnlineMember'
+			)
 		));
 	}
 	
@@ -58,7 +56,7 @@ final class OnlineMemberActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'OnlineMember'
@@ -96,14 +94,14 @@ final class OnlineMemberActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'OnlineMember'
 		));
 		
 		foreach($OnlineMemberCollection->toArray() as $OnlineMember){
-			$array = $DataCollection->getItemsBy('user_id',$OnlineMember->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$OnlineMember->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('OnlineMember',$OnlineMember);
 			}
@@ -123,7 +121,7 @@ final class OnlineMemberActions extends Actions{
 				':last_active' => $OnlineMember->getDateTimeObject('last_active')->getMySQLFormat('datetime'),
 				':user_id' => $OnlineMember->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':user_id'
@@ -140,7 +138,7 @@ final class OnlineMemberActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

@@ -19,12 +19,12 @@ final class UserHistoryActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':page_title' => $UserHistory->getString('page_title'),
 				':location' => $UserHistory->getString('location'),
 				':user_id' => $UserHistory->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':user_id'
@@ -46,12 +46,10 @@ final class UserHistoryActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserHistory'
+			)
 		));
 	}
 	
@@ -68,7 +66,7 @@ final class UserHistoryActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserHistory'
@@ -108,14 +106,14 @@ final class UserHistoryActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserHistory'
 		));
 		
 		foreach($UserHistoryCollection->toArray() as $UserHistory){
-			$array = $DataCollection->getItemsBy('user_id',$UserHistory->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserHistory->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserHistory',$UserHistory);
 			}
@@ -137,7 +135,7 @@ final class UserHistoryActions extends Actions{
 				':location' => $UserHistory->getString('location'),
 				':user_id' => $UserHistory->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':user_id'
@@ -154,7 +152,7 @@ final class UserHistoryActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

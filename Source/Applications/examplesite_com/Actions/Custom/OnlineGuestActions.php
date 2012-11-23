@@ -18,7 +18,7 @@ final class OnlineGuestActions extends Actions{
 				':last_active' => $OnlineGuest->getDateTimeObject('last_active')->getMySQLFormat('datetime'),
 				':php_session_id' => $OnlineGuest->getInteger('php_session_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':php_session_id'
@@ -38,12 +38,10 @@ final class OnlineGuestActions extends Actions{
 			array(
 				':php_session_id' => (int)$php_session_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':php_session_id'
-			),
-			// return as this object collection type
-			'OnlineGuest'
+			)
 		));
 	}
 	
@@ -58,7 +56,7 @@ final class OnlineGuestActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'OnlineGuest'
@@ -96,14 +94,14 @@ final class OnlineGuestActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'OnlineGuest'
 		));
 		
 		foreach($OnlineGuestCollection->toArray() as $OnlineGuest){
-			$array = $DataCollection->getItemsBy('php_session_id',$OnlineGuest->getInteger('php_session_id'));
+			$array = $DataCollection->getObjectByFieldValue('php_session_id',$OnlineGuest->getInteger('php_session_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('OnlineGuest',$OnlineGuest);
 			}
@@ -123,7 +121,7 @@ final class OnlineGuestActions extends Actions{
 				':last_active' => $OnlineGuest->getDateTimeObject('last_active')->getMySQLFormat('datetime'),
 				':php_session_id' => $OnlineGuest->getInteger('php_session_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':php_session_id'
@@ -140,7 +138,7 @@ final class OnlineGuestActions extends Actions{
 			array(
 				':php_session_id' => (int)$php_session_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':php_session_id'
 			)

@@ -27,12 +27,13 @@ final class RoleActions extends Actions{
 				':is_user_selectable' => $Role->getBoolean('is_user_selectable'),
 				':title' => $Role->getString('title'),
 				':hint' => $Role->getString('hint'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':role_id' => $Role->getInteger('role_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_group_id',
+				':is_user_selectable',
 				':role_id'
 			)
 		);
@@ -54,12 +55,10 @@ final class RoleActions extends Actions{
 			array(
 				':role_id' => (int)$role_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_id'
-			),
-			// return as this object collection type
-			'Role'
+			)
 		));
 	}
 	
@@ -78,7 +77,7 @@ final class RoleActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Role'
@@ -120,14 +119,14 @@ final class RoleActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Role'
 		));
 		
 		foreach($RoleCollection->toArray() as $Role){
-			$array = $DataCollection->getItemsBy('role_id',$Role->getInteger('role_id'));
+			$array = $DataCollection->getObjectByFieldValue('role_id',$Role->getInteger('role_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Role',$Role);
 			}
@@ -153,7 +152,7 @@ final class RoleActions extends Actions{
 				':hint' => $Role->getString('hint'),
 				':role_id' => $Role->getInteger('role_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_group_id',
 				':role_id'
@@ -170,7 +169,7 @@ final class RoleActions extends Actions{
 			array(
 				':role_id' => (int)$role_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_id'
 			)

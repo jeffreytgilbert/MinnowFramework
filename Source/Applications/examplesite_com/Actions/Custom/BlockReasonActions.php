@@ -21,7 +21,7 @@ final class BlockReasonActions extends Actions{
 				':view_text' => $BlockReason->getString('view_text'),
 				':block_reason_id' => $BlockReason->getInteger('block_reason_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':block_reason_id'
@@ -42,12 +42,10 @@ final class BlockReasonActions extends Actions{
 			array(
 				':block_reason_id' => (int)$block_reason_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':block_reason_id'
-			),
-			// return as this object collection type
-			'BlockReason'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class BlockReasonActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'BlockReason'
@@ -102,14 +100,14 @@ final class BlockReasonActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'BlockReason'
 		));
 		
 		foreach($BlockReasonCollection->toArray() as $BlockReason){
-			$array = $DataCollection->getItemsBy('block_reason_id',$BlockReason->getInteger('block_reason_id'));
+			$array = $DataCollection->getObjectByFieldValue('block_reason_id',$BlockReason->getInteger('block_reason_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('BlockReason',$BlockReason);
 			}
@@ -131,7 +129,7 @@ final class BlockReasonActions extends Actions{
 				':view_text' => $BlockReason->getString('view_text'),
 				':block_reason_id' => $BlockReason->getInteger('block_reason_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':block_reason_id'
@@ -148,7 +146,7 @@ final class BlockReasonActions extends Actions{
 			array(
 				':block_reason_id' => (int)$block_reason_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':block_reason_id'
 			)

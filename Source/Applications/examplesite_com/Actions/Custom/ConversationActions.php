@@ -21,13 +21,13 @@ final class ConversationActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':creator_id' => $Conversation->getInteger('creator_id'),
 				':last_sender_id' => $Conversation->getInteger('last_sender_id'),
 				':last_message' => $Conversation->getString('last_message'),
 				':conversation_id' => $Conversation->getInteger('conversation_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':creator_id',
 				':last_sender_id',
@@ -52,12 +52,10 @@ final class ConversationActions extends Actions{
 			array(
 				':conversation_id' => (int)$conversation_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':conversation_id'
-			),
-			// return as this object collection type
-			'Conversation'
+			)
 		));
 	}
 	
@@ -76,7 +74,7 @@ final class ConversationActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Conversation'
@@ -118,14 +116,14 @@ final class ConversationActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Conversation'
 		));
 		
 		foreach($ConversationCollection->toArray() as $Conversation){
-			$array = $DataCollection->getItemsBy('conversation_id',$Conversation->getInteger('conversation_id'));
+			$array = $DataCollection->getObjectByFieldValue('conversation_id',$Conversation->getInteger('conversation_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Conversation',$Conversation);
 			}
@@ -145,13 +143,13 @@ final class ConversationActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':creator_id' => $Conversation->getInteger('creator_id'),
 				':last_sender_id' => $Conversation->getInteger('last_sender_id'),
 				':last_message' => $Conversation->getString('last_message'),
 				':conversation_id' => $Conversation->getInteger('conversation_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':creator_id',
 				':last_sender_id',
@@ -169,7 +167,7 @@ final class ConversationActions extends Actions{
 			array(
 				':conversation_id' => (int)$conversation_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':conversation_id'
 			)

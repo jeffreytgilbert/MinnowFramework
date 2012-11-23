@@ -19,12 +19,12 @@ final class PowerActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':name' => $Power->getString('name'),
 				':hint' => $Power->getString('hint'),
 				':power_id' => $Power->getInteger('power_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':power_id'
@@ -46,12 +46,10 @@ final class PowerActions extends Actions{
 			array(
 				':power_id' => (int)$power_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':power_id'
-			),
-			// return as this object collection type
-			'Power'
+			)
 		));
 	}
 	
@@ -68,7 +66,7 @@ final class PowerActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Power'
@@ -108,14 +106,14 @@ final class PowerActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Power'
 		));
 		
 		foreach($PowerCollection->toArray() as $Power){
-			$array = $DataCollection->getItemsBy('power_id',$Power->getInteger('power_id'));
+			$array = $DataCollection->getObjectByFieldValue('power_id',$Power->getInteger('power_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Power',$Power);
 			}
@@ -137,7 +135,7 @@ final class PowerActions extends Actions{
 				':hint' => $Power->getString('hint'),
 				':power_id' => $Power->getInteger('power_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':power_id'
@@ -154,7 +152,7 @@ final class PowerActions extends Actions{
 			array(
 				':power_id' => (int)$power_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':power_id'
 			)

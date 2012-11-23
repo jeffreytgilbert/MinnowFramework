@@ -18,10 +18,10 @@ final class UserRoleActions extends Actions{
 			// bind data to sql variables
 			array(
 				':role_id' => $UserRole->getInteger('role_id'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_id' => $UserRole->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_id',
 				':user_id'
@@ -42,12 +42,10 @@ final class UserRoleActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserRole'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class UserRoleActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserRole'
@@ -102,14 +100,14 @@ final class UserRoleActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserRole'
 		));
 		
 		foreach($UserRoleCollection->toArray() as $UserRole){
-			$array = $DataCollection->getItemsBy('user_id',$UserRole->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserRole->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserRole',$UserRole);
 			}
@@ -129,7 +127,7 @@ final class UserRoleActions extends Actions{
 				':role_id' => $UserRole->getInteger('role_id'),
 				':user_id' => $UserRole->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':role_id',
 				':user_id'
@@ -146,7 +144,7 @@ final class UserRoleActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

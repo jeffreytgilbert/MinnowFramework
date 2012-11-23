@@ -21,10 +21,10 @@ final class CheckInLinkActions extends Actions{
 			array(
 				':check_in_link_image_url' => $CheckInLink->getString('check_in_link_image_url'),
 				':url' => $CheckInLink->getString('url'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':check_in_link_id' => $CheckInLink->getInteger('check_in_link_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':check_in_link_id'
@@ -46,12 +46,10 @@ final class CheckInLinkActions extends Actions{
 			array(
 				':check_in_link_id' => (int)$check_in_link_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':check_in_link_id'
-			),
-			// return as this object collection type
-			'CheckInLink'
+			)
 		));
 	}
 	
@@ -68,7 +66,7 @@ final class CheckInLinkActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'CheckInLink'
@@ -108,14 +106,14 @@ final class CheckInLinkActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'CheckInLink'
 		));
 		
 		foreach($CheckInLinkCollection->toArray() as $CheckInLink){
-			$array = $DataCollection->getItemsBy('check_in_link_id',$CheckInLink->getInteger('check_in_link_id'));
+			$array = $DataCollection->getObjectByFieldValue('check_in_link_id',$CheckInLink->getInteger('check_in_link_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('CheckInLink',$CheckInLink);
 			}
@@ -137,7 +135,7 @@ final class CheckInLinkActions extends Actions{
 				':url' => $CheckInLink->getString('url'),
 				':check_in_link_id' => $CheckInLink->getInteger('check_in_link_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':check_in_link_id'
@@ -154,7 +152,7 @@ final class CheckInLinkActions extends Actions{
 			array(
 				':check_in_link_id' => (int)$check_in_link_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':check_in_link_id'
 			)

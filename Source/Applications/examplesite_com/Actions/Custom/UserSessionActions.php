@@ -30,7 +30,7 @@ final class UserSessionActions extends Actions{
 				':unread_messages' => $UserSession->getInteger('unread_messages'),
 				':user_id' => $UserSession->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':unread_messages',
 				':user_id'
@@ -54,12 +54,10 @@ final class UserSessionActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'UserSession'
+			)
 		));
 	}
 	
@@ -78,7 +76,7 @@ final class UserSessionActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserSession'
@@ -120,14 +118,14 @@ final class UserSessionActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserSession'
 		));
 		
 		foreach($UserSessionCollection->toArray() as $UserSession){
-			$array = $DataCollection->getItemsBy('user_id',$UserSession->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$UserSession->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserSession',$UserSession);
 			}
@@ -155,7 +153,7 @@ final class UserSessionActions extends Actions{
 				':unread_messages' => $UserSession->getInteger('unread_messages'),
 				':user_id' => $UserSession->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':unread_messages',
 				':user_id'
@@ -172,7 +170,7 @@ final class UserSessionActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)

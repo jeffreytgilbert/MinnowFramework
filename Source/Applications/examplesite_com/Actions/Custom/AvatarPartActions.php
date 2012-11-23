@@ -29,7 +29,7 @@ final class AvatarPartActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':layer' => $AvatarPart->getInteger('layer'),
 				':layer_order_id' => $AvatarPart->getInteger('layer_order_id'),
 				':grouping' => $AvatarPart->getString('grouping'),
@@ -39,10 +39,11 @@ final class AvatarPartActions extends Actions{
 				':is_inactive' => $AvatarPart->getBoolean('is_inactive'),
 				':avatar_part_id' => $AvatarPart->getInteger('avatar_part_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':layer',
 				':layer_order_id',
+				':is_inactive',
 				':avatar_part_id'
 			)
 		);
@@ -67,12 +68,10 @@ final class AvatarPartActions extends Actions{
 			array(
 				':avatar_part_id' => (int)$avatar_part_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':avatar_part_id'
-			),
-			// return as this object collection type
-			'AvatarPart'
+			)
 		));
 	}
 	
@@ -94,7 +93,7 @@ final class AvatarPartActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'AvatarPart'
@@ -139,14 +138,14 @@ final class AvatarPartActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'AvatarPart'
 		));
 		
 		foreach($AvatarPartCollection->toArray() as $AvatarPart){
-			$array = $DataCollection->getItemsBy('avatar_part_id',$AvatarPart->getInteger('avatar_part_id'));
+			$array = $DataCollection->getObjectByFieldValue('avatar_part_id',$AvatarPart->getInteger('avatar_part_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('AvatarPart',$AvatarPart);
 			}
@@ -178,7 +177,7 @@ final class AvatarPartActions extends Actions{
 				':is_inactive' => $AvatarPart->getBoolean('is_inactive'),
 				':avatar_part_id' => $AvatarPart->getInteger('avatar_part_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':layer',
 				':layer_order_id',
@@ -196,7 +195,7 @@ final class AvatarPartActions extends Actions{
 			array(
 				':avatar_part_id' => (int)$avatar_part_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':avatar_part_id'
 			)

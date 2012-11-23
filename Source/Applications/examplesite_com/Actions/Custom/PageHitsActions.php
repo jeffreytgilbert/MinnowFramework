@@ -27,7 +27,7 @@ final class PageHitsActions extends Actions{
 				':member_hits' => $PageHits->getInteger('member_hits'),
 				':id' => $PageHits->getInteger('id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':guest_hits',
 				':member_hits',
@@ -50,12 +50,10 @@ final class PageHitsActions extends Actions{
 			array(
 				':id' => (int)$id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':id'
-			),
-			// return as this object collection type
-			'PageHits'
+			)
 		));
 	}
 	
@@ -72,7 +70,7 @@ final class PageHitsActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'PageHits'
@@ -112,14 +110,14 @@ final class PageHitsActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'PageHits'
 		));
 		
 		foreach($PageHitsCollection->toArray() as $PageHits){
-			$array = $DataCollection->getItemsBy('id',$PageHits->getInteger('id'));
+			$array = $DataCollection->getObjectByFieldValue('id',$PageHits->getInteger('id'));
 			foreach($array as $DataObject){
 				$DataObject->set('PageHits',$PageHits);
 			}
@@ -145,7 +143,7 @@ final class PageHitsActions extends Actions{
 				':member_hits' => $PageHits->getInteger('member_hits'),
 				':id' => $PageHits->getInteger('id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':guest_hits',
 				':member_hits',
@@ -163,7 +161,7 @@ final class PageHitsActions extends Actions{
 			array(
 				':id' => (int)$id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':id'
 			)

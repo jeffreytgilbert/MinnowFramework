@@ -387,7 +387,7 @@ final class TranslationMessageActions extends Actions{
 			array(
 				':page_address' => $TranslationMessage->getString('page_address'),
 				':message_key' => $TranslationMessage->getString('message_key'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':en' => $TranslationMessage->getString('en'),
 				':ab' => $TranslationMessage->getString('ab'),
 				':aa' => $TranslationMessage->getString('aa'),
@@ -573,7 +573,7 @@ final class TranslationMessageActions extends Actions{
 				':zu' => $TranslationMessage->getString('zu'),
 				':id' => $TranslationMessage->getInteger('id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':id'
@@ -778,12 +778,10 @@ final class TranslationMessageActions extends Actions{
 			array(
 				':id' => (int)$id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':id'
-			),
-			// return as this object collection type
-			'TranslationMessage'
+			)
 		));
 	}
 	
@@ -983,7 +981,7 @@ final class TranslationMessageActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'TranslationMessage'
@@ -1206,14 +1204,14 @@ final class TranslationMessageActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'TranslationMessage'
 		));
 		
 		foreach($TranslationMessageCollection->toArray() as $TranslationMessage){
-			$array = $DataCollection->getItemsBy('id',$TranslationMessage->getInteger('id'));
+			$array = $DataCollection->getObjectByFieldValue('id',$TranslationMessage->getInteger('id'));
 			foreach($array as $DataObject){
 				$DataObject->set('TranslationMessage',$TranslationMessage);
 			}
@@ -1601,7 +1599,7 @@ final class TranslationMessageActions extends Actions{
 				':zu' => $TranslationMessage->getString('zu'),
 				':id' => $TranslationMessage->getInteger('id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':id'
@@ -1618,7 +1616,7 @@ final class TranslationMessageActions extends Actions{
 			array(
 				':id' => (int)$id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':id'
 			)

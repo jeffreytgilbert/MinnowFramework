@@ -21,10 +21,10 @@ final class AccountStatusActions extends Actions{
 			array(
 				':status_type' => $AccountStatus->getString('status_type'),
 				':hierarchical_order' => $AccountStatus->getString('hierarchical_order'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':account_status_id' => $AccountStatus->getInteger('account_status_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':account_status_id'
@@ -46,12 +46,10 @@ final class AccountStatusActions extends Actions{
 			array(
 				':account_status_id' => (int)$account_status_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':account_status_id'
-			),
-			// return as this object collection type
-			'AccountStatus'
+			)
 		));
 	}
 	
@@ -68,7 +66,7 @@ final class AccountStatusActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'AccountStatus'
@@ -108,14 +106,14 @@ final class AccountStatusActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'AccountStatus'
 		));
 		
 		foreach($AccountStatusCollection->toArray() as $AccountStatus){
-			$array = $DataCollection->getItemsBy('account_status_id',$AccountStatus->getInteger('account_status_id'));
+			$array = $DataCollection->getObjectByFieldValue('account_status_id',$AccountStatus->getInteger('account_status_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('AccountStatus',$AccountStatus);
 			}
@@ -137,7 +135,7 @@ final class AccountStatusActions extends Actions{
 				':hierarchical_order' => $AccountStatus->getString('hierarchical_order'),
 				':account_status_id' => $AccountStatus->getInteger('account_status_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				
 				':account_status_id'
@@ -154,7 +152,7 @@ final class AccountStatusActions extends Actions{
 			array(
 				':account_status_id' => (int)$account_status_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':account_status_id'
 			)

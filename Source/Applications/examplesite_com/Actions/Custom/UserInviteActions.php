@@ -24,10 +24,10 @@ final class UserInviteActions extends Actions{
 				':user_id' => $UserInvite->getInteger('user_id'),
 				':code' => $UserInvite->getString('code'),
 				':code_used_by' => $UserInvite->getInteger('code_used_by'),
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_invite_id' => $UserInvite->getInteger('user_invite_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id',
 				':code_used_by',
@@ -52,12 +52,10 @@ final class UserInviteActions extends Actions{
 			array(
 				':user_invite_id' => (int)$user_invite_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_invite_id'
-			),
-			// return as this object collection type
-			'UserInvite'
+			)
 		));
 	}
 	
@@ -76,7 +74,7 @@ final class UserInviteActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserInvite'
@@ -118,14 +116,14 @@ final class UserInviteActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'UserInvite'
 		));
 		
 		foreach($UserInviteCollection->toArray() as $UserInvite){
-			$array = $DataCollection->getItemsBy('user_invite_id',$UserInvite->getInteger('user_invite_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_invite_id',$UserInvite->getInteger('user_invite_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('UserInvite',$UserInvite);
 			}
@@ -148,10 +146,10 @@ final class UserInviteActions extends Actions{
 				':user_id' => $UserInvite->getInteger('user_id'),
 				':code' => $UserInvite->getString('code'),
 				':code_used_by' => $UserInvite->getInteger('code_used_by'),
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':user_invite_id' => $UserInvite->getInteger('user_invite_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id',
 				':code_used_by',
@@ -169,7 +167,7 @@ final class UserInviteActions extends Actions{
 			array(
 				':user_invite_id' => (int)$user_invite_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_invite_id'
 			)

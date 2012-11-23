@@ -21,13 +21,13 @@ final class BlockActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':target_user_id' => $Block->getInteger('target_user_id'),
 				':block_reason_id' => $Block->getInteger('block_reason_id'),
 				':note' => $Block->getString('note'),
 				':my_user_id' => $Block->getInteger('my_user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':target_user_id',
 				':block_reason_id',
@@ -52,12 +52,10 @@ final class BlockActions extends Actions{
 			array(
 				':my_user_id' => (int)$my_user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':my_user_id'
-			),
-			// return as this object collection type
-			'Block'
+			)
 		));
 	}
 	
@@ -76,7 +74,7 @@ final class BlockActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Block'
@@ -118,14 +116,14 @@ final class BlockActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'Block'
 		));
 		
 		foreach($BlockCollection->toArray() as $Block){
-			$array = $DataCollection->getItemsBy('my_user_id',$Block->getInteger('my_user_id'));
+			$array = $DataCollection->getObjectByFieldValue('my_user_id',$Block->getInteger('my_user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('Block',$Block);
 			}
@@ -145,13 +143,13 @@ final class BlockActions extends Actions{
 			',
 			// bind data to sql variables
 			array(
-				':modified_datetime' => RIGHT_NOW_GMT,
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':target_user_id' => $Block->getInteger('target_user_id'),
 				':block_reason_id' => $Block->getInteger('block_reason_id'),
 				':note' => $Block->getString('note'),
 				':my_user_id' => $Block->getInteger('my_user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':target_user_id',
 				':block_reason_id',
@@ -169,7 +167,7 @@ final class BlockActions extends Actions{
 			array(
 				':my_user_id' => (int)$my_user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':my_user_id'
 			)

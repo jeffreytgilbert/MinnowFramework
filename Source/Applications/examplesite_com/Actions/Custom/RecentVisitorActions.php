@@ -17,11 +17,11 @@ final class RecentVisitorActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RIGHT_NOW_GMT,
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':visitor_id' => $RecentVisitor->getInteger('visitor_id'),
 				':user_id' => $RecentVisitor->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':visitor_id',
 				':user_id'
@@ -42,12 +42,10 @@ final class RecentVisitorActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
-			),
-			// return as this object collection type
-			'RecentVisitor'
+			)
 		));
 	}
 	
@@ -63,7 +61,7 @@ final class RecentVisitorActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'RecentVisitor'
@@ -102,14 +100,14 @@ final class RecentVisitorActions extends Actions{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			'RecentVisitor'
 		));
 		
 		foreach($RecentVisitorCollection->toArray() as $RecentVisitor){
-			$array = $DataCollection->getItemsBy('user_id',$RecentVisitor->getInteger('user_id'));
+			$array = $DataCollection->getObjectByFieldValue('user_id',$RecentVisitor->getInteger('user_id'));
 			foreach($array as $DataObject){
 				$DataObject->set('RecentVisitor',$RecentVisitor);
 			}
@@ -129,7 +127,7 @@ final class RecentVisitorActions extends Actions{
 				':visitor_id' => $RecentVisitor->getInteger('visitor_id'),
 				':user_id' => $RecentVisitor->getInteger('user_id')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':visitor_id',
 				':user_id'
@@ -146,7 +144,7 @@ final class RecentVisitorActions extends Actions{
 			array(
 				':user_id' => (int)$user_id
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':user_id'
 			)
