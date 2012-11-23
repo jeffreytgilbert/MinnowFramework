@@ -185,7 +185,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					$set_columns[] = "{$field}";
 					$value_columns[] = ":{$field}";
 					if($field == 'created_datetime' || $field == 'created'){
-						$data_to_columns[] = "':{$field}' => RIGHT_NOW_GMT";
+						$data_to_columns[] = "':{$field}' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime')";
 					} else if(in_array($field, $date_array)){
 						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('date')";
 					} else if(in_array($field, $datetime_array)){
@@ -201,7 +201,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 					} else {
 						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getString('{$field}')";
 					}
-					if(in_array($field, $int_array) || $field == $primary_key){
+					if(in_array($field, $int_array) || $field == $primary_key || in_array($field, $boolean_array)){
 						$integer_columns[] = "':{$field}'";
 					}
 				}
@@ -217,7 +217,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 				'.implode(",\n\t\t\t\t",$data_to_columns).',
 				\':'.$primary_key.'\' => $'.$object_names[$key].'->getInteger(\''.$primary_key.'\')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				'.implode(",\n\t\t\t\t",$integer_columns).((count($integer_columns)>0)?',':'').'
 				\':'.$primary_key.'\'
@@ -236,12 +236,10 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 			array(
 				\':'.$primary_key.'\' => (int)$'.$primary_key.'
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				\':'.$primary_key.'\'
-			),
-			// return as this object collection type
-			\''.$object_names[$key].'\'
+			)
 		';		
 				
 				
@@ -255,7 +253,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 			// bind data to sql variables
 			array(
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 			),
 			\''.$object_names[$key].'\'
@@ -270,7 +268,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 				foreach($update_columns as $field){
 					$set_columns[] = "{$field}=:{$field}";
 					if($field == 'modified_datetime' || $field == 'modified'){
-						$data_to_columns[] = "':{$field}' => RIGHT_NOW_GMT";
+						$data_to_columns[] = "':{$field}' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime')";
 					} else if(in_array($field, $date_array)){
 						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('date')";
 					} else if(in_array($field, $datetime_array)){
@@ -301,7 +299,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 				'.implode(",\n\t\t\t\t",$data_to_columns).',
 				\':'.$primary_key.'\' => $'.$object_names[$key].'->getInteger(\''.$primary_key.'\')
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				'.implode(",\n\t\t\t\t",$integer_columns).((count($integer_columns)>0)?',':'').'
 				\':'.$primary_key.'\'
@@ -319,7 +317,7 @@ class ScaffoldActionsPage extends PageController implements HTMLCapable{
 			array(
 				\':'.$primary_key.'\' => (int)$'.$primary_key.'
 			),
-			// which fields are integers
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				\':'.$primary_key.'\'
 			)

@@ -14,7 +14,10 @@ class Conversation extends DataObject{
 			'Creator'=>DataType::OBJECT,
 			'last_sender_id'=>DataType::NUMBER,
 			'LastSender'=>DataType::OBJECT,
-			'last_message'=>DataType::TEXT
+			'last_message'=>DataType::TEXT,
+			'ConversationParticipantCollection'=>DataType::COLLECTION,
+			'participant_ids'=>DataType::PHP_ARRAY,
+			'MessageCollection'=>DataType::COLLECTION
 		),true);
 		parent::__construct($data);
 	}
@@ -36,6 +39,18 @@ class Conversation extends DataObject{
 		return ($this->getObject('LastSender') instanceof UserAccount)
 			?$this->_data['LastSender']
 			:new UserAccount();
+	}
+	
+	public function getConversationParticipantCollection(){
+		return isset($this->_data['ConversationParticipantCollection']) && $this->_data['ConversationParticipantCollection'] instanceof ConversationParticipantCollection
+			?$this->_data['ConversationParticipantCollection']
+			:new ConversationParticipantCollection();
+	}
+	
+	public function getMessageCollection(){
+		return isset($this->_data['MessageCollection']) && $this->_data['MessageCollection'] instanceof MessageCollection
+			?$this->_data['MessageCollection']
+			:new MessageCollection();
 	}
 	
 }

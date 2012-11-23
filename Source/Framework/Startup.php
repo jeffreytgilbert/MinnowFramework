@@ -52,14 +52,24 @@ final class Startup{
 	private $_settings_folder_path;
 	public function settingsFolderPath(){ return $this->_settings_folder_path; }
 	
+	private $_now;
+	public function now(){ return $this->_now; }
+	
 	private $_pageTimer;
+	// @deprecated 
 	public function pageTimer(){ return $this->_pageTimer; }
+	public function getPageTimer(){ return $this->_pageTimer; }
 	
 	private $_connections;
+	// @deprecated 
 	public function connections(){ return $this->_connections; }
+	public function getConnections(){ return $this->_connections; }
 	
 	private $_helpers;
+	// @deprecated 
 	public function helpers(){ return $this->_helpers; }
+	public function getHelpers(){ return $this->_helpers; }
+	
 	
 	public function appSettings(){
 		static $appSettings = null;
@@ -69,7 +79,7 @@ final class Startup{
 // 	private $_systemCache;
 // 	public function systemCache(){ return $this->_systemCache; }
 	
-	public function __construct($settings_folder_path, $application_name){
+	private function __construct($settings_folder_path, $application_name){
 		
 		header('Content-Type: text/html; charset=UTF-8');
 		
@@ -139,7 +149,11 @@ final class Startup{
 		// start the official page time after majority of startup tasks have been completed
 		$this->_pageTimer = new Timer();
 		$this->_pageTimer->start();
+		
 //		$this->_systemCache = new CacheObjectCollection();
+
+		$this->_now = new DateTimeObject('now');
+		
 		register_shutdown_function('Startup::shutdownHandler');
 	}
 	

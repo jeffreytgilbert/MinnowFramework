@@ -45,7 +45,7 @@ final class ObjectNameActions extends Actions{
 		$ObjectNameCollection = new ObjectNameCollection(parent::MySQLReadReturnArrayOfObjectsAction(/* list */));
 		
 		foreach($ObjectNameCollection->toArray() as $ObjectName){
-			$array = $DataCollection->getItemsBy('primary_key',$ObjectName->getInteger('primary_key'));
+			$array = $DataCollection->getObjectByFieldValue('primary_key',$ObjectName->getInteger('primary_key'));
 			foreach($array as $DataObject){
 				$DataObject->set('ObjectName',$ObjectName);
 			}

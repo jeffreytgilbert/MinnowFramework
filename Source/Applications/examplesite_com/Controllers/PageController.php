@@ -19,6 +19,12 @@ abstract class PageController extends Controller{
 	public function __construct(){
 		parent::__construct();
 		
+		// now that everything has been initialized, set the time to the mysql servers time since that's the connection we're using.
+		$MasterConnection = $this->getConnections()->MySQL();
+		$MasterConnection->query('SELECT NOW() AS right_now_gmt');
+		$MasterConnection->readRow();
+		RuntimeInfo::instance()->now()->setTimestamp(strtotime($MasterConnection->row_data['right_now_gmt']));
+		
 		// load components needed on every page manually. These may have object dependencies / inheritance issues if auto loaded
 		Run::fromComponents('AuthenticationComponent.php');
 		
