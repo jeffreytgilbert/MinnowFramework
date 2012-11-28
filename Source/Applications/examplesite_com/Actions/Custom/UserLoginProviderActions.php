@@ -9,19 +9,22 @@ final class UserLoginProviderActions extends Actions{
 	public static function insertUserLoginProvider(UserLoginProvider $UserLoginProvider){
 		return parent::MySQLCreateAction('
 			INSERT INTO user_login_provider (
+				created_datetime,
 				provider_name,
-				is_validation_required,
-				created_datetime
+				login_type,
+				is_validation_required
 			) VALUES (
+				:created_datetime,
 				:provider_name,
-				:is_validation_required,
-				:created_datetime
+				:login_type,
+				:is_validation_required
 			)',
 			// bind data to sql variables
 			array(
-				':provider_name' => $UserLoginProvider->getString('provider_name'),
-				':is_validation_required' => $UserLoginProvider->getBoolean('is_validation_required'),
 				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':provider_name' => $UserLoginProvider->getString('provider_name'),
+				':login_type' => $UserLoginProvider->getString('login_type'),
+				':is_validation_required' => $UserLoginProvider->getBoolean('is_validation_required'),
 				':user_login_provider_id' => $UserLoginProvider->getInteger('user_login_provider_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
@@ -37,10 +40,11 @@ final class UserLoginProviderActions extends Actions{
 		return new UserLoginProvider(parent::MySQLReadReturnSingleResultAsArrayAction('
 			SELECT 
 				user_login_provider_id,
-				provider_name,
-				is_validation_required,
 				created_datetime,
-				modified_datetime
+				modified_datetime,
+				provider_name,
+				login_type,
+				is_validation_required
 			FROM user_login_provider 
 			WHERE user_login_provider_id=:user_login_provider_id',
 			// bind data to sql variables
@@ -59,10 +63,11 @@ final class UserLoginProviderActions extends Actions{
 		$UserLoginProviderCollection = new UserLoginProviderCollection(parent::MySQLReadReturnArrayOfObjectsAction('
 			SELECT 
 				user_login_provider_id,
-				provider_name,
-				is_validation_required,
 				created_datetime,
-				modified_datetime
+				modified_datetime,
+				provider_name,
+				login_type,
+				is_validation_required
 			FROM user_login_provider 
 			',
 			// bind data to sql variables
@@ -100,10 +105,11 @@ final class UserLoginProviderActions extends Actions{
 		$UserLoginProviderCollection = new UserLoginProviderCollection(parent::MySQLReadReturnArrayOfObjectsAction('
 			SELECT 
 				user_login_provider_id,
-				provider_name,
-				is_validation_required,
 				created_datetime,
-				modified_datetime
+				modified_datetime,
+				provider_name,
+				login_type,
+				is_validation_required
 			FROM user_login_provider 
 			',
 			// bind data to sql variables
@@ -128,16 +134,18 @@ final class UserLoginProviderActions extends Actions{
 	public static function updateUserLoginProvider(UserLoginProvider $UserLoginProvider){
 		return parent::MySQLUpdateAction('
 			UPDATE user_login_provider 
-			SET provider_name=:provider_name,
-				is_validation_required=:is_validation_required,
-				modified_datetime=:modified_datetime
+			SET modified_datetime=:modified_datetime,
+				provider_name=:provider_name,
+				login_type=:login_type,
+				is_validation_required=:is_validation_required
 			WHERE user_login_provider_id=:user_login_provider_id
 			',
 			// bind data to sql variables
 			array(
-				':provider_name' => $UserLoginProvider->getString('provider_name'),
-				':is_validation_required' => $UserLoginProvider->getBoolean('is_validation_required'),
 				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':provider_name' => $UserLoginProvider->getString('provider_name'),
+				':login_type' => $UserLoginProvider->getString('login_type'),
+				':is_validation_required' => $UserLoginProvider->getBoolean('is_validation_required'),
 				':user_login_provider_id' => $UserLoginProvider->getInteger('user_login_provider_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)

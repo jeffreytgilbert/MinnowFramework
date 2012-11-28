@@ -214,29 +214,8 @@ abstract class SQLConnection
 		return preg_replace('/([^a-zA-Z0-9_\-])/s','',$str);
 	}
 	
-	public static function string($str, $max=null)
-	{
-		if(empty($str)) { return ''; }
-		$str=strval($str);
-	
-		if(isset($max)) { $str = substr($str,0,$max); }
-	
-		return self::escape($str);
-	}
-	
-	/**
-	 * Filter an array of strings into a WHERE blah IN ready format
-	 * @param array $array
-	 * @return string
-	 */
-	public static function strings($array)
-	{
-		$array=array_unique($array);
-		sort($array);
-		$array=array_filter($array,'SQLConnection::string');
-		$string=implode('","',$array);
-		return '("'.$string.'")';
-	}
+// 	abstract function strings(Array $array);
+// 	abstract function string($str, $max=null);
 	
 	/**
 	 * Filter an array of ints into a WHERE blah IN ready format

@@ -16,7 +16,6 @@ class UserLoginHistory extends DataObject{
 			'ip'=>DataType::TEXT,
 			'proxy'=>DataType::TEXT,
 			'description'=>DataType::TEXT,
-			'isp'=>DataType::TEXT,
 			'success'=>DataType::NUMBER
 		),true);
 		parent::__construct($data);
@@ -31,7 +30,7 @@ class UserLoginHistory extends DataObject{
 	
 	public function getUserAccount(){
 		return ($this->getObject('UserAccount') instanceof UserAccount)
-			?$this->_data['UserAccount']
+			?$this->_data['User']
 			:new UserAccount();
 	}
 	

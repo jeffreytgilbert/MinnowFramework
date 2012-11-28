@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 
-class OnlineMember extends DataObject{
+class OnlineMember extends AccessRequest{
 	public function __construct(Array $data=array()){
 		$this->addAllowedData(array(
 			'user_id'=>DataType::NUMBER,
@@ -14,6 +14,8 @@ class OnlineMember extends DataObject{
 		parent::__construct($data);
 	}
 
+	public function isOnline(){ return $this->getObject('UserAccount')->getBoolean('is_online'); }
+	
 	public static function cast(DataObject $DataObject){
 		return ($DataObject instanceof OnlineMember)?$DataObject:new OnlineMember($DataObject->toArray());
 	}

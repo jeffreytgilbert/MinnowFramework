@@ -86,6 +86,16 @@ class Helpers{
 		return $SecureHashHelper->getInstance();
 	}
 	
+	public function SecureCookie(){
+		if(isset($this->_helpers['SecureCookie'])
+				&& $this->_helpers['SecureCookie'] instanceof SecureCookieHelper){
+			return $this->_helpers['SecureCookie']->getInstance();
+		}
+		Run::fromHelpers('SecureCookie/SecureCookieHelper.php');
+		$this->_helpers['SecureCookie'] = $SecureCookieHelper = new SecureCookieHelper($this->config('Helpers/SecureCookie/'));
+		return $SecureCookieHelper->getInstance();
+	}
+	
 	public function Video(){
 		if(isset($this->_helpers['Video'])
 				&& $this->_helpers['Video'] instanceof VideoHelper){

@@ -12,7 +12,18 @@ abstract class PageController extends Controller{
 	
 	use HTMLFormat, JSONFormat, XMLFormat;
 	
-	protected $Session;
+	// add some constants for commonly used pages
+	const _LOGIN_PAGE = '/Account/Login/';
+	const _LOGOUT_PAGE = '/Account/Logout/';
+	const _REGISTRATION_PAGE = '/Account/Login/';
+	const _404_PAGE = '/404/'; // couldnt find content
+	const _403_PAGE = '/403/'; // unexpected login error
+	const _500_PAGE = '/500/'; // server error
+	
+	protected $_Session, $_Authentication;
+	
+	public function getSession(){ return SessionAbstraction::cast($this->_Session); }
+	public function getAuthentication(){ return AuthenticationComponent::cast($this->_Authentication); }
 	
 	// define the logic that happens on every page for your application
 	
@@ -25,10 +36,15 @@ abstract class PageController extends Controller{
 		$MasterConnection->readRow();
 		RuntimeInfo::instance()->now()->setTimestamp(strtotime($MasterConnection->row_data['right_now_gmt']));
 		
+		// load required files for this controller automatically and do so before components so components can use included files
+		$this->loadIncludedFiles();
+		
+		// load any globally used helpers
+		$this->_Session = $this->getHelpers()->Session(); // especially sessions, since it needs to run before anything else starts a session
+		
 		// load components needed on every page manually. These may have object dependencies / inheritance issues if auto loaded
 		Run::fromComponents('AuthenticationComponent.php');
-		
-		$this->loadIncludedFiles();
+		$this->_Authentication = new AuthenticationComponent($this);
 		
 		// add all the javascript files you want loaded every html page request here
 		$this->_extra_js = array_merge($this->_extra_js,array(
@@ -39,10 +55,6 @@ abstract class PageController extends Controller{
 		$this->_extra_css = array_merge($this->_extra_css,array(
 			'default'
 		));
-		
-		$this->Session = $this->getHelpers()->Session();
-		
-		$HybridAuth = $this->getHelpers()->HybridAuth();
 		
 		$this->handleRequest();
 	}

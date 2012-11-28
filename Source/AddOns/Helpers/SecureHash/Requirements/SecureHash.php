@@ -26,6 +26,7 @@ class SecureHash{
 		$_salt_index = 2,
 		$_makeHash_index = 3;
 	
+	
 	public function __construct($debug, $hash_algorithm, $iterations, $salt_bytes, $hash_bytes){
 		$this->debug = $debug;
 		$this->hash_algorithm = $hash_algorithm;
@@ -36,47 +37,47 @@ class SecureHash{
 	
 	public function generateSecureHash($password)
 	{
-	    // format: algorithm:iterations:salt:hash
-	    $salt = base64_encode(mcrypt_create_iv($this->salt_bytes, MCRYPT_DEV_URANDOM));
-	    return $this->hash_algorithm . ':' . $this->iterations . ':' .  $salt . ':' . 
-	        base64_encode(self::makeHash(
-	            $this->hash_algorithm,
-	            $password,
-	            $salt,
-	            $this->iterations,
-	            $this->hash_bytes,
-	            true
-	        ));
+		// format: algorithm:iterations:salt:hash
+		$salt = base64_encode(mcrypt_create_iv($this->salt_bytes, MCRYPT_DEV_URANDOM));
+		return $this->hash_algorithm . ':' . $this->iterations . ':' .  $salt . ':' . 
+			base64_encode(self::makeHash(
+				$this->hash_algorithm,
+				$password,
+				$salt,
+				$this->iterations,
+				$this->hash_bytes,
+				true
+			));
 	}
 	
 	public function validatePassword($password, $good_hash)
 	{
-	    $params = explode(':', $good_hash);
-	    if(count($params) < $this->_sections)
-	       return false; 
-	    $makeHash = base64_decode($params[$this->_makeHash_index]);
-	    return self::checkHash(
-	        $makeHash,
-	        self::makeHash(
-	            $params[$this->_algorithm_index],
-	            $password,
-	            $params[$this->_salt_index],
-	            (int)$params[$this->_iteration_index],
-	            strlen($makeHash),
-	            true
-	        )
-	    );
+		$params = explode(':', $good_hash);
+		if(count($params) < $this->_sections)
+		   return false; 
+		$makeHash = base64_decode($params[$this->_makeHash_index]);
+		return self::checkHash(
+			$makeHash,
+			self::makeHash(
+				$params[$this->_algorithm_index],
+				$password,
+				$params[$this->_salt_index],
+				(int)$params[$this->_iteration_index],
+				strlen($makeHash),
+				true
+			)
+		);
 	}
 	
 	// Compares two strings $a and $b in length-constant time.
 	private function checkHash($a, $b)
 	{
-	    $diff = strlen($a) ^ strlen($b);
-	    for($i = 0; $i < strlen($a) && $i < strlen($b); $i++)
-	    {
-	        $diff |= ord($a[$i]) ^ ord($b[$i]);
-	    }
-	    return $diff === 0; 
+		$diff = strlen($a) ^ strlen($b);
+		for($i = 0; $i < strlen($a) && $i < strlen($b); $i++)
+		{
+			$diff |= ord($a[$i]) ^ ord($b[$i]);
+		}
+		return $diff === 0; 
 	}
 	
 	/*
@@ -96,31 +97,40 @@ class SecureHash{
 	 */
 	private function makeHash($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
 	{
-	    $algorithm = strtolower($algorithm);
-	    if(!in_array($algorithm, hash_algos(), true))
-	        die('PBKDF2 ERROR: Invalid hash algorithm.');
-	    if($count <= 0 || $key_length <= 0)
-	        die('PBKDF2 ERROR: Invalid parameters.');
+		$algorithm = strtolower($algorithm);
+		if(!in_array($algorithm, hash_algos(), true))
+			die('PBKDF2 ERROR: Invalid hash algorithm.');
+		if($count <= 0 || $key_length <= 0)
+			die('PBKDF2 ERROR: Invalid parameters.');
 	
-	    $hash_length = strlen(hash($algorithm, '', true));
-	    $block_count = ceil($key_length / $hash_length);
+		$hash_length = strlen(hash($algorithm, '', true));
+		$block_count = ceil($key_length / $hash_length);
 	
-	    $output = '';
-	    for($i = 1; $i <= $block_count; $i++) {
-	        // $i encoded as 4 bytes, big endian.
-	        $last = $salt . pack('N', $i);
-	        // first iteration
-	        $last = $xorsum = hash_hmac($algorithm, $last, $password, true);
-	        // perform the other $count - 1 iterations
-	        for ($j = 1; $j < $count; $j++) {
-	            $xorsum ^= ($last = hash_hmac($algorithm, $last, $password, true));
-	        }
-	        $output .= $xorsum;
-	    }
+		$output = '';
+		for($i = 1; $i <= $block_count; $i++) {
+			// $i encoded as 4 bytes, big endian.
+			$last = $salt . pack('N', $i);
+			// first iteration
+			$last = $xorsum = hash_hmac($algorithm, $last, $password, true);
+			// perform the other $count - 1 iterations
+			for ($j = 1; $j < $count; $j++) {
+				$xorsum ^= ($last = hash_hmac($algorithm, $last, $password, true));
+			}
+			$output .= $xorsum;
+		}
 	
-	    if($raw_output)
-	        return substr($output, 0, $key_length);
-	    else
-	        return bin2hex(substr($output, 0, $key_length));
+		if($raw_output)
+			return substr($output, 0, $key_length);
+		else
+			return bin2hex(substr($output, 0, $key_length));
 	}
+	
 }
+
+
+
+
+
+
+
+

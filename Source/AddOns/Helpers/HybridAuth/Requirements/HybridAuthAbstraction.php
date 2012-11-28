@@ -33,6 +33,50 @@ class HybridAuthAbstraction{
 		return $this->_hybridAuth->getAdapter($provider);
 	}
 	
+	public function getSerializedCredentialsByProvider($requested_provider){
+				
+		$session_data = $this->getHybridAuthInstance()->getSessionData();
+		
+// 		pr($_SESSION['HA::STORE']);
+		$session_array = unserialize($session_data);
+// 		pr($session_array);
+		
+		$keys_by_provider = array();
+		$full_keys_by_provider = array();
+		$providers = array();
+		if(is_array($session_array)){
+			foreach($session_array as $key => $value){
+				$key_parts = explode('.',$key);
+				$container = array_shift($key_parts);
+				$provider = array_shift($key_parts);
+				$simple_key = implode('.',$key_parts);
+				$keys_by_provider[$provider][$simple_key] = $value;
+				$full_keys_by_provider[$provider][$container.'.'.$provider.'.'.$simple_key] = $value;
+			}
+//  		pr('Keys by provider');
+// 		pr($keys_by_provider);
+//  		pr($full_keys_by_provider);
+// 		pr('Segmented credentials');
+// 		foreach($keys_by_provider as $provider => $credentials){
+// 			pr($provider);
+// 			pr($credentials);
+// 			pr(serialize($credentials));
+// 		}
+//  		pr('All credentials');
+			
+			//$credentials = serialize($keys_by_provider);
+			return serialize($full_keys_by_provider[lower($requested_provider)]);
+		} else {
+			// throw error here?
+			// return false?
+			return serialize(array());
+		}
+	}
+	
+	public function setProviderCredentials(Array $provider_credentials){
+		$this->_hybridAuth->restoreSessionData(serialize($provider_credentials));
+	}
+	
 	public function getConnectedStates(){
 		$connected_states = array();
 		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
@@ -186,51 +230,63 @@ class HybridAuthAbstraction{
 		}
 	}
 	
-	public function authenticate($provider){
-		ob_start();
+	public function authenticate($provider, $redirect_url=null){
+	 	ob_start();
+		
 		try{
-				
+ 			
 			// try to authenticate the selected $provider
 			$adapter = $this->_hybridAuth->authenticate( $provider );
 
 			// if okay, we will redirect to user profile page
-			$this->_hybridAuth->redirect( $this->_safe_redirect_url );
+			if(!is_null($redirect_url)){ $this->_hybridAuth->redirect( $redirect_url ); }
+			
+	 		$contents = ob_get_contents();
+	 		ob_flush();
+			return $contents;
 			
 		} catch( Exception $e ){
-		// In case we have errors 6 or 7, then we have to use Hybrid_Provider_Adapter::logout() to
-		// let hybridauth forget all about the user so we can try to authenticate again.
-		
-		// Display the recived error,
-		// to know more please refer to Exceptions handling section on the userguide
-		switch( $e->getCode() ){
-		case 0 : $error = "Unspecified error."; break;
-				case 1 : $error = "Hybriauth configuration error."; break;
-				case 2 : $error = "Provider not properly configured."; break;
-				case 3 : $error = "Unknown or disabled provider."; break;
-				case 4 : $error = "Missing provider application credentials."; break;
-				case 5 : $error = "Authentification failed. The user has canceled the authentication or the provider refused the connection."; break;
-				case 6 : $error = "User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again.";
-				$adapter->logout();
-		break;
-		case 7 : $error = "User not connected to the provider.";
-				$adapter->logout();
-				break;
-		}
+			// In case we have errors 6 or 7, then we have to use Hybrid_Provider_Adapter::logout() to
+			// let hybridauth forget all about the user so we can try to authenticate again.
+			
+			// Display the recived error,
+			// to know more please refer to Exceptions handling section on the userguide
+			switch( $e->getCode() ){
+				case 0 : 
+					$error = "Unspecified error."; 
+					break;
+				case 1 : 
+					$error = "Hybriauth configuration error."; 
+					break;
+				case 2 : 
+					$error = "Provider not properly configured."; 
+					break;
+				case 3 : 
+					$error = "Unknown or disabled provider."; 
+					break;
+				case 4 : 
+					$error = "Missing provider application credentials."; 
+					break;
+				case 5 : 
+					$error = "Authentification failed. The user has canceled the authentication or the provider refused the connection."; 
+					break;
+				case 6 : 
+					$error = "User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again.";
+					$adapter->logout();
+					break;
+				case 7 : 
+					$error = "User not connected to the provider.";
+					$adapter->logout();
+					break;
+			}
 			
 			// well, basically your should not display this to the end user, just give him a hint and move on..
 			$error .= "<br /><br /><b>Original error message:</b> " . $e->getMessage();
 			$error .= "<hr /><pre>Trace:<br />" . $e->getTraceAsString() . "</pre>";
+			
+	 		ob_flush();
+			return $error;
 		}
-		
-		if( $error ){
-			echo '<p><h3 style="color:red">Error!</h3>' . $error . '</p>';
-			echo "<pre>Session:<br />" . print_r( $_SESSION, true ) . "</pre><hr />";
-		}
-		
-		$contents = ob_get_contents();
-		ob_flush();
-		
-		return $contents;
 	}
 	
 	

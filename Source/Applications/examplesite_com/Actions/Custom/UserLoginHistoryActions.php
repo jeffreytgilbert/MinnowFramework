@@ -15,7 +15,6 @@ final class UserLoginHistoryActions extends Actions{
 				ip,
 				proxy,
 				description,
-				isp,
 				success
 			) VALUES (
 				:created_datetime,
@@ -24,7 +23,6 @@ final class UserLoginHistoryActions extends Actions{
 				:ip,
 				:proxy,
 				:description,
-				:isp,
 				:success
 			)',
 			// bind data to sql variables
@@ -35,7 +33,6 @@ final class UserLoginHistoryActions extends Actions{
 				':ip' => $UserLoginHistory->getString('ip'),
 				':proxy' => $UserLoginHistory->getString('proxy'),
 				':description' => $UserLoginHistory->getString('description'),
-				':isp' => $UserLoginHistory->getString('isp'),
 				':success' => $UserLoginHistory->getInteger('success'),
 				':user_id' => $UserLoginHistory->getInteger('user_id')
 			),
@@ -59,7 +56,6 @@ final class UserLoginHistoryActions extends Actions{
 				ip,
 				proxy,
 				description,
-				isp,
 				success
 			FROM user_login_history 
 			WHERE user_id=:user_id',
@@ -86,7 +82,6 @@ final class UserLoginHistoryActions extends Actions{
 				ip,
 				proxy,
 				description,
-				isp,
 				success
 			FROM user_login_history 
 			',
@@ -132,7 +127,6 @@ final class UserLoginHistoryActions extends Actions{
 				ip,
 				proxy,
 				description,
-				isp,
 				success
 			FROM user_login_history 
 			',
@@ -164,7 +158,6 @@ final class UserLoginHistoryActions extends Actions{
 				ip=:ip,
 				proxy=:proxy,
 				description=:description,
-				isp=:isp,
 				success=:success
 			WHERE user_id=:user_id
 			',
@@ -176,7 +169,6 @@ final class UserLoginHistoryActions extends Actions{
 				':ip' => $UserLoginHistory->getString('ip'),
 				':proxy' => $UserLoginHistory->getString('proxy'),
 				':description' => $UserLoginHistory->getString('description'),
-				':isp' => $UserLoginHistory->getString('isp'),
 				':success' => $UserLoginHistory->getInteger('success'),
 				':user_id' => $UserLoginHistory->getInteger('user_id')
 			),

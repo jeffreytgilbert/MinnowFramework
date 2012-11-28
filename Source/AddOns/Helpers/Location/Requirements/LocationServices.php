@@ -16,6 +16,8 @@ class LocationServices
 		return $long;
 	}
 	
+	// this logic could be changed. i dont know that its the perfect setup for grabbing the ip, but it tunnels through proxies (sorta). 
+	// I think HTTP_X_FORWARDED_FOR sometimes returns a comma separated array and this thing expects a string
 	public static function guessIP(){
 		// because fake ips from proxies are bogus. // read up here: http://roshanbh.com.np/2007/12/getting-real-ip-address-in-php.html
 		//check ip from share internet

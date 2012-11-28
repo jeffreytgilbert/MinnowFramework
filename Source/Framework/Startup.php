@@ -223,13 +223,13 @@ final class Startup{
 // 				echo 'This is a request for the '.$f['controller_name']." Controller\n";
 				
 				$controller_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['controller_name']);
-				if(isset($f['folder_name'])){
-// 					echo 'This is a request for the '.$f['controller_name']." Controller in the folder ".$f['folder_name']."\n";
+				if(isset($f['controller_path'])){
+// 					echo 'This is a request for the '.$f['controller_name']." Controller in the folder ".$f['controller_path']."\n";
 					
-					$folder_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['folder_name']);
-					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_name.'/'.$controller_name.'Page.php'))){
+					$folder_path = preg_replace('/([^a-zA-Z0-9])/s','',$f['controller_path']);
+					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_path.'/'.$controller_name.'Page.php'))){
 // 						echo 'This file was found'."\n";
-						Run::fromControllers('Pages/'.$folder_name.'/'.$controller_name.'Page.php');
+						Run::fromControllers('Pages/'.$folder_path.'/'.$controller_name.'Page.php');
 						if(class_exists($controller_name.'Page')){
 // 							echo 'This class exists'."\n";
 							$class_name = $controller_name.'Page';
@@ -271,18 +271,20 @@ final class Startup{
 		$not_rendered = true;
 		if(isset($f['controller_format']) && strtolower($f['controller_format']) != 'page' && strtolower($f['controller_format']) != 'html'){ //  && $f['controller_format'] != 'html' // for optional link formatting
 			$output_method = 'render'.$f['controller_format'];
-			if(method_exists($Page,$output_method)){
+			if($Page instanceof $output_method.'Capable'){ // check to see if the page is capable of rendering this content
 				$Page->$output_method();
 				$not_rendered = false;
 			}
+			
 		}
 		
 		if($not_rendered) {
-			if($Page instanceof HTMLCapable){
+			if($Page instanceof HTMLCapable){ // check to see if the page can render the default content type
 				$Page->renderHTML();
 				$Page->renderThemedHTMLPage();
 			}
 		}
-		echo $Page->getOutput();
+		
+		echo $Page->getOutput(); // output whats in the page buffer
 	}
 }

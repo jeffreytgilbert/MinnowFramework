@@ -1,6 +1,6 @@
 <?php
 
-class Location extends DataObject{
+class LocationFromIp extends DataObject{
 	
 	public function __construct($data=array(), $default_filter='Parse::decode'){
 		$this->addAllowedData(array(
@@ -17,20 +17,22 @@ class Location extends DataObject{
 			'utctime'=>DataType::DATETIME,
 			'dst_offset'=>DataType::NUMBER,
 			'area_code'=>DataType::NUMBER,
-			'dma_code'=>DataType::NUMBER
-		),true);
+			'dma_code'=>DataType::NUMBER,
+			'ip'=>DataType::TEXT
+		), true);
+		
 		parent::__construct($data, $default_filter);
 	}
-	
+
 	public static function cast(DataObject $DataObject){
-		return ($DataObject instanceof Location)?$DataObject:new Location($DataObject->toArray());
+		return ($DataObject instanceof LocationFromIp)?$DataObject:new LocationFromIp($DataObject->toArray());
 	}
 	
 }
 
-class LocationCollection extends DataCollection{
+class LocationFromIpCollection extends DataCollection{
 	public function __construct(Array $array_of_objects=null){
-		$this->setCollectionType('Location');
+		$this->setCollectionType('LocationFromIp');
 		parent::__construct($array_of_objects);
 	}
 }

@@ -4,6 +4,8 @@ class SessionAbstraction {
 	
 	private $_sessionConfig;
 	
+	public static function cast(SessionAbstration $SessionAbstraction){ return $SessionAbstraction; }
+	
 	public function __construct(SessionConfig $SessionConfig){
 		$this->_sessionConfig = $SessionConfig;
 	}

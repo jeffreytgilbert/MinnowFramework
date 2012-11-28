@@ -21,6 +21,16 @@ class Model implements Iterator, Serializable{
 	*/
 	public function __construct(Array $data=array()){
 		$this->setDataFromArray($data);
+		// Pre-initialize objects for collections and data objects for smooth sailing when traversing.
+		foreach($this->_allowed_data as $column_name => $data_type){
+			if(!isset($this->_data[$column_name])){
+				switch($data_type){
+					case DataType::OBJECT:		$this->set($column_name, new DataObject()); break;
+					case DataType::COLLECTION:	$this->set($column_name, new DataCollection()); break;
+				}
+			}
+		}
+		
 	}
 	
 	public function set($key_name, $data_value){
@@ -195,6 +205,7 @@ class Model implements Iterator, Serializable{
 	}
 	
 	protected function addAllowedData(Array $a, $typed_array = false){
+		//pr($a);
 		if(!$typed_array){
 			$a = array_flip($a);
 			foreach($a as $key => $value){ $a[$key] = 'text'; }

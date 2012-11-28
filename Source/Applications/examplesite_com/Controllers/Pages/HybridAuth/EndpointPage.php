@@ -9,7 +9,7 @@ class EndPointPage extends PageController implements HTMLCapable{
 	}
 	
 	protected function handleRequest(){
-		$this->RuntimeInfo->helpers()->HybridAuth()->endpoint();
+		$this->getHelpers()->HybridAuth()->endpoint();
 	}
 
 	public function renderHTML(){ parent::renderHTML(); }

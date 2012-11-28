@@ -247,7 +247,31 @@ final class MySQLAbstraction extends SQLConnection{
 	 * Escape strings to prepare them for insert.
 	 */
 	final public function escape($data) { return $this->db_handle->quote($data); }
-
+	
+	final public static function string($str, $max=null)
+	{
+		if(empty($str)) { return ''; }
+		$str=strval($str);
+	
+		if(isset($max)) { $str = substr($str,0,$max); }
+	
+		return RuntimeInfo::instance()->getConnections()->MySQL()->escape($str);
+	}
+	
+	/**
+	 * Filter an array of strings into a WHERE blah IN ready format
+	 * @param array $array
+	 * @return string
+	 */
+	final public static function strings($array)
+	{
+		$array=array_unique($array);
+		sort($array);
+		$array=array_filter($array,'MySQLAbstraction::string');
+		$string=implode('","',$array);
+		return '("'.$string.'")';
+	}
+	
 	/**
 	 * Return the number of affected rows
 	 */

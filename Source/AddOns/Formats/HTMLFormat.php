@@ -34,10 +34,11 @@ trait HTMLFormat{
 	
 	public function renderHTML(){
 		$Page = PageController::cast($this);
-		$this->addCss('Pages/'.$Page->getControllerName());
-		$this->addJs('Pages/'.$Page->getControllerName());
+		$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().'/'.$Page->getControllerName();
+		$this->addCss('Pages/'.$path);
+		$this->addJs('Pages/'.$path);
 		
-		$this->_page_body = $this->runCodeReturnOutput('Pages/'.$Page->getControllerName().'/layout.php');
+		$this->_page_body = $this->runCodeReturnOutput('Pages/'.$path.'/layout.php');
 	}
 	
 	public function setPageTitle($page_title){ $this->_page_title = $page_title; }

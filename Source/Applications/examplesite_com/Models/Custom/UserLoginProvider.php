@@ -8,10 +8,11 @@ class UserLoginProvider extends DataObject{
 	public function __construct(Array $data=array()){
 		$this->addAllowedData(array(
 			'user_login_provider_id'=>DataType::NUMBER,
-			'provider_name'=>DataType::TEXT,
-			'is_validation_required'=>DataType::BOOLEAN,
 			'created_datetime'=>DataType::DATETIME,
-			'modified_datetime'=>DataType::DATETIME
+			'modified_datetime'=>DataType::DATETIME,
+			'provider_name'=>DataType::TEXT,
+			'login_type'=>DataType::TEXT,
+			'is_validation_required'=>DataType::BOOLEAN
 		),true);
 		parent::__construct($data);
 	}

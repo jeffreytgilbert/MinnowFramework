@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 
-class OnlineGuest extends DataObject{
+class OnlineGuest extends AccessRequest{
 	public function __construct(Array $data=array()){
 		$this->addAllowedData(array(
 			'php_session_id'=>DataType::TEXT,
@@ -13,6 +13,8 @@ class OnlineGuest extends DataObject{
 		),true);
 		parent::__construct($data);
 	}
+	
+	public function isOnline(){ return false; }
 
 	public static function cast(DataObject $DataObject){
 		return ($DataObject instanceof OnlineGuest)?$DataObject:new OnlineGuest($DataObject->toArray());

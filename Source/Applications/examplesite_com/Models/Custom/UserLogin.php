@@ -30,7 +30,6 @@ class UserLogin extends DataObject{
 	
 	// Static typed child methods for autocomplete on object
 	
-	
 	public function getUserAccount(){
 		return ($this->getObject('UserAccount') instanceof UserAccount)
 			?$this->_data['UserAccount']

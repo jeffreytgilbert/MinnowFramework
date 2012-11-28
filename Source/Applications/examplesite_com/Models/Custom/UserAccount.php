@@ -22,10 +22,10 @@ class UserAccount extends DataObject{
 			'latitude'=>DataType::NUMBER,
 			'longitude'=>DataType::NUMBER,
 			'gmt_offset'=>DataType::NUMBER,
-			'is_email_validated'=>DataType::BOOLEAN,
+			'is_login_collection_validated'=>DataType::BOOLEAN,
 			'is_online'=>DataType::BOOLEAN,
 			'is_closed'=>DataType::BOOLEAN,
-			'pass_code'=>DataType::SECRET,
+			'password_hash'=>DataType::SECRET,
 			'unread_messages'=>DataType::NUMBER,
 				
 			'AppPermissionCollection'=>DataType::COLLECTION, // all permissions this user allows the current 3rd party application to have
@@ -192,6 +192,19 @@ class UserAccount extends DataObject{
 			?$this->_data['AvatarPartCollection']
 			:new AvatarPartCollection();
 	}
+	
+	  //////
+	 // 
+	////// ustom methods go down here
+
+	public function isRole($role_name){
+		$Role = $this->getUserRoleCollection()->getObjectByFieldValue('role',$role_name);
+		
+		// if return is null, there wont be a matching record for that role in this users role collection
+		if($Role->getString('role') != ''){ return true; }
+		return false;
+	}
+	
 	
 }
 

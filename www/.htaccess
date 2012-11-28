@@ -21,7 +21,7 @@ RewriteRule ^img/(.*)$ static.php?type=img&path=$1 [L]
 
 # catch /FolderName/ScriptName.FormatType?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[folder_name]=$1&framework[controller_name]=$2&framework[controller_format]=$3&%1 [L]
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[controller_path]=$1&framework[controller_name]=$2&framework[controller_format]=$3&%1 [L]
 
 # catch /ScriptName.FormatType?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
@@ -29,7 +29,7 @@ RewriteRule ^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/?$ index.php?framework[controlle
 
 # catch /FolderName/ScriptName?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?framework[folder_name]=$1&framework[controller_name]=$2&framework[controller_format]=html&%1 [L]
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?framework[controller_path]=$1&framework[controller_name]=$2&framework[controller_format]=html&%1 [L]
 
 # catch /ScriptName?whatever
 RewriteCond %{QUERY_STRING} ^(.*)$

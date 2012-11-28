@@ -16,6 +16,7 @@ abstract class Controller {
 		$_data = array(),
 		$_tpl,
 		$_page_body,
+		$_controller_path,
 		$_controller_name,
 		$_controller_format,
 		
@@ -39,6 +40,7 @@ abstract class Controller {
 	public function __construct(){
 		$this->_tpl = new TemplateParser();
 		
+		$this->_controller_path = isset($_GET['framework']['controller_path'])?preg_replace('/([^a-zA-Z0-9])/s','',$_GET['framework']['controller_path']):'';
 		$this->_controller_name = isset($_GET['framework']['controller_name'])?$_GET['framework']['controller_name']:'Index'; // default to Index
 		$this->_controller_format = isset($_GET['framework']['controller_format'])?$_GET['framework']['controller_format']:'html'; // default to HTML
 		
@@ -80,6 +82,7 @@ abstract class Controller {
 	public function getLoadedModels(){ return $this->_models; }
 	public function getLoadedActions(){ return $this->_actions; }
 	
+	public function getControllerPath(){ return $this->_controller_path; }
 	public function getControllerName(){ return $this->_controller_name; }
 	public function getControllerFormat(){ return $this->_controller_format; }
 	

@@ -6,9 +6,8 @@ class LocationHelper extends Helper{
 		// run parent construct action to save settings
 		parent::__construct($Config);
 
-		Run::fromHelpers('Location/Requirements/Location.php');
-		Run::fromHelpers('Location/Requirements/LocationFromIp.php');
-		Run::fromHelpers('Location/Requirements/NetworkAddress.php');
+		Run::fromModels('Custom/LocationFromIp.php');
+		Run::fromModels('Custom/NetworkAddress.php');
 		Run::fromHelpers('Location/Requirements/LocationServices.php');
 		
 		$this->_instance = new LocationServices(
