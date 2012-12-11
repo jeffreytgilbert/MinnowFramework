@@ -17,7 +17,11 @@ trait HTMLFormat{
 	protected $output_template = '';
 	
 	public function initializeHTML(){
-		$Page = PageController::cast($this);
+		if($this instanceof PageController){
+			$Page = PageController::cast($this);
+		} else {
+			$Page = ComponentController::cast($this);
+		}
 		
 		$this->_page_title = $Page->getAppSettings()->getString('default_page_title');
 		$this->_page_keywords = $Page->getAppSettings()->getString('default_page_keywords');

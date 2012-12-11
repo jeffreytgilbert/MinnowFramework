@@ -4,8 +4,6 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 */
 
-
-
 class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLCapable{
 	protected function loadIncludedFiles(){
 		
@@ -70,9 +68,9 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 // 		pr($this->getHelpers()->HybridAuth()->getConnectedActivity());
 	}
 	
-	public function renderJSON(){ parent::renderJSON(); }
-	public function renderXML(){ parent::renderXML(); }
-	public function renderHTML(){ parent::renderHTML(); }
+	public function renderJSON(){ return parent::renderJSON(); }
+	public function renderXML(){ return parent::renderXML(); }
+	public function renderHTML(){ return parent::renderHTML(); }
 	
 }
 

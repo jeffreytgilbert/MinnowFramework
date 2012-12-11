@@ -20,15 +20,16 @@ abstract class PageController extends Controller{
 	const _403_PAGE = '/403/'; // unexpected login error
 	const _500_PAGE = '/500/'; // server error
 	
-	protected $_Session, $_Authentication;
+	protected $_Session, $_Authentication, $_Components;
 	
 	public function getSession(){ return SessionAbstraction::cast($this->_Session); }
 	public function getAuthentication(){ return AuthenticationComponent::cast($this->_Authentication); }
+	public function getComponents(){ return Components::cast($this->_Components); }
 	
 	// define the logic that happens on every page for your application
 	
-	public function __construct(){
-		parent::__construct();
+	public function __construct($ParentObject=null){
+		parent::__construct($ParentObject);
 		
 		// now that everything has been initialized, set the time to the mysql servers time since that's the connection we're using.
 		$MasterConnection = $this->getConnections()->MySQL();
@@ -43,8 +44,11 @@ abstract class PageController extends Controller{
 		$this->_Session = $this->getHelpers()->Session(); // especially sessions, since it needs to run before anything else starts a session
 		
 		// load components needed on every page manually. These may have object dependencies / inheritance issues if auto loaded
-		Run::fromComponents('AuthenticationComponent.php');
-		$this->_Authentication = new AuthenticationComponent($this);
+// 		Run::fromComponents('AuthenticationComponent.php');
+		
+		$this->_Components = new Components();
+		
+		$this->_Authentication = $this->_Components->Authentication($this);
 		
 		// add all the javascript files you want loaded every html page request here
 		$this->_extra_js = array_merge($this->_extra_js,array(

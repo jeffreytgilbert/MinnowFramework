@@ -9,6 +9,7 @@ trait XMLFormat{
 	public function renderXML(){
 		header("Content-type: text/xml; charset=utf-8");
 		$this->_output = $this->renderStatusMessagesAsXML();
+		return $this->_output;
 	}
 	
 	public function renderStatusMessagesAsXML(){

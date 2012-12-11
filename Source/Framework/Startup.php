@@ -187,6 +187,9 @@ final class Startup{
 		// Same for helpers
 		Run::fromHelpers('Helpers.php');
 		
+		// Load Component fetcher after all other dependencies have been loaded.
+		Run::fromComponents('Components.php');
+		
 		// Load the Models customization layer
 		Run::fromModels('DataObject.php');
 		Run::fromModels('DataCollection.php');
@@ -194,8 +197,10 @@ final class Startup{
 		// Load the sugar methods in actions so the actions accessors can better format the output to DataObjects and DataCollections
 		Run::fromActions('Actions.php');
 		
+		
 		// Load the PageController which is the base of all page requests and allows the user to override controller behaviors for things like themes, logins, etc
 		Run::fromControllers('PageController.php');
+		Run::fromControllers('ComponentController.php');
 	}
 	
 	// This should be sensitive to the type of output the page should be rendering, but currently isn't

@@ -73,6 +73,7 @@ class VideoAbstraction {
 	
 	public function saveAsH264($save_path){
 		shell_exec('/usr/bin/ffmpeg -i '.$this->_path.' -acodec libfaac -ab '.$this->_audio_bit_rate.'k -vcodec libx264 -vpre slow -b '.$this->_video_bit_rate.' -r '.$this->_fps.' -threads 0 '.$save_path.' 2>&1');
+		// /usr/bin/ffmpeg -i '.$original.' -acodec libfaac -ab '.$audio_bit_rate.'k -vcodec libx264 -vpre slow -b '.$video_bit_rate.' -r '.$fps.' -threads 0 '.$destination.' 2>&1
 		return $this;
 	}
 	

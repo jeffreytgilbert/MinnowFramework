@@ -19,6 +19,7 @@ abstract class Controller {
 		$_controller_path,
 		$_controller_name,
 		$_controller_format,
+		$_ParentObject,
 		
 		// well these aren't cased appropriately are they
 		$page_result_start = 0,
@@ -37,7 +38,10 @@ abstract class Controller {
 		$Confirmations,
 		$Input;
 	
-	public function __construct(){
+	public function __construct($ParentObject=null){
+		
+		$this->_ParentObject = $ParentObject; // parent object makes it easier to traverse component and controller hierarchies.
+		
 		$this->_tpl = new TemplateParser();
 		
 		$this->_controller_path = isset($_GET['framework']['controller_path'])?preg_replace('/([^a-zA-Z0-9])/s','',$_GET['framework']['controller_path']):'';
@@ -138,15 +142,21 @@ abstract class Controller {
 	protected $_output='';
 	public function getOutput(){ return $this->_output; }
 		
-	public function runCodeReturnOutput($path){
+	public function runCodeReturnOutput($path, $start_path_in_view_folder=true){
 //		$ID = RuntimeInfo::instance()->id();
 		
 		ob_start();
 		
 		extract($this->data());
 		
+		if($start_path_in_view_folder){
+			$base_path = dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/';
+		} else {
+			$base_path = '';
+		}
+		
 		try{
-			$file = File::osPath(dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/').$path;
+			$file = File::osPath($base_path.$path);
 			if(file_exists($file)){ require($file); }
 			else { exit('Could not load required file:'. $file); }
 		} catch (Exception $e){

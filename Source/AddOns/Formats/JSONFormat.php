@@ -8,6 +8,7 @@ trait JSONFormat{
 	
 	public function renderJSON(){
 		$this->_output = $this->renderStatusMessagesAsJSON();
+		return $this->_output;
 	}
 	
 	public function renderStatusMessagesAsJSON(){

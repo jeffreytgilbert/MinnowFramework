@@ -37,6 +37,13 @@ class AuthenticationComponent extends Component{
 	protected $_is_api_call		= false;
 	private $_HybridAuthHelper, $_LocationHelper;
 	
+	const REQUEST_FULL_REGISTRATION = 'FullRegistration';
+	const REQUEST_FINISH_REGISTRATION = 'FinishRegistration';
+	const REQUEST_LOGIN = 'Login';
+	const REQUEST_LOGOUT = 'Logout';
+	const REQUEST_CONFIRM_CONTACT = 'ConfirmContact';
+	
+	// maybe these can get refactored to a component controller for login status, or maybe they stay here instead. 
 	const _LOGGED_OUT_BY_REQUEST = 1;
 	const _LOGGED_OUT_BAD_SESSION = 2;
 // 	const _LOGGED_OUT_BY_REQUEST = 'logged out by request';
@@ -59,10 +66,12 @@ class AuthenticationComponent extends Component{
 	const MSG_SYSTEM_ERROR = 14;
 	const MSG_UNKNOWN_ERROR = 15;
 	
-	public static function cast(AuthenticationComponent $AuthenticationComponent){ return $AuthenticationComponent; }
+	public static function cast(Component $AuthenticationComponent){ 
+		if($AuthenticationComponent instanceof AuthenticationComponent) { return $AuthenticationComponent;}
+	}
 	
-	public function __construct(Controller $Controller){
-		parent::__construct($Controller);
+	public function __construct(Controller $Controller, Model $Settings){
+		parent::__construct($Controller, $Settings);
 		
 		$this->_Controller->loadModels(array(
 			'UserAccount',
@@ -72,6 +81,7 @@ class AuthenticationComponent extends Component{
 			'OnlineMember',
 			'OnlineGuest'
 		));
+		
 		$this->_Controller->loadActions(array(
 			'PhpSessionActions',// not sure i need this one
 			'UserSessionActions',
@@ -83,6 +93,15 @@ class AuthenticationComponent extends Component{
 		$this->_HybridAuthHelper = $this->_Controller->getHelpers()->HybridAuth();
 		$this->_LocationHelper = $this->_Controller->getHelpers()->Location();
 	}
+	
+	public function __destruct(){}
+	
+	public function getInstance(){
+		if($this->_instance instanceof AuthenticationComponent){
+			return $this->_instance;
+		}
+	}
+	
 	
 	public function authenticateFromHybridAuth(){
 		

@@ -14,16 +14,45 @@ trait ConfigReader{
 			// Not an actual file read each time. This method checks a cached copy first
 			if(!isset($this->_config[$folder])){
 				if(!empty($folder)){
+// 					pr($folder);
+// 					pr(SettingsRegistry::configPath().$folder.RuntimeInfo::instance()->getApplicationName().'.ini');
+// 					pr(SettingsRegistry::configPath().$folder.'settings.ini');
+					
+					if(file_exists(SettingsRegistry::configPath().$folder.RuntimeInfo::instance()->getApplicationName().'.ini')){
+// 						pr('folder path specified. site specific settings found. attempting to load them.');
 						$this->_config[$folder] = SettingsRegistry::get(
 							$folder.RuntimeInfo::instance()->getApplicationName().'.ini',
 							Path::toAddOns().$folder.'example.ini'
 						);
+//					} else if(file_exists(SettingsRegistry::configPath().$folder.'settings.ini')) {
+					} else {
+// 						pr('folder path specified. site specific settings NOT found. attempting to load defaults which were found.');
+						$this->_config[$folder] = SettingsRegistry::get(
+							$folder.'settings.ini',
+							Path::toAddOns().$folder.'example.ini'
+						);
+					}
+					
+					
 				} else {
-					$this->_config[$folder] = SettingsRegistry::get(
-						RuntimeInfo::instance()->getApplicationName().'.ini',
-						Path::toFramework().'example.ini'
-					);
+					
+					
+					if(file_exists(SettingsRegistry::configPath().RuntimeInfo::instance()->getApplicationName().'.ini')){
+// 						pr('folder path NOT specified. site specific settings found. attempting to load them.');
+						$this->_config[$folder] = SettingsRegistry::get(
+							RuntimeInfo::instance()->getApplicationName().'.ini',
+							Path::toFramework().'example.ini'
+						);
+// 					} else if(file_exists(SettingsRegistry::configPath().'settings.ini')) {
+					} else {
+// 						pr('folder path NOT specified. site specific settings NOT found. attempting to load defaults which were found.');
+						$this->_config[$folder] = SettingsRegistry::get(
+							'settings.ini',
+							Path::toFramework().'example.ini'
+						);
+					}
 				}
+// 				pr($this->_config[$folder]);
 			}
 		} catch(Exception $e){
 			die($e->getMessage());
