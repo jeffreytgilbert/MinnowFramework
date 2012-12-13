@@ -44,9 +44,9 @@ abstract class Controller {
 		
 		$this->_tpl = new TemplateParser();
 		
-		$this->_controller_path = isset($_GET['framework']['controller_path'])?preg_replace('/([^a-zA-Z0-9])/s','',$_GET['framework']['controller_path']):'';
-		$this->_controller_name = isset($_GET['framework']['controller_name'])?$_GET['framework']['controller_name']:'Index'; // default to Index
-		$this->_controller_format = isset($_GET['framework']['controller_format'])?$_GET['framework']['controller_format']:'html'; // default to HTML
+		$this->_controller_path = RuntimeInfo::instance()->getControllerPath();
+		$this->_controller_name = RuntimeInfo::instance()->getControllerName(); // default to Index
+		$this->_controller_format = RuntimeInfo::instance()->getControllerFormat(); // default to HTML
 		
 		// all of these variables need to be reconciled and finalized///////
 		

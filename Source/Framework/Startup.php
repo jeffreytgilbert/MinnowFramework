@@ -71,8 +71,9 @@ final class Startup{
 	public function getHelpers(){ return $this->_helpers; }
 	
 	private $_pathing_info;
-	public function getControllerName(){ isset($this->_pathing_info['controller_name'])?$this->_pathing_info['controller_name']:null; }
+	public function getControllerName(){ isset($this->_pathing_info['controller_name'])?$this->_pathing_info['controller_name']:'Index'; }
 	public function getControllerPath(){ isset($this->_pathing_info['controller_path'])?$this->_pathing_info['controller_path']:null; }
+	public function getControllerFormat(){ isset($this->_pathing_info['controller_format'])?$this->_pathing_info['controller_format']:'html'; }
 	public function getComponentName(){ isset($this->_pathing_info['component_name'])?$this->_pathing_info['component_name']:null; }
 	public function getComponentControllerName(){ isset($this->_pathing_info['component_controller_name'])?$this->_pathing_info['component_controller_name']:null; }
 	
@@ -222,30 +223,30 @@ final class Startup{
 		} else {
 			$f = $_GET['framework'];
 			$path_segments = explode('/-/',$f['requested_url'], 2);
-			switch(count($path_segments)){
-				case 0: // index page request
-					$this->_pathing_info = array('controller_name'=>'Index');
-					Run::fromControllers('Pages/IndexPage.php');
-					$Page = new IndexPage();
-					break;
-				case 1: // page only, no components
-					$last_slash_position = strripos($path_segments[0],'/');
-					if($last_slash_position === false){
-						$f['controller_name'] = $path_segments[0];
-					} else {
-						$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
-						$f['controller_name'] = substr($path_segments[0], $last_slash_position);
-					}
-					break;
-				default: // page has components
-					$last_slash_position = strripos($path_segments[0],'/');
-					if($last_slash_position === false){
-						$f['controller_name'] = $path_segments[0];
-					} else {
-						$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
-						$f['controller_name'] = substr($path_segments[0], $last_slash_position+1);
-					}
-					
+			$total_segments = count($path_segments);
+			if($total_segments == 0){ // index page request by default
+				$this->_pathing_info = array('controller_name'=>'Index');
+				Run::fromControllers('Pages/IndexPage.php');
+				$Page = new IndexPage();
+			} else { // page request
+				
+				$last_slash_position = strripos($path_segments[0],'/');
+				if($last_slash_position === false){
+					$f['controller_name'] = $path_segments[0];
+				} else {
+					$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
+					$f['controller_name'] = substr($path_segments[0], $last_slash_position+1);
+				}
+				
+				if(strripos($f['controller_name'],'.') === false){
+					$f['controller_name'] = $path_segments[0];
+				} else {
+					$controller_parts = explode('.',$f['controller_name']);
+					$f['controller_name'] = $controller_parts[0];
+					$f['controller_format'] = array_pop($controller_parts);
+				}
+				
+				if($total_segments > 1){ // page has components
 					unset($last_slash_position);
 					$last_slash_position = strripos($path_segments[1],'/');
 					if($last_slash_position === false){
@@ -254,7 +255,7 @@ final class Startup{
 						$f['component_name'] = substr($path_segments[1], 0, $last_slash_position);
 						$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
 					}
-					break;
+				}
 			}
 			$this->_pathing_info = $f;
 			
