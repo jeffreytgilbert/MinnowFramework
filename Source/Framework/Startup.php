@@ -71,11 +71,11 @@ final class Startup{
 	public function getHelpers(){ return $this->_helpers; }
 	
 	private $_pathing_info;
-	public function getControllerName(){ isset($this->_pathing_info['controller_name'])?$this->_pathing_info['controller_name']:'Index'; }
-	public function getControllerPath(){ isset($this->_pathing_info['controller_path'])?$this->_pathing_info['controller_path']:null; }
-	public function getControllerFormat(){ isset($this->_pathing_info['controller_format'])?$this->_pathing_info['controller_format']:'html'; }
-	public function getComponentName(){ isset($this->_pathing_info['component_name'])?$this->_pathing_info['component_name']:null; }
-	public function getComponentControllerName(){ isset($this->_pathing_info['component_controller_name'])?$this->_pathing_info['component_controller_name']:null; }
+	public function getControllerName(){ return isset($this->_pathing_info['controller_name'])?$this->_pathing_info['controller_name']:'Index'; }
+	public function getControllerPath(){ return isset($this->_pathing_info['controller_path'])?$this->_pathing_info['controller_path']:''; }
+	public function getControllerFormat(){ return isset($this->_pathing_info['controller_format'])?$this->_pathing_info['controller_format']:'html'; }
+	public function getComponentName(){ return isset($this->_pathing_info['component_name'])?$this->_pathing_info['component_name']:''; }
+	public function getComponentControllerName(){ return isset($this->_pathing_info['component_controller_name'])?$this->_pathing_info['component_controller_name']:''; }
 	
 	public function appSettings(){
 		static $appSettings = null;
