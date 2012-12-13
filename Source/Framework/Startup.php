@@ -70,6 +70,11 @@ final class Startup{
 	public function helpers(){ return $this->_helpers; }
 	public function getHelpers(){ return $this->_helpers; }
 	
+	private $_pathing_info;
+	public function getControllerName(){ isset($this->_pathing_info['controller_name'])?$this->_pathing_info['controller_name']:null; }
+	public function getControllerPath(){ isset($this->_pathing_info['controller_path'])?$this->_pathing_info['controller_path']:null; }
+	public function getComponentName(){ isset($this->_pathing_info['component_name'])?$this->_pathing_info['component_name']:null; }
+	public function getComponentControllerName(){ isset($this->_pathing_info['component_controller_name'])?$this->_pathing_info['component_controller_name']:null; }
 	
 	public function appSettings(){
 		static $appSettings = null;
@@ -210,13 +215,48 @@ final class Startup{
 		$app_path = Path::toApplication();
 		$controller_path = Path::toControllers();
 		
-//		pr($_GET);
-		
-		if(!isset($_GET['framework']) || !is_array($_GET['framework'])){
+		if(!isset($_GET['framework']) || !isset($_GET['framework']['requested_url'])){
 			Run::fromControllers('Pages/IndexPage.php');
+			$this->_pathing_info = array('controller_name'=>'Index');
 			$Page = new IndexPage();
 		} else {
 			$f = $_GET['framework'];
+			$path_segments = explode('/-/',$f['requested_url'], 2);
+			switch(count($path_segments)){
+				case 0: // index page request
+					$this->_pathing_info = array('controller_name'=>'Index');
+					Run::fromControllers('Pages/IndexPage.php');
+					$Page = new IndexPage();
+					break;
+				case 1: // page only, no components
+					$last_slash_position = strripos($path_segments[0],'/');
+					if($last_slash_position === false){
+						$f['controller_name'] = $path_segments[0];
+					} else {
+						$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
+						$f['controller_name'] = substr($path_segments[0], $last_slash_position);
+					}
+					break;
+				default: // page has components
+					$last_slash_position = strripos($path_segments[0],'/');
+					if($last_slash_position === false){
+						$f['controller_name'] = $path_segments[0];
+					} else {
+						$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
+						$f['controller_name'] = substr($path_segments[0], $last_slash_position+1);
+					}
+					
+					unset($last_slash_position);
+					$last_slash_position = strripos($path_segments[1],'/');
+					if($last_slash_position === false){
+						$f['component_controller_name'] = $path_segments[1];
+					} else {
+						$f['component_name'] = substr($path_segments[1], 0, $last_slash_position);
+						$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
+					}
+					break;
+			}
+			$this->_pathing_info = $f;
 			
 			// if this is a request for the webroot
 			if(isset($f['controller_name']) && $f['controller_name'] == ''){

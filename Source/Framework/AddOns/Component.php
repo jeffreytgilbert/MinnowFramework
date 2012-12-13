@@ -34,22 +34,22 @@ abstract class Component{
 		$this->_component_name = substr($this->_component_class_name, 0, strlen('Component')*-1);
 	}
 	
+//	the handling of 1 page request bound to an alias vs all page requests bound to a folder need to be easier to author and understand.
+	
 	// The component checks to see if the controller exists, and if it does it creates an instance to the component
 	public function checkRequest($component_controller_name){
 		$component_controller_class = $component_controller_name.'ComponentController';
 		if(isset($this->_component_controllers[$component_controller_class])){
 			// rerun request? Seems like maybe this would be an option somehow. loops or something. Cant imagine a use currently
-			$this->_component_controllers[$component_controller_class]->handleRequest();
-			return true;
+			return $this->_component_controllers[$component_controller_class]->handleRequest();
 		} else {
 			Run::fromComponents($this->_component_name.'/Controllers/'.$component_controller_class.'.php');
 			if(class_exists($component_controller_class)){
 				// instantiation of a controller runs all the necessary controller methods
-				$this->_component_controllers[$component_controller_class] 
+				return $this->_component_controllers[$component_controller_class] 
 					= new $component_controller_class($this); // this isn't great for code completion, but because there are cast methods its excusable
-				return true;
 			} else {
-				return false;
+				return new ComponentController();
 			}
 		}
 	}
