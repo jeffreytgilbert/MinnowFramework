@@ -233,54 +233,67 @@ final class Startup{
 			
 			$path_segments = explode('/-/',$f['requested_url'], 3);
 			$total_segments = count($path_segments);
+
 			if($total_segments == 0){ // index page request by default
 				$this->_pathing_info = array('controller_name'=>'Index');
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			}else { // page request
 				
-				$last_slash_position = strripos($path_segments[0],'/');
-				if($last_slash_position === false){
-					$f['controller_name'] = $path_segments[0];
-				} else {
-					$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
-					$f['controller_name'] = substr($path_segments[0], $last_slash_position+1);
-				}
-				
-				if(strripos($f['controller_name'],'.') === false){
-					$f['controller_name'] = $path_segments[0];
-				} else {
-					$controller_parts = explode('.',$f['controller_name']);
-					$f['controller_name'] = $controller_parts[0];
-					$f['controller_format'] = array_pop($controller_parts);
-				}
-				
-				if($total_segments > 1){ // page has components
-					unset($last_slash_position);
-// 					$first_slash_position = stripos($path_segments[1],'/');
-					$last_slash_position = strripos($path_segments[1],'/');
+				// if at the webroot, and loading a component, the total segments will be 1, but the logic below wont work. so handle this exception seperately 
+				if(substr($f['requested_url'],0,2) == '-/'){
+					
+					$f['controller_name'] = 'Index';
+					
+					$requested_component_url = substr($f['requested_url'],2,strlen($f['requested_url']));
+					$last_slash_position = strripos($requested_component_url,'/');
 					if($last_slash_position === false){
-						$f['component_controller_name'] = $path_segments[1];
+						$f['component_controller_name'] = $requested_component_url;
 					} else {
-						// test code for specifying a component name in the url before the path was specified. 
-						// Because the component has to be called in the controller to map the request, there's no point to specify it via an extra required parameter.
-// 						if($first_slash_position != $last_slash_position){
-// 							$f['component_name'] = substr($path_segments[1], 0, $first_slash_position);
-// 							$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
-// 							$extra_characters = strlen($f['component_controller_name'])+1;// + strlen($f['component_name']);
-// 							$f['component_controller_path'] = substr($path_segments[1], $first_slash_position+1, $path_segments[1]-$extra_characters);
-// 						} else {
-// 							$f['component_name'] = substr($path_segments[1], 0, $last_slash_position);
-// 							$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
-// 						}
+						$f['component_controller_path'] = substr($requested_component_url, 0, $last_slash_position);
+						$f['component_controller_name'] = substr($requested_component_url, $last_slash_position+1);
 						
-						$f['component_controller_path'] = substr($path_segments[1], 0, $last_slash_position);
-						$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
-						
+					}
+					
+					$this->_pathing_info = $f;
+					
+					Run::fromControllers('Pages/IndexPage.php');
+					$Page = new IndexPage();
+					
+				// handle all other occasions 
+				} else {
+				
+					$last_slash_position = strripos($path_segments[0],'/');
+					if($last_slash_position === false){
+						$f['controller_name'] = $path_segments[0];
+					} else {
+						$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
+						$f['controller_name'] = substr($path_segments[0], $last_slash_position+1);
+					}
+					
+					if(strripos($f['controller_name'],'.') === false){
+	//					$f['controller_name'] = $path_segments[0];
+					} else {
+						$controller_parts = explode('.',$f['controller_name']);
+						$f['controller_name'] = $controller_parts[0];
+						$f['controller_format'] = array_pop($controller_parts);
+					}
+
+				
+					if($total_segments > 1){ // page has components
+						unset($last_slash_position);
+						$last_slash_position = strripos($path_segments[1],'/');
+						if($last_slash_position === false){
+							$f['component_controller_name'] = $path_segments[1];
+						} else {
+							$f['component_controller_path'] = substr($path_segments[1], 0, $last_slash_position);
+							$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
+							
+						}
 					}
 				}
 			}
-//			pr($f);
+			
 			$this->_pathing_info = $f;
 			
 			// if this is a request for the webroot
