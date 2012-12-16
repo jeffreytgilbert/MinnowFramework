@@ -14,6 +14,7 @@ class ExampleComponentPage extends PageController implements HTMLCapable, JSONCa
 	public function handleRequest(){
 		
 		$this->_AuthenticationComponentController = $this->getComponents()->Authentication($this)->mapRequest();
+		$this->getData()->setDataFromArray($this->_AuthenticationComponentController->getData()->toArray());
 		
 	}
 	

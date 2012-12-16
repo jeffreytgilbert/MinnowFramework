@@ -9,7 +9,7 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 	}
 	
 	public function handleRequest(){
-		$this->_data['thisiswhatitsoundslike']='whenthedovescry';
+		$this->getData()->set('thisiswhatitsoundslike','whenthedovescry');
 	}
 	
 	public function renderJSON(){ return parent::renderJSON(); }

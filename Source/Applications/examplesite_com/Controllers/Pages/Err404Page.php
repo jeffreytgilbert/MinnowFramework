@@ -9,7 +9,7 @@ class Err404Page extends PageController implements HTMLCapable, JSONCapable, XML
 	}
 	
 	public function handleRequest(){
-		$this->Errors->set('404','Page could not be found as requested.');
+		$this->getErrors()->set('Error404','Page could not be found as requested.');
 	}
 
 	public function renderJSON(){ return $this->_output = parent::renderJSON(); }

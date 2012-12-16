@@ -12,11 +12,18 @@ trait JSONFormat{
 	}
 	
 	public function renderStatusMessagesAsJSON(){
+		// this is a little annoying... there's no cast method on controller. but if there were i'd need to change controller cast methods everywhere from easy to harder code. need return type hinting PHP!
+		if($this instanceof PageController){
+			$Page = PageController::cast($this);
+		} else {
+			$Page = ComponentController::cast($this);
+		}
+		
 		return json_encode(array(
-			'Notices'=>$this->Notices->toArray(),
-			'Errors'=>$this->Errors->toArray(),
-			'Confirmations'=>$this->Confirmations->toArray(),
-			'Messages'=>$this->Messages->toArray() // depricated
+			'Notices'=>$Page->getNotices()->toArrayRecursive(),
+			'Errors'=>$Page->getErrors()->toArrayRecursive(),
+			'Confirmations'=>$Page->getConfirmations()->toArrayRecursive(),
+			'Data'=>$Page->getData()->toArrayRecursive()
 		));
 	}
 }

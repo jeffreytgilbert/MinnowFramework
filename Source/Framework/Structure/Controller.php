@@ -13,7 +13,6 @@ abstract class Controller {
 		$_Connections;
 	
 	protected 
-		$_data = array(),
 		$_tpl,
 		$_page_body,
 		$_controller_path,
@@ -21,22 +20,19 @@ abstract class Controller {
 		$_controller_format,
 		$_ParentObject,
 		
+		$SystemNotifications,
+		// All ok.
+		$_Data,
+		$_Errors,
+		$_Notices,
+		$_Confirmations,
+		$_Input,
+		
 		// well these aren't cased appropriately are they
 		$page_result_start = 0,
 		$page_result_limit = 20,
 		$cache_results = false;
 	
-	/*
-	 * @depricated
-	 */
-	public 
-		$SystemNotifications,
-		$Messages, // depricated
-		// All ok.
-		$Errors,
-		$Notices,
-		$Confirmations,
-		$Input;
 	
 	public function __construct($ParentObject=null){
 		
@@ -50,14 +46,36 @@ abstract class Controller {
 		
 		// all of these variables need to be reconciled and finalized///////
 		
-		// depricated
-		$this->Messages = new DataObject();			// generic messages (a combination of confirmations and notices) which has been depricated
 		// all ok
-		$this->SystemNotifications = new DataObject();	// store confirmations of an action
-		$this->Errors = new DataObject();			// store errors when processing
-		$this->Confirmations = new DataObject();	// store confirmations of an action
-		$this->Notices = new DataObject();			// store info notices  
-		$this->Input = new DataObject();			// store data from the form
+		$this->_SystemNotifications = new DataObject();	// store confirmations of an action
+		$this->_Errors = new DataObject();			// store errors when processing
+		$this->_Confirmations = new DataObject();	// store confirmations of an action
+		$this->_Notices = new DataObject();			// store info notices  
+		$this->_Data = new DataObject();			// store data that goes to the view as an array 
+		
+		// store data from the form
+		if(isset($_POST) && is_array($_POST)){
+			$total_post_forms = count($_POST);
+			if($total_post_forms == 1){
+				$fields = current($POST);
+				if(is_array($fields) && count($fields)){
+					$this->_Input = new DataObject(array(key($_POST) => new DataObject($fields)));
+				} else {
+					$this->_Input = new DataObject();
+				}
+			} else {
+				foreach($_POST as $form => $fields){
+					if(is_array($fields) && count($fields)){
+						$this->_Input = new DataObject(array(key($_POST) => new DataObject($fields)));
+					} else {
+						$this->_Input = new DataObject();
+					}
+				}
+				$this->_Input = new DataObject($_POST);
+			}
+		} else {
+			$this->_Input = new DataObject();
+		}
 		
 		$this->_RuntimeInfo = RuntimeInfo::instance();
 		$this->_AppSettings = $this->_RuntimeInfo->appSettings();
@@ -70,6 +88,13 @@ abstract class Controller {
 		}
 		
 	}
+	
+	public function getData(){ return DataObject::cast($this->_Data); }
+	public function getInput(){ return DataObject::cast($this->_Input); }
+	public function getNotices(){ return DataObject::cast($this->_Notices); }
+	public function getConfirmations(){ return DataObject::cast($this->_Confirmations); }
+	public function getErrors(){ return DataObject::cast($this->_Input); }
+	public function getSystemNotifications(){ return DataObject::cast($this->_SystemNotifications); }
 	
 	public function getAppSettings(){ return DataObject::cast($this->_AppSettings); }
 	public function getRuntimeInfo(){ return Startup::cast($this->_RuntimeInfo); }
@@ -134,8 +159,6 @@ abstract class Controller {
 	public function setCacheResults($cache_results){ $this->cache_results = $cache_results; }
 	public function getCacheResults(){ return $this->cache_results; }
 	
-	public function data(){ return $this->_data; }
-
 	public function getPageBody(){ return $this->_page_body; }
 	public function getTemplateEngine(){ return $this->_tpl; }
 	
@@ -147,7 +170,7 @@ abstract class Controller {
 		
 		ob_start();
 		
-		extract($this->data());
+		extract($this->getData()->toArrayRecursive());
 		
 		if($start_path_in_view_folder){
 			$base_path = dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/';
