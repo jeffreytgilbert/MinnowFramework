@@ -33,23 +33,56 @@ abstract class Component{
 		$this->_component_class_name = get_called_class();
 		$this->_component_name = substr($this->_component_class_name, 0, strlen('Component')*-1);
 	}
-	
+
+	// just use map request. 
 //	the handling of 1 page request bound to an alias vs all page requests bound to a folder need to be easier to author and understand.
+// 	// The component checks to see if the controller exists, and if it does it creates an instance to the component
+// 	public function checkRequest($component_controller_name){
+// 		$component_controller_class = $component_controller_name.'ComponentController';
+// 		if(isset($this->_component_controllers[$component_controller_class])){
+// 			// rerun request? Seems like maybe this would be an option somehow. loops or something. Cant imagine a use currently
+// 			return $this->_component_controllers[$component_controller_class]->handleRequest();
+// 		} else {
+// 			Run::fromComponents($this->_component_name.'/Controllers/'.$component_controller_class.'.php');
+// 			if(class_exists($component_controller_class)){
+// 				// instantiation of a controller runs all the necessary controller methods
+// 				return $this->_component_controllers[$component_controller_class] 
+// 					= new $component_controller_class($this); // this isn't great for code completion, but because there are cast methods its excusable
+// 			} else {
+// 				return new ComponentController();
+// 			}
+// 		}
+// 	}
 	
-	// The component checks to see if the controller exists, and if it does it creates an instance to the component
-	public function checkRequest($component_controller_name){
+	public function mapRequest(){
+			
+		$component_controller_name = RuntimeInfo::instance()->getComponentControllerName();
+		$component_controller_path = RuntimeInfo::instance()->getComponentControllerPath();
+		if(strlen($component_controller_path) > 0){ $component_controller_path .= '/'; }
+		
 		$component_controller_class = $component_controller_name.'ComponentController';
-		if(isset($this->_component_controllers[$component_controller_class])){
+		if(isset($this->_component_controllers[$component_controller_path.$component_controller_class])){
 			// rerun request? Seems like maybe this would be an option somehow. loops or something. Cant imagine a use currently
-			return $this->_component_controllers[$component_controller_class]->handleRequest();
+			return $this->_component_controllers[$component_controller_path.$component_controller_class]->handleRequest();
 		} else {
-			Run::fromComponents($this->_component_name.'/Controllers/'.$component_controller_class.'.php');
-			if(class_exists($component_controller_class)){
-				// instantiation of a controller runs all the necessary controller methods
-				return $this->_component_controllers[$component_controller_class] 
-					= new $component_controller_class($this); // this isn't great for code completion, but because there are cast methods its excusable
+//			pr(Path::toComponents().$this->_component_name.'/Controllers/'.$component_controller_path.$component_controller_class.'.php');
+			if(File::exists(Path::toComponents().$this->_component_name.'/Controllers/'.$component_controller_path.$component_controller_class.'.php')){
+//				pr(__LINE__);
+				Run::fromComponents($this->_component_name.'/Controllers/'.$component_controller_path.$component_controller_class.'.php');
+				if(class_exists($component_controller_class)){
+					// instantiation of a controller runs all the necessary controller methods
+					$ComponentController = $this->_component_controllers[$component_controller_path.$component_controller_class] 
+						= new $component_controller_class($this); // this isn't great for code completion, but because there are cast methods its excusable
+					$ComponentController->handleRequest();
+					return ComponentController::cast($ComponentController);
+				} else {
+					Run::fromControllers('Pages/Err404Page.php');
+					return new Err404Page();
+				}
 			} else {
-				return new ComponentController();
+//				pr(__LINE__);
+				Run::fromControllers('Pages/Err404Page.php');
+				return new Err404Page();
 			}
 		}
 	}

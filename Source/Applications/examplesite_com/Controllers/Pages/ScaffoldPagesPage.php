@@ -9,7 +9,7 @@ class ScaffoldPagesPage extends PageController implements HTMLCapable{
 	protected function loadIncludedFiles(){
 	}
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		$RuntimeInfo = RuntimeInfo::instance();
 		
 		if(isset($_POST['list']) && trim($_POST['list']) != ''){

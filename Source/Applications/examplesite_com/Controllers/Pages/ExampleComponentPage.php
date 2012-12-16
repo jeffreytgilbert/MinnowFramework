@@ -9,15 +9,11 @@ class ExampleComponentPage extends PageController implements HTMLCapable, JSONCa
 		
 	}
 	
-	protected $_AuthenticationComponent;
 	protected $_AuthenticationComponentController;
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		
-		$this->_AuthenticationComponent = $this->getComponents()->Authentication($this);
-		if($this->_AuthenticationComponent->checkRequest(AuthenticationComponent::REQUEST_LOGIN)){
-			$this->_AuthenticationComponentController = $this->_AuthenticationComponent->getComponentController(AuthenticationComponent::REQUEST_LOGIN);
-		}
+		$this->_AuthenticationComponentController = $this->getComponents()->Authentication($this)->mapRequest();
 		
 	}
 	

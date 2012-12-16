@@ -76,6 +76,7 @@ final class Startup{
 	public function getControllerFormat(){ return isset($this->_pathing_info['controller_format'])?$this->_pathing_info['controller_format']:'html'; }
 	public function getComponentName(){ return isset($this->_pathing_info['component_name'])?$this->_pathing_info['component_name']:''; }
 	public function getComponentControllerName(){ return isset($this->_pathing_info['component_controller_name'])?$this->_pathing_info['component_controller_name']:''; }
+	public function getComponentControllerPath(){ return isset($this->_pathing_info['component_controller_path'])?$this->_pathing_info['component_controller_path']:''; }
 	
 	public function appSettings(){
 		static $appSettings = null;
@@ -222,13 +223,21 @@ final class Startup{
 			$Page = new IndexPage();
 		} else {
 			$f = $_GET['framework'];
-			$path_segments = explode('/-/',$f['requested_url'], 2);
+			
+			// condition the url to the expected format
+			// ... remove trailing slashes and extraneous characters
+			$f['requested_url'] = rtrim($f['requested_url'],'\/');
+			
+// 			// ... remove duplicate slashes <-- seems this is already done by mod-rewrite
+// 			$requested_url = preg_replace('#//+#', '/', $requested_url);
+			
+			$path_segments = explode('/-/',$f['requested_url'], 3);
 			$total_segments = count($path_segments);
 			if($total_segments == 0){ // index page request by default
 				$this->_pathing_info = array('controller_name'=>'Index');
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
-			} else { // page request
+			}else { // page request
 				
 				$last_slash_position = strripos($path_segments[0],'/');
 				if($last_slash_position === false){
@@ -248,15 +257,30 @@ final class Startup{
 				
 				if($total_segments > 1){ // page has components
 					unset($last_slash_position);
+// 					$first_slash_position = stripos($path_segments[1],'/');
 					$last_slash_position = strripos($path_segments[1],'/');
 					if($last_slash_position === false){
 						$f['component_controller_name'] = $path_segments[1];
 					} else {
-						$f['component_name'] = substr($path_segments[1], 0, $last_slash_position);
+						// test code for specifying a component name in the url before the path was specified. 
+						// Because the component has to be called in the controller to map the request, there's no point to specify it via an extra required parameter.
+// 						if($first_slash_position != $last_slash_position){
+// 							$f['component_name'] = substr($path_segments[1], 0, $first_slash_position);
+// 							$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
+// 							$extra_characters = strlen($f['component_controller_name'])+1;// + strlen($f['component_name']);
+// 							$f['component_controller_path'] = substr($path_segments[1], $first_slash_position+1, $path_segments[1]-$extra_characters);
+// 						} else {
+// 							$f['component_name'] = substr($path_segments[1], 0, $last_slash_position);
+// 							$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
+// 						}
+						
+						$f['component_controller_path'] = substr($path_segments[1], 0, $last_slash_position);
 						$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
+						
 					}
 				}
 			}
+//			pr($f);
 			$this->_pathing_info = $f;
 			
 			// if this is a request for the webroot

@@ -97,9 +97,7 @@ class AuthenticationComponent extends Component{
 	public function __destruct(){}
 	
 	public function getInstance(){
-		if($this->_instance instanceof AuthenticationComponent){
-			return $this->_instance;
-		}
+		if($this->_instance instanceof AuthenticationComponent){ return $this->_instance; }
 	}
 	
 	

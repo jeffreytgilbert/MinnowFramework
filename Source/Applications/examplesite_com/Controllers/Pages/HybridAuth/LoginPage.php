@@ -8,7 +8,7 @@ class LoginPage extends PageController implements HTMLCapable{
 	protected function loadIncludedFiles(){
 	}
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		
 		$ID = $this->_Authentication->authenticateFromHybridAuth();
 		

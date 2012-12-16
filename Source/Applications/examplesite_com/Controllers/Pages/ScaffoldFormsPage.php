@@ -12,7 +12,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 	protected function loadIncludedFiles(){
 	}
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		$RuntimeInfo = RuntimeInfo::instance();
 		$db = $RuntimeInfo->mysql();
 				

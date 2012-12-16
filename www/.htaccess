@@ -21,5 +21,5 @@ RewriteRule ^img/(.*)$ static.php?type=img&path=$1 [L]
 
 # catch everything and forward it to php as one big string that the framework can parse out without doing all this stuff in apache
 RewriteCond %{QUERY_STRING} ^(.*)$
-RewriteRule ^([a-zA-Z0-9-_\.\/]+)/?$ index.php?framework[requested_url]=$1&&%1 [L]
+RewriteRule ^([a-zA-Z0-9-_\+\w\.\/]+)/?$ index.php?framework[requested_url]=$1&&%1 [L]
 

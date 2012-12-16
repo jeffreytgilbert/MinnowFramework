@@ -77,7 +77,7 @@ abstract class Controller {
 	public function getConnections(){ return Connections::cast($this->_Connections); }
 	
 	abstract protected function loadIncludedFiles();
-	abstract protected function handleRequest();
+	abstract public function handleRequest();
 	
 	private $_models = array();
 	private $_actions = array();

@@ -8,7 +8,7 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 	protected function loadIncludedFiles(){
 	}
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		$this->_data['thisiswhatitsoundslike']='whenthedovescry';
 	}
 	

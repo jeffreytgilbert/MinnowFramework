@@ -7,7 +7,7 @@ class SitemapXMLPage extends PageController implements HTMLCapable{
 		/* page dependencies */
 	}
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		/* business logic */
 	}
 	

@@ -8,7 +8,7 @@ class EndPointPage extends PageController implements HTMLCapable{
 	protected function loadIncludedFiles(){
 	}
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		$this->getHelpers()->HybridAuth()->endpoint();
 	}
 
