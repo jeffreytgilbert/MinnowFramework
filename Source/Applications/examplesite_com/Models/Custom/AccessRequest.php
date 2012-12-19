@@ -12,7 +12,9 @@ abstract class AccessRequest extends DataObject{
 	public function __construct(Array $data=array()){
 		$this->addAllowedData(array(
 			'NetworkAddress'=>DataType::OBJECT,
-			'LocationFromIp'=>DataType::OBJECT
+			'LocationFromIp'=>DataType::OBJECT,
+			'user_agent'=>DataType::TEXT,
+			'created_datetime'=>DataType::TEXT
 		),true);
 		parent::__construct($data);
 	}

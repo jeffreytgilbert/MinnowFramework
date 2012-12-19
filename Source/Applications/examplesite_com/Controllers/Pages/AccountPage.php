@@ -11,7 +11,7 @@ class AccountPage extends PageController implements HTMLCapable, JSONCapable, XM
 	
 	public function handleRequest(){
 		// business logic here
-		
+			
 		// tell authentication component to handle account related requests. 
 		$this->_AuthenticationComponentController = $this->getComponents()->Authentication($this)->mapRequest();
 		

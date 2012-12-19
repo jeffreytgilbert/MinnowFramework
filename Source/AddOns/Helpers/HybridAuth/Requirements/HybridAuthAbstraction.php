@@ -187,6 +187,31 @@ class HybridAuthAbstraction{
 		return $connected_activity;
 	}
 	
+	private function handleException($e, $adapter=null){
+		switch( $e->getCode() ){
+			case 0 : 
+				throw new HybridAuthException("Unspecified error.", HybridAuthException::UNSPECIFIED_ERROR, $e);
+			case 1 : 
+				throw new HybridAuthException("Hybriauth configuration error.", HybridAuthException::CONFIGURATION_ERROR, $e);
+			case 2 : 
+				throw new HybridAuthException("Provider not properly configured.", HybridAuthException::BAD_PROVIDER_CONFIG, $e);
+			case 3 : 
+				throw new HybridAuthException("Unknown or disabled provider.", HybridAuthException::PROVIDER_DISABLED, $e);
+			case 4 : 
+				throw new HybridAuthException("Missing provider application credentials.", HybridAuthException::PROVIDER_CREDENTIALS_MISSING, $e);
+			case 5 : 
+				throw new HybridAuthException("Authentification failed. '
+					.'The user has canceled the authentication or the provider refused the connection.", HybridAuthException::AUTHENTICATION_FAILED, $e);
+			case 6 : 
+				if($adapter){ $adapter->logout(); }
+				throw new HybridAuthException("User profile request failed. '
+					.'Most likely the user is not connected to the provider and he should to authenticate again.", HybridAuthException::PROFILE_REQUEST_FAILED, $e);
+			case 7 : 
+				if($adapter){ $adapter->logout(); }
+				throw new HybridAuthException("User not connected to the provider.", HybridAuthException::USER_NOT_CONNECTED, $e);
+		}		
+	}
+	
 	public function getConnectedProfileByProvider($provider){
 		try{
 			// check if the user is currently connected to the selected provider
@@ -201,32 +226,9 @@ class HybridAuthAbstraction{
 			// grab the user profile
 			$user_data = $Adapter->getUserProfile();
 			return $user_data;
-	    }
-		catch( Exception $e ){  
-			// In case we have errors 6 or 7, then we have to use Hybrid_Provider_Adapter::logout() to 
-			// let hybridauth forget all about the user so we can try to authenticate again.
-	
-			// Display the recived error, 
-			// to know more please refer to Exceptions handling section on the userguide
-			switch( $e->getCode() ){ 
-				case 0 : echo "Unspecified error."; break;
-				case 1 : echo "Hybriauth configuration error."; break;
-				case 2 : echo "Provider not properly configured."; break;
-				case 3 : echo "Unknown or disabled provider."; break;
-				case 4 : echo "Missing provider application credentials."; break;
-				case 5 : echo "Authentification failed. " 
-						  . "The user has canceled the authentication or the provider refused the connection."; 
-				case 6 : echo "User profile request failed. Most likely the user is not connected "
-						  . "to the provider and he should to authenticate again."; 
-					   $Adapter->logout(); 
-					   break;
-				case 7 : echo "User not connected to the provider."; 
-					   $Adapter->logout(); 
-					   break;
-			} 
-	
-			echo "<br /><br /><b>Original error message:</b> " . $e->getMessage();
-			echo "<hr /><h3>Trace</h3> <pre>" . $e->getTraceAsString() . "</pre>";  
+	    } catch( Exception $e ){
+			ob_flush();
+			self::handleException($e);
 		}
 	}
 	
@@ -245,49 +247,11 @@ class HybridAuthAbstraction{
 	 		ob_flush();
 			return $contents;
 			
-		} catch( Exception $e ){
-			// In case we have errors 6 or 7, then we have to use Hybrid_Provider_Adapter::logout() to
-			// let hybridauth forget all about the user so we can try to authenticate again.
-			
-			// Display the recived error,
-			// to know more please refer to Exceptions handling section on the userguide
-			switch( $e->getCode() ){
-				case 0 : 
-					$error = "Unspecified error."; 
-					break;
-				case 1 : 
-					$error = "Hybriauth configuration error."; 
-					break;
-				case 2 : 
-					$error = "Provider not properly configured."; 
-					break;
-				case 3 : 
-					$error = "Unknown or disabled provider."; 
-					break;
-				case 4 : 
-					$error = "Missing provider application credentials."; 
-					break;
-				case 5 : 
-					$error = "Authentification failed. The user has canceled the authentication or the provider refused the connection."; 
-					break;
-				case 6 : 
-					$error = "User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again.";
-					$adapter->logout();
-					break;
-				case 7 : 
-					$error = "User not connected to the provider.";
-					$adapter->logout();
-					break;
-			}
-			
-			// well, basically your should not display this to the end user, just give him a hint and move on..
-			$error .= "<br /><br /><b>Original error message:</b> " . $e->getMessage();
-			$error .= "<hr /><pre>Trace:<br />" . $e->getTraceAsString() . "</pre>";
-			
-	 		ob_flush();
-			return $error;
+	    } catch( Exception $e ){
+			ob_flush();
+			self::handleException($e,$adapter);
 		}
+		
 	}
-	
 	
 }

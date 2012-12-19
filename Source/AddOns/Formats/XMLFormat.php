@@ -24,7 +24,7 @@ trait XMLFormat{
 			'Notices'=>$Page->getNotices()->toArrayRecursive(),
 			'Errors'=>$Page->getErrors()->toArrayRecursive(),
 			'Confirmations'=>$Page->getConfirmations()->toArrayRecursive(),
-			'Data'=>$Page->getData()->toArrayRecursive()
+			'Data'=>$Page->getDataObject()->toArrayRecursive()
 		);
 		
 		$xml = new SimpleXMLElement("<?xml version=\"1.0\"?><response></response>");

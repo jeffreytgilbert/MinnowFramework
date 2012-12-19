@@ -34,7 +34,7 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 		$SecureCookieHelper->store('MFUL', serialize($cookie_data));
 		*/
 		
-		$this->_AuthenticationComponentController = $this->getComponents()->Authentication($this)->mapRequest();
+//		$this->_AuthenticationComponentController = $this->getComponents()->Authentication($this)->mapRequest();
 		
 // 		$CookieData = new CookieData();
 // 		$CookieData->data = serialize(array('1'=>'2','3'=>'4'));
@@ -72,16 +72,8 @@ class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLC
 // 		pr($this->getHelpers()->HybridAuth()->getConnectedActivity());
 	}
 	
-	public function renderJSON(){ return $this->_output = $this->_AuthenticationComponentController->renderJSON(); }
-	public function renderXML(){ return $this->_output = $this->_AuthenticationComponentController->renderXML(); }
-	public function renderHTML(){ return $this->_page_body = $this->_AuthenticationComponentController->renderHTML(); }
+	public function renderJSON(){ return $this->output = parent::renderJSON(); }
+	public function renderXML(){ return $this->output = parent::renderXML(); }
+	public function renderHTML(){ return $this->_page_body = parent::renderHTML(); }
 	
 }
-
-// class CookieData{
-	
-// 	public 
-// 		$token, 
-// 		$data,
-// 		$name;
-// }

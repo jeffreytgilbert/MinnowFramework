@@ -26,6 +26,8 @@ abstract class ComponentController extends Controller{
 		$this->loadIncludedFiles();
 	}
 	
+	abstract public function getParentComponent();
+	
 	public function renderHTML(){
 // 		$Page = ComponentController::cast($this);
 // 		$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().'/'.$Page->getControllerName();

@@ -28,6 +28,12 @@ abstract class PageController extends Controller{
 	
 	// define the logic that happens on every page for your application
 	
+	protected $_ID;
+	public function getID(){
+		if(isset($this->_ID) && $this->_ID instanceof AccessRequest){ return $this->_ID; }
+		return $this->_ID = $this->getAuthentication()->identifyUser();
+	}
+	
 	public function __construct($ParentObject=null){
 		parent::__construct($ParentObject);
 		

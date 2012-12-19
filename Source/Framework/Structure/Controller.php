@@ -57,7 +57,7 @@ abstract class Controller {
 		if(isset($_POST) && is_array($_POST)){
 			$total_post_forms = count($_POST);
 			if($total_post_forms == 1){
-				$fields = current($POST);
+				$fields = current($_POST);
 				if(is_array($fields) && count($fields)){
 					$this->_Input = new DataObject(array(key($_POST) => new DataObject($fields)));
 				} else {
@@ -89,7 +89,9 @@ abstract class Controller {
 		
 	}
 	
-	public function getData(){ return DataObject::cast($this->_Data); }
+	public function getDataObject(){ return DataObject::cast($this->_Data); }
+	public function getDataValue($field_name){ return $this->_Data->get($field_name); }
+	public function setData($key_name, $data_value){ return $this->_Data->set($key_name, $data_value); }
 	public function getInput(){ return DataObject::cast($this->_Input); }
 	public function getNotices(){ return DataObject::cast($this->_Notices); }
 	public function getConfirmations(){ return DataObject::cast($this->_Confirmations); }
@@ -170,7 +172,7 @@ abstract class Controller {
 		
 		ob_start();
 		
-		extract($this->getData()->toArrayRecursive());
+		extract($this->getDataObject()->toArrayRecursive());
 		
 		if($start_path_in_view_folder){
 			$base_path = dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/';

@@ -39,7 +39,11 @@ foreach($Page->getRemoteCss() as $css_file) {
 <link rel="stylesheet" type="text/css" href="'.$css_file.'">'."\n"; 
 }
 foreach($Page->getCss() as $css_file) {
-	$css .= "\n".'<link rel="stylesheet" type="text/css" href="/css/'.$css_file.'.css?'.date('dmhis',filemtime(File::osPath($this_path.'/css/'.$css_file.'.css'))).'">'."\n"; 
+	if(File::exists($this_path.'/css/'.$css_file.'.css')){
+		$css .= "\n".'<link rel="stylesheet" type="text/css" href="/css/'.$css_file.'.css?'.date('dmhis',filemtime(File::osPath($this_path.'/css/'.$css_file.'.css'))).'">'."\n"; 
+	} else {
+		$css .= pr('Error loading css file: '.File::osPath($this_path.'/css/'.$css_file.'.css'),1);
+	}
 }
 $css .= '<!-- End CSS Links ';
 
@@ -83,11 +87,19 @@ echo $css;
 							</ul>
 						</li>
 					</ul>
-					<form class="navbar-form pull-right">
-						<input class="span2" type="text" placeholder="Email">
-						<input class="span2" type="password" placeholder="Password">
-						<button type="submit" class="btn">Sign in</button>
-					</form>
+					<div class="navbar-form pull-right">
+					
+						<?php if($Page->getID()->isOnline()){ ?>
+						
+						<button type="submit" class="btn" onclick="location.href='<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('logout_page_url') ?>'">Sign out</button>
+						
+						<?php } else { ?>
+						
+						<button type="submit" class="btn" onclick="location.href='<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('login_page_url') ?>'">Sign in</button>
+						
+						<?php } ?>
+						
+					</div>
 				</div><!--/.nav-collapse -->
 			</div>
 		</div>
@@ -128,8 +140,14 @@ $js = '-->';
 foreach($Page->getRemoteJs() as $js_file) {
 	$js .= "\n".'<script src="'.$js_file.'"></script>'."\n";
 }
+
 foreach($Page->getJs() as $js_file) {
-	$js .= "\n".'<script src="/js/'.$js_file.'.js?'.date('dmhis',filemtime(File::osPath($this_path.'/js/'.$js_file.'.js'))).'"></script>'."\n";
+	if(File::exists($this_path.'/js/'.$js_file.'.js')){
+		$js .= "\n".'<script src="/js/'.$js_file.'.js?'.date('dmhis',filemtime(File::osPath($this_path.'/js/'.$js_file.'.js'))).'"></script>'."\n";
+	} else {
+		$js .= pr('Error loading js file: '.File::osPath($this_path.'/js/'.$js_file.'.js'),1);
+	}
+	
 }
 $js .= '<!-- End JS ';
 

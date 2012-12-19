@@ -43,6 +43,7 @@ trait HTMLFormat{
 		$this->addJs('Pages/'.$path);
 		
 		$this->_page_body = $this->runCodeReturnOutput('Pages/'.$path.'/layout.php');
+		return $this->_page_body;
 	}
 	
 	public function setPageTitle($page_title){ $this->_page_title = $page_title; }

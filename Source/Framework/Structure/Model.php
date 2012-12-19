@@ -166,7 +166,7 @@ class Model implements Iterator, Serializable{
 	
 	public function getObject($key_name, $object_type_if_null='DataObject'){
 		$result = isset($this->_data[$key_name])?$this->_data[$key_name]:new $object_type_if_null();
-		return ($result instanceof $object_type_if_null)?$result:new $object_type_if_null();
+		return ($result instanceof DataObject)?$result:new $object_type_if_null();
 	}
 	
 	public function getString($key_name, $character_limit=null, $trim_output=true){

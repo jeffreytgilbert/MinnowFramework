@@ -23,15 +23,33 @@ function handle_static_content_request(){
 		$file_path = dirname(__FILE__).'/../'.$_GET['type'].'/'.$path;
 		if(!file_exists($file_path)){ header('HTTP/1.0 404 Not Found'); }
 		
+		// better to not statically type the mime types because css folder sometimes contains web fonts, etc, by users. hybrid auth definitely does 
 		switch($_GET['type']){
+ 			
 			case 'css':
-				header('Content-Type: text/css');
-				echo file_get_contents($file_path);
-			break;
+				if(substr($file_path,-4,4) == '.css'){
+					header('Content-Type: text/css');
+				} else {
+					if(function_exists('mime_content_type')){
+						header('Content-Type: '.mime_content_type($file_path));
+					} else if(class_exists('finfo')) {
+						header('Content-Type: '.finfo::file($file_path,FILEINFO_MIME_ENCODING));
+					}
+				}
+ 			break;
+ 			
 			case 'js':
-				header('Content-Type: text/javascript');
-				echo file_get_contents($file_path);
+				if(substr($file_path,-3,3) == '.js'){
+					header('Content-Type: text/javascript');
+				} else {
+					if(function_exists('mime_content_type')){
+						header('Content-Type: '.mime_content_type($file_path));
+					} else if(class_exists('finfo')) {
+						header('Content-Type: '.finfo::file($file_path,FILEINFO_MIME_ENCODING));
+					}
+				}
 			break;
+			
 			case 'img':
 				header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 3600000));
 				if(function_exists('mime_content_type')){
@@ -39,9 +57,10 @@ function handle_static_content_request(){
 				} else if(class_exists('finfo')) {
 					header('Content-Type: '.finfo::file($file_path,FILEINFO_MIME_ENCODING));
 				}
-				echo file_get_contents($file_path);
 			break;
 		}
+		
+		echo file_get_contents($file_path);
 	} else {
 		header('HTTP/1.0 404 Not Found');
 		exit;

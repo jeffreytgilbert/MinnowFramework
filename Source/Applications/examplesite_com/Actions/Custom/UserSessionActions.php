@@ -161,7 +161,23 @@ final class UserSessionActions extends Actions{
 		);
 	}
 	
-	public static function deleteUserSessionById($user_id){
+	public static function deleteUserSessionByPhpSessionId($php_session_id){
+		return parent::MySQLUpdateAction('
+			DELETE 
+			FROM user_session 
+			WHERE php_session_id=:php_session_id',
+			// bind data to sql variables
+			array(
+				':php_session_id' => $php_session_id
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
+				':php_session_id'
+			)
+		);
+	}
+
+	public static function deleteUserSessionsByUserId($user_id){
 		return parent::MySQLUpdateAction('
 			DELETE 
 			FROM user_session 

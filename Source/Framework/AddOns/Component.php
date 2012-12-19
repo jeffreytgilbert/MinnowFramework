@@ -16,9 +16,10 @@ abstract class Component{
 		$_component_controllers = array(); // instances of component controller run from this request
 	
 	// set up read only variables
+	public function getParentController(){ return $this->_Controller; }
 	public function getComponentName(){ return $this->_component_name; }
 	public function getComponentClassName(){ return $this->_component_class_name; }
-	public function getConfig(){ return $this->_Config; } // this should probably be a model object for simplicity in calling unknown values without running checks
+	public function getConfig(){ return $this->_Config; }
 	public function getInstanceName(){ return $this->_instance_name; }
 	abstract public function getInstance(); // leave this to be defined by connection driver so it can be type cast correctly
 	
@@ -33,7 +34,7 @@ abstract class Component{
 		$this->_component_class_name = get_called_class();
 		$this->_component_name = substr($this->_component_class_name, 0, strlen('Component')*-1);
 	}
-
+	
 	// just use map request. 
 //	the handling of 1 page request bound to an alias vs all page requests bound to a folder need to be easier to author and understand.
 // 	// The component checks to see if the controller exists, and if it does it creates an instance to the component

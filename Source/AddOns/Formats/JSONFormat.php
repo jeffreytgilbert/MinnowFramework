@@ -23,7 +23,7 @@ trait JSONFormat{
 			'Notices'=>$Page->getNotices()->toArrayRecursive(),
 			'Errors'=>$Page->getErrors()->toArrayRecursive(),
 			'Confirmations'=>$Page->getConfirmations()->toArrayRecursive(),
-			'Data'=>$Page->getData()->toArrayRecursive()
+			'Data'=>$Page->getDataObject()->toArrayRecursive()
 		));
 	}
 }

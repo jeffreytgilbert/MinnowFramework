@@ -12,6 +12,11 @@ class Helpers{
 	
 	private $_helpers = array();
 	
+	// Helper function for grabbing just a setting
+	public function getSetting($helper_name, $setting, $grouping=null){
+		return $this->config('Helpers/'.$helper_name.'/', $grouping, $setting);
+	}
+	
 	// make sure connections are freed at the end of a process execution
 	public function __destruct(){
 		foreach($this->_helpers as $HelperType){

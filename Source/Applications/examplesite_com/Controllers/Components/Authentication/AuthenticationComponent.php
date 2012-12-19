@@ -35,19 +35,22 @@ class AuthenticationComponent extends Component{
 	private $location			= array();
 	
 	protected $_is_api_call		= false;
-	private $_HybridAuthHelper, $_LocationHelper;
+	private $_HybridAuthHelper, $_LocationHelper, $_SecureCookieHelper, $_SessionHelper, $_SecureHashHelper;
 	
-	const REQUEST_FULL_REGISTRATION = 'FullRegistration';
-	const REQUEST_FINISH_REGISTRATION = 'FinishRegistration';
-	const REQUEST_LOGIN = 'Login';
-	const REQUEST_LOGOUT = 'Logout';
-	const REQUEST_CONFIRM_CONTACT = 'ConfirmContact';
+	public function getHybridAuth(){ return $this->_HybridAuthHelper; }
+	public function getLocationHelper(){ return $this->_LocationHelper; }
+	public function getSecureCookieHelper(){ return $this->_SecureCookieHelper; }
+	public function getSessionHelper(){ return $this->_SessionHelper; }
+	
+// 	const REQUEST_FULL_REGISTRATION = 'FullRegistration';
+// 	const REQUEST_FINISH_REGISTRATION = 'FinishRegistration';
+// 	const REQUEST_LOGIN = 'Login';
+// 	const REQUEST_LOGOUT = 'Logout';
+// 	const REQUEST_CONFIRM_CONTACT = 'ConfirmContact';
 	
 	// maybe these can get refactored to a component controller for login status, or maybe they stay here instead. 
 	const _LOGGED_OUT_BY_REQUEST = 1;
 	const _LOGGED_OUT_BAD_SESSION = 2;
-// 	const _LOGGED_OUT_BY_REQUEST = 'logged out by request';
-// 	const _LOGGED_OUT_BY_REQUEST = 'logged out by request';
 // 	const _LOGGED_OUT_BY_REQUEST = 'logged out by request';
 	const MSG_MANUAL_LOG_OUT = 0;
 	const MSG_PASSWORD_CHANGED = 1;
@@ -67,7 +70,7 @@ class AuthenticationComponent extends Component{
 	const MSG_UNKNOWN_ERROR = 15;
 	
 	public static function cast(Component $AuthenticationComponent){ 
-		if($AuthenticationComponent instanceof AuthenticationComponent) { return $AuthenticationComponent;}
+		if($AuthenticationComponent instanceof AuthenticationComponent) { return $AuthenticationComponent; }
 	}
 	
 	public function __construct(Controller $Controller, Model $Settings){
@@ -82,6 +85,8 @@ class AuthenticationComponent extends Component{
 			'OnlineGuest'
 		));
 		
+		Run::fromComponents('Authentication/Models/AuthenticationCookie.php');
+		
 		$this->_Controller->loadActions(array(
 			'PhpSessionActions',// not sure i need this one
 			'UserSessionActions',
@@ -92,6 +97,9 @@ class AuthenticationComponent extends Component{
 		
 		$this->_HybridAuthHelper = $this->_Controller->getHelpers()->HybridAuth();
 		$this->_LocationHelper = $this->_Controller->getHelpers()->Location();
+		$this->_SecureCookieHelper = $this->_Controller->getHelpers()->SecureCookie();
+		$this->_SecureHash = $this->_Controller->getHelpers()->SecureHash();
+		$this->_SessionHelper = $this->_Controller->getHelpers()->Session();
 	}
 	
 	public function __destruct(){}
@@ -100,19 +108,86 @@ class AuthenticationComponent extends Component{
 		if($this->_instance instanceof AuthenticationComponent){ return $this->_instance; }
 	}
 	
+	public function getProviderList(){
+		return $this->_HybridAuthHelper->getAvailableProviders();
+	}
 	
-	public function authenticateFromHybridAuth(){
-		
-		if(isset($_SESSION['MINNOW::ID'])){ 
-			$ID = unserialize($_SESSION['MINNOW::ID']);
-			// make sure it's authentic.
-			if($ID instanceof AccessRequest){ return $ID; }
-			// if it's not genuine, dump it and start over.
-			else { unset($_SESSION['MINNOW::ID']); }
+	public function logout(){
+		if(isset($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'])){
+			$ID = unserialize($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID']);
+			
+			if($ID instanceof AccessRequest && $ID->isOnline()){
+				$ID = OnlineMember::cast($ID);
+				// kill user session in the db
+				UserSessionActions::deleteUserSessionByPhpSessionId(session_id());
+			}
+			
+			// kill php session data
+			unset($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID']);
 		}
 		
-		// We'll need this IP address for the object that's returned
-		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($this->_LocationHelper->guessIP());
+		// kill social logins
+		$this->getHybridAuth()->logoutAllProviders();
+		
+		// kill secure cookie
+		$CookieHelper = RuntimeInfo::instance()->getHelpers()->SecureCookie();
+		$CookieHelper->delete('MINNOW::COMPONENTS::AUTHENTICATION::ID');
+	}
+	
+	private $_ID;
+	public function identifyUser(){
+		// cache
+		if(isset($this->_ID)){ return $this->_ID; }
+		
+		// Check sessions
+		if(isset($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'])){ 
+			$ID = unserialize($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID']);
+			// make sure it's authentic.
+			if($ID instanceof OnlineMember || $ID instanceof OnlineGuest){ return $ID; }
+			// if it's not genuine, dump it and start over.
+			else {
+				unset($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID']);
+				return $ID = $this->authenticate();
+			}
+		} else {
+			return $ID = $this->authenticate();
+		}
+		
+	}
+	
+	private function authenticate(){
+			// We'll need this IP address for the object that's returned
+		$users_ip = $this->_LocationHelper->guessIP();
+		
+		$CookieHelper = RuntimeInfo::instance()->getHelpers()->SecureCookie();
+		
+		pr($users_ip);
+		
+		// Otherwise check cookie
+		if($CookieHelper->fetch('MINNOW::COMPONENTS::AUTHENTICATION::ID')) {
+			$serialized_cookie_data = $CookieHelper->fetch('MINNOW::COMPONENTS::AUTHENTICATION::ID');
+			$Cookie = unserialize($serialized_cookie_data);
+			$Cookie = AuthenticationCookie::cast($Cookie);
+			
+			pr($Cookie);
+			pr($this->getConfig());
+			
+			// @todo check the cookie to see if the user is logged in already with the cookie
+			if(
+				($this->getConfig()->get('validate_cookie_against_ip') && $Cookie->get('ip')) || // @todo
+				($this->getConfig()->get('validate_cookie_against_user_agent') && $Cookie->get('')) || // @todo
+				($this->getConfig()->get('validate_cookie_against_token') && $Cookie->get('')) // @todo
+			){
+				// @todo log in the user and return their data if all is good
+				return;
+			}
+			
+		}
+		
+		// Otherwise check social sign ins
+		
+		// See if we can get a location from this ip
+		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
 		$NetworkAddress = new NetworkAddress(array(
 			'ip'=>$LocationFromIp->get('ip'),
 		));
@@ -188,9 +263,12 @@ class AuthenticationComponent extends Component{
 					'php_session_id'=>session_id(),
 					'last_active'=>'now',
 					'LocationFromIp'=>$LocationFromIp,
-					'NetworkAddress'=>$NetworkAddress
+					'NetworkAddress'=>$NetworkAddress,
+					'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+					'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat()
 				));
-				$_SESSION['MINNOW::ID'] = serialize($ID);
+				// Set this requesters session data so subsequent page loads dont try to log him in
+				$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
 				return $ID;
 				
 			} else { // there are no accounts associated with this/these logins, but there should be, so register one.
@@ -318,7 +396,7 @@ class AuthenticationComponent extends Component{
 				}
 			}
 			
-			$_SESSION['MINNOW::ID'] = serialize($ID);
+			$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
 			return $ID;
 			
 		} else {
@@ -326,9 +404,11 @@ class AuthenticationComponent extends Component{
 				'php_session_id'=>session_id(),
 				'last_active'=>'now',
 				'LocationFromIp'=>$LocationFromIp,
-				'NetworkAddress'=>$NetworkAddress
+				'NetworkAddress'=>$NetworkAddress,
+				'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+				'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat()
 			));
-			$_SESSION['MINNOW::ID'] = serialize($ID);
+			$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
 			// no providers connected, so couldn't log in with hybrid auth
 //			return new Guest();
 		}

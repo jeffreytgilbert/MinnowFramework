@@ -14,6 +14,7 @@ final class HybridAuthHelper extends Helper{
 		
 		Run::fromHelpers('HybridAuth/Requirements/Hybrid/Auth.php');
 		Run::fromHelpers('HybridAuth/Requirements/HybridAuthAbstraction.php');
+		Run::fromHelpers('HybridAuth/Requirements/HybridAuthException.php');
 		
 		$SettingsObject = $this->getConfig();
 		
