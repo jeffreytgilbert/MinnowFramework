@@ -13,8 +13,11 @@ final class SessionHelper extends Helper{
 		
 		try{
 			$timeout = $this->getConfig()->get('timeout');
-				
-			if( session_id() != '' ){ throw new Exception('Can\'t use sessions through framework. Sessions were started previously without initialing framework sessions first.'); }
+			if( session_id() != '' ){
+				throw new Exception('Can\'t use sessions through framework. Sessions were started previously without initialing framework sessions first.');
+// 				echo '<pre/>';
+// 				debug_print_backtrace();
+			}
 			
 			$this->_instance = $Sessions = new SessionAbstraction(new SessionConfig(
 				$this->getConfig()->get('storage_method'),
@@ -34,6 +37,7 @@ final class SessionHelper extends Helper{
 					'SessionMySQLActions::destroy',
 					'SessionMySQLActions::clean'
 				);
+				
 			} else if($this->_instance->getSessionConfig()->isUsingMemcached()) {
 				ini_set('session.save_handler', 'memcache');
 				ini_set('session.save_path', $this->_instance->getSessionConfig()->getHosts());
@@ -48,12 +52,11 @@ final class SessionHelper extends Helper{
 			if($this->_Config->get('debug')){ pr($e); }
 			die;
 		}
-		
-		session_start();
 	}
 	
 	public function getInstance(){ 
 		if($this->_instance instanceof SessionAbstraction) return $this->_instance;
+		
 		return new SessionAbstraction();
 	}
 	

@@ -15,7 +15,7 @@ class AuthenticationCookie extends DataObject{
 	}
 	
 	public static function cast(DataObject $DataObject){
-		return ($DataObject instanceof AccountStatus)?$DataObject:new AccountStatus($DataObject->toArray());
+		return ($DataObject instanceof AuthenticationCookie)?$DataObject:new AuthenticationCookie($DataObject->toArray());
 	}
 	
 	// Static typed child methods for autocomplete on object

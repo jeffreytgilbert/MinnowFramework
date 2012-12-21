@@ -48,7 +48,7 @@ abstract class PageController extends Controller{
 		$this->loadIncludedFiles();
 		
 		// load any globally used helpers
-		$this->_Session = $this->getHelpers()->Session(); // especially sessions, since it needs to run before anything else starts a session
+		$this->_Session = $this->getHelpers()->Session()->start(); // especially sessions, since it needs to run before anything else starts a session
 		
 		// load components needed on every page manually. These may have object dependencies / inheritance issues if auto loaded
 // 		Run::fromComponents('AuthenticationComponent.php');

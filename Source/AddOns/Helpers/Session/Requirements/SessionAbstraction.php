@@ -14,6 +14,8 @@ class SessionAbstraction {
 		return $this->_sessionConfig;
 	}
 	
+	public function start(){ session_start(); }
+	
 	public function write($label, $data){
 		$app_name = RuntimeInfo::instance()->getApplicationName();
 		if(isset($_SESSION[$app_name]) && isset($_SESSION[$app_name]['Data'])){
