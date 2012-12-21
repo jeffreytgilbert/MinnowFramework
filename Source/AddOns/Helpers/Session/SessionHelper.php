@@ -13,11 +13,11 @@ final class SessionHelper extends Helper{
 		
 		try{
 			$timeout = $this->getConfig()->get('timeout');
-			if( session_id() != '' ){
-				throw new Exception('Can\'t use sessions through framework. Sessions were started previously without initialing framework sessions first.');
-// 				echo '<pre/>';
-// 				debug_print_backtrace();
-			}
+// 			if( session_id() != '' ){
+// 				throw new Exception('Can\'t use sessions through framework. Sessions were started previously without initialing framework sessions first.');
+// // 				echo '<pre/>';
+// // 				debug_print_backtrace();
+// 			}
 			
 			$this->_instance = $Sessions = new SessionAbstraction(new SessionConfig(
 				$this->getConfig()->get('storage_method'),

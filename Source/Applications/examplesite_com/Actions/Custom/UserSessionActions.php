@@ -34,13 +34,12 @@ final class UserSessionActions extends Actions{
 				':last_access' => $UserSession->getDateTimeObject('last_access')->getMySQLFormat('datetime'),
 				':ip' => $UserSession->getString('ip'),
 				':proxy' => $UserSession->getString('proxy'),
-				':user_agent' => $UserSession->getString('unread_messages'),
+				':user_agent' => $UserSession->getString('user_agent'),
 				':access_token' => $UserSession->getString('access_token'),
 				':php_session_id' => $UserSession->getString('php_session_id'),
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				':unread_messages',
 				':user_id'
 			)
 		);
@@ -196,9 +195,9 @@ final class UserSessionActions extends Actions{
 				':last_access' => $UserSession->getDateTimeObject('last_access')->getMySQLFormat('datetime'),
 				':ip' => $UserSession->getString('ip'),
 				':proxy' => $UserSession->getString('proxy'),
-				':user_agent' => $UserSession->getInteger('user_agent'),
-				':access_token' => $UserSession->getInteger('access_token'),
-				':php_session_id' => $UserSession->getInteger('php_session_id'),
+				':user_agent' => $UserSession->getString('user_agent'),
+				':access_token' => $UserSession->getString('access_token'),
+				':php_session_id' => $UserSession->getString('php_session_id'),
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(

@@ -44,11 +44,11 @@ abstract class PageController extends Controller{
 		$MasterConnection->readRow();
 		RuntimeInfo::instance()->now()->setTimestamp(strtotime($MasterConnection->row_data['right_now_gmt']));
 		
+		// Load sessions straight away because anything afterwards needs to use the db session handler
+		$this->_Session = $this->getHelpers()->Session()->start(); // especially sessions, since it needs to run before anything else starts a session
+		
 		// load required files for this controller automatically and do so before components so components can use included files
 		$this->loadIncludedFiles();
-		
-		// load any globally used helpers
-		$this->_Session = $this->getHelpers()->Session()->start(); // especially sessions, since it needs to run before anything else starts a session
 		
 		// load components needed on every page manually. These may have object dependencies / inheritance issues if auto loaded
 // 		Run::fromComponents('AuthenticationComponent.php');

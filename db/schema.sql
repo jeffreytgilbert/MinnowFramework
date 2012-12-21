@@ -1,4 +1,7 @@
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT=0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 CREATE TABLE `account_status` (
@@ -246,6 +249,9 @@ CREATE TABLE `php_session` (
   `data` varchar(21000) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `php_session` (`id`, `access`, `data`) VALUES
+('f0f504f6d9b8abb8e26d59918fc5c7ce', 1356126770, 'HA::CONFIG|a:3:{s:14:"php_session_id";s:40:"s:32:"f0f504f6d9b8abb8e26d59918fc5c7ce";";s:7:"version";s:16:"s:9:"2.1.0-dev";";s:6:"config";s:1705:"a:8:{s:10:"debug_mode";s:0:"";s:10:"debug_file";s:0:"";s:8:"base_url";s:54:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/";s:9:"providers";a:10:{s:6:"OpenID";a:1:{s:7:"enabled";s:1:"1";}s:5:"Yahoo";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:3:"key";s:0:"";s:6:"secret";s:0:"";}}s:3:"AOL";a:1:{s:7:"enabled";s:1:"1";}s:6:"Google";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:2:"id";s:0:"";s:6:"secret";s:0:"";}}s:8:"Facebook";a:2:{s:7:"enabled";s:1:"1";s:4:"keys";a:2:{s:2:"id";s:15:"461820303860356";s:6:"secret";s:32:"fd6a75169c964c926835d3609b9d761b";}}s:7:"Twitter";a:2:{s:7:"enabled";s:1:"1";s:4:"keys";a:2:{s:3:"key";s:22:"xwsjQ8mp4RZpRWDJaNE0YA";s:6:"secret";s:42:"EznZlkdYQoRB8iuCleD6HmhNmyVJvfVMpzD9jLfxL4";}}s:4:"Live";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:2:"id";s:0:"";s:6:"secret";s:0:"";}}s:7:"MySpace";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:3:"key";s:0:"";s:6:"secret";s:0:"";}}s:8:"LinkedIn";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:3:"key";s:0:"";s:6:"secret";s:0:"";}}s:10:"FourSquare";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:2:"id";s:0:"";s:6:"secret";s:0:"";}}}s:9:"path_base";s:112:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/";s:14:"path_libraries";s:123:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/thirdparty/";s:14:"path_resources";s:122:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/resources/";s:14:"path_providers";s:122:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/Providers/";}";}HA::STORE|a:3:{s:38:"hauth_session.facebook.hauth_return_to";s:75:"s:67:"http://localhost/Account/-/HybridAuthLoginRequest?provider=Facebook";";s:37:"hauth_session.facebook.hauth_endpoint";s:82:"s:74:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/?hauth.done=Facebook";";s:41:"hauth_session.facebook.id_provider_params";s:418:"a:5:{s:15:"hauth_return_to";s:67:"http://localhost/Account/-/HybridAuthLoginRequest?provider=Facebook";s:11:"hauth_token";s:32:"f0f504f6d9b8abb8e26d59918fc5c7ce";s:10:"hauth_time";i:1356124380;s:11:"login_start";s:97:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/?hauth.start=Facebook&hauth.time=1356124380";s:10:"login_done";s:74:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/?hauth.done=Facebook";}";}MINNOW::COMPONENTS::AUTHENTICATION::ID|s:1209:"C:11:"OnlineGuest":1183:{a:7:{s:14:"php_session_id";s:32:"f0f504f6d9b8abb8e26d59918fc5c7ce";s:11:"last_active";s:19:"2012-12-21 21:32:02";s:14:"LocationFromIp";C:14:"LocationFromIp":696:{a:15:{s:2:"ip";s:9:"127.0.0.1";s:9:"city_name";s:0:"";s:11:"region_name";s:0:"";s:12:"country_code";s:0:"";s:12:"country_name";s:0:"";s:11:"postal_code";s:0:"";s:8:"latitude";s:0:"";s:9:"longitude";s:0:"";s:8:"dma_code";s:0:"";s:9:"area_code";s:0:"";s:10:"gmt_offset";s:1:"0";s:9:"localtime";O:14:"DateTimeObject":3:{s:4:"date";s:19:"2012-12-21 21:32:04";s:13:"timezone_type";i:3;s:8:"timezone";s:3:"UTC";}s:7:"isotime";O:14:"DateTimeObject":3:{s:4:"date";s:19:"2012-12-21 21:32:04";s:13:"timezone_type";i:1;s:8:"timezone";s:6:"+00:00";}s:7:"utctime";O:14:"DateTimeObject":3:{s:4:"date";s:19:"2012-12-21 21:32:04";s:13:"timezone_type";i:3;s:8:"timezone";s:3:"UTC";}s:10:"dst_offset";s:5:"False";}}s:14:"NetworkAddress";C:14:"NetworkAddress":31:{a:1:{s:2:"ip";s:9:"127.0.0.1";}}s:10:"user_agent";s:119:"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.40 Safari/537.17";s:16:"created_datetime";s:19:"2012-12-21 21:32:02";s:10:"PhpSession";C:10:"DataObject":6:{a:0:{}}}}";');
 
 CREATE TABLE `power` (
   `power_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
@@ -664,7 +670,10 @@ INSERT INTO `user_login_provider` (`user_login_provider_id`, `created_datetime`,
 (2, '2012-11-27 15:32:02', NULL, 'SMS', 'MinnowAuth', 1),
 (3, '2012-11-27 15:32:02', NULL, 'Facebook', 'HybridAuth', 0),
 (4, '2012-11-27 15:32:02', NULL, 'Twitter', 'HybridAuth', 0),
-(5, '2012-11-27 15:32:02', NULL, 'Instagram', 'HybridAuth', 0);
+(5, '2012-11-27 15:32:02', NULL, 'Instagram', 'HybridAuth', 0),
+(6, '2012-11-27 15:32:02', NULL, 'AOL', 'HybridAuth', 0),
+(7, '2012-11-27 15:32:02', NULL, 'OpenSocial', 'HybridAuth', 0)
+;
 
 CREATE TABLE `user_login_validation` (
   `user_login_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -710,7 +719,9 @@ CREATE TABLE `user_session` (
   `user_agent` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
   `access_token` varchar(256) CHARACTER SET latin1 NOT NULL,
   `php_session_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`user_id`)
+  KEY `user_id` (`user_id`),
+  KEY `php_session_id` (`php_session_id`),
+  KEY `access_token` (`access_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
@@ -723,3 +734,5 @@ CREATE TABLE `user_setting` (
   PRIMARY KEY (`user_id`,`setting_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;

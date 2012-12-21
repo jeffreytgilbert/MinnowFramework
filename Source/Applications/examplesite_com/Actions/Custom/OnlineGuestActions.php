@@ -18,7 +18,7 @@ final class OnlineGuestActions extends Actions{
 			// bind data to sql variables
 			array(
 				':last_active' => $OnlineGuest->getDateTimeObject('last_active')->getMySQLFormat('datetime'),
-				':php_session_id' => $OnlineGuest->getInteger('php_session_id')
+				':php_session_id' => $OnlineGuest->getString('php_session_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
@@ -36,7 +36,7 @@ final class OnlineGuestActions extends Actions{
 			WHERE php_session_id=:php_session_id',
 			// bind data to sql variables
 			array(
-				':php_session_id' => (int)$php_session_id
+				':php_session_id' => $php_session_id
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
@@ -77,8 +77,8 @@ final class OnlineGuestActions extends Actions{
 		$php_session_ids = array();
 		foreach($DataCollection->toArray() as $DataObject){
 			$DataObject->set('OnlineGuest', new OnlineGuest());
-			if($DataObject->getInteger('php_session_id') > 0){
-				$php_session_ids[] = $DataObject->getInteger('php_session_id');
+			if($DataObject->getString('php_session_id') > 0){
+				$php_session_ids[] = $DataObject->getString('php_session_id');
 			}
 		}
 		
@@ -118,7 +118,7 @@ final class OnlineGuestActions extends Actions{
 			// bind data to sql variables
 			array(
 				':last_active' => $OnlineGuest->getDateTimeObject('last_active')->getMySQLFormat('datetime'),
-				':php_session_id' => $OnlineGuest->getInteger('php_session_id')
+				':php_session_id' => $OnlineGuest->getString('php_session_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
@@ -133,7 +133,7 @@ final class OnlineGuestActions extends Actions{
 			WHERE php_session_id=:php_session_id',
 			// bind data to sql variables
 			array(
-				':php_session_id' => (int)$php_session_id
+				':php_session_id' => $php_session_id
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
