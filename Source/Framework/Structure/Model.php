@@ -129,8 +129,24 @@ class Model implements Iterator, Serializable{
 	}
 	
 	public function getDateTimeObject($key_name, $timezone='UTC'){
-		$result = isset($this->_data[$key_name])?strtotime($this->_data[$key_name]):0; // same
-		return new DateTimeObject($result, new DateTimeZone($timezone));
+		$result = isset($this->_data[$key_name])?$this->_data[$key_name]:0; // same
+		try{
+			return new DateTimeObject($result, new DateTimeZone($timezone));
+		} catch(Exception $e){
+			pr($e);
+			if(RuntimeInfo::instance()->isDebugModeOn()){
+				pr(
+					"Exception:\t".get_class($e).'<br>'.
+					"Code:\t\t".$e->getCode().'<br>'.
+					"File:\t\t".$e->getFile().'<br>'.
+					"Message:\t".$e->getMessage().'<br>'
+				);
+				pr($e->getTrace());
+				die;
+			} else {
+				die;
+			}
+		}
 	}
 	
 	// meant to be shorthand for getNumber, only with the default being to have decimals set to 2

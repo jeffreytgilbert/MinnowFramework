@@ -32,6 +32,11 @@ class LocationServices
 		return $ip;
 	}
 	
+	public static function guessProxyIP(){
+		if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) { return $_SERVER['HTTP_X_FORWARDED_FOR']; }
+		return false;
+	}
+	
 	public static function getLocationFromServices($ip){
 		
 		// this could likely use a try catch or throw block in here for failed requests 

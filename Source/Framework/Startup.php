@@ -55,6 +55,9 @@ final class Startup{
 	private $_now;
 	public function now(){ return $this->_now; }
 	
+	private $_debug;
+	public function isDebugModeOn(){ return (isset($this->_debug)?(bool)$this->_debug:true); }
+	
 	private $_pageTimer;
 	// @deprecated 
 	public function pageTimer(){ return $this->_pageTimer; }
@@ -140,6 +143,8 @@ final class Startup{
 				
 		// include all files required by the startup process
 		$this->includeRequirements();
+		
+ 		$this->_debug = isset($settings['']['debug'])?$settings['']['debug']:false;
 		
 // 		if($this->config(null,null)->getBoolean('online')){
 // 			echo 'Site is online';

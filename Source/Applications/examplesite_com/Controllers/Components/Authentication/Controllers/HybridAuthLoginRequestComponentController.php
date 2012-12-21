@@ -31,7 +31,10 @@ class HybridAuthLoginRequestComponentController extends ComponentController { //
 			// Is that provider in the provider list that corresponds to the providers configured in hybrid auth settings
 			if(in(_g('provider'), $this->_data['providers'])){
 				try{
-					$this->_page_body = $HybridAuth->authenticate(lower(_g('provider'), $this->getParentComponent()->getConfig()->get('hybrid_auth_endpoint_page_url')));
+					$this->_Authentication->logout();
+					$this->_page_body = $HybridAuth->authenticate(lower(_g('provider')));
+					$ID = $this->_Authentication->identifyUser();
+					$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url'));
 				} catch (HybridAuthException $e){
 					$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url').'?error_code='.$e->getCode());
 				}

@@ -36,6 +36,41 @@ final class MySQLAbstraction extends SQLConnection{
 		self::close();
 	}
 
+	private function cleanTraceOutputOfCredentials(PDOException $e){
+		if($this->_debug){
+			$trace = $e->getTrace();
+			foreach($trace as $trace_key => $step){
+//				pr($step);
+				if(isset($step['class']) && in($step['class'], array('PDO','MySQLAbstraction','MySQLConnection'))){
+					$keys = array_keys($step['args']);
+//					pr($keys);
+					foreach($keys as $key){
+						if(is_string($step['args'][$key])){
+//							echo 'Set this: '.$step['args'][$key].'<br>';
+						}
+						unset($step['args'][$key]);
+						$step['args'][$key] = '********';
+					}
+					unset($keys);
+				}
+//				pr($step);
+//				echo '===============<br><br><br><br>';
+				$trace[$trace_key] = $step;
+			}
+			
+			pr(
+				"Exception:\t".get_class($e).'<br>'.
+				"Code:\t\t".$e->getCode().'<br>'.
+				"File:\t\t".$e->getFile().'<br>'.
+				"Message:\t".$e->getMessage().'<br>'
+			);
+			pr($trace);
+			die;
+		} else {
+			die('Unable to connect using mysql. Checked the configuration?');
+		}
+	}
+	
 	/**
 	 * Opens a new connection to your MySQL 4.1+ database
 	 * @return resource
@@ -53,11 +88,7 @@ final class MySQLAbstraction extends SQLConnection{
 			);
 			$this->db_handle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (PDOException $e){
-			if($this->_debug){
-				pr($e);
-			} else {
-				die('Unable to connect using mysql. Checked the configuration?');
-			}
+			$this->cleanTraceOutputOfCredentials($e);
 		}
 		
 		return $this->db_handle;
@@ -99,12 +130,12 @@ final class MySQLAbstraction extends SQLConnection{
 			$this->rows=$this->statement->rowCount();
 			$this->next_row_number=0;
 		} catch (PDOException $e) {
-			if($this->_debug){ pr($e); }
-				
 			$time_end = microtime(true);
 			$time = $time_end - $time_start;
 			$this->bad_queries[]=$query.'; #'.$e->getMessage().' at '.date(DATE_RFC822);
-			return false;
+			
+			$this->cleanTraceOutputOfCredentials($e);
+			return false;// unreachable code. the clean method exits the script.
 		}
 
 		return true;
@@ -122,10 +153,10 @@ final class MySQLAbstraction extends SQLConnection{
 		try {
 			$this->statement=$this->db_handle->prepare($query);
 		} catch (PDOException $e) {
-			if($this->_debug){ pr($e); }
-				
 			$this->bad_queries[]=$query.'; #'.$e->getMessage().' at '.date(DATE_RFC822);
-			return false;
+			
+			$this->cleanTraceOutputOfCredentials($e);
+			return false;// unreachable code. the clean method exits the script.
 		}
 
 		$time_end = microtime(true);
@@ -157,12 +188,10 @@ final class MySQLAbstraction extends SQLConnection{
 				}
 			}
 		} catch (PDOException $e) {
-				
 			$this->bad_queries[]=current($this->queries).'; #'.$e->getMessage().' at '.date(DATE_RFC822);
 			
-			if($this->_debug){ pr($e); }
-			//			echo $query;
-			return false;
+			$this->cleanTraceOutputOfCredentials($e);
+			return false;// unreachable code. the clean method exits the script.
 		}
 
 		$time_start = microtime(true);
@@ -170,12 +199,10 @@ final class MySQLAbstraction extends SQLConnection{
 			// run it
 			$this->statement->execute(); // $values
 		} catch (PDOException $e) {
-			pr($this);
-			if($this->_debug){ pr($e); }
-				
 			$this->bad_queries[]=current($this->queries).'; #'.$e->getMessage().' at '.date(DATE_RFC822);
-			//			echo $query;
-			return false;
+			
+			$this->cleanTraceOutputOfCredentials($e);
+			return false;// unreachable code. the clean method exits the script.
 		}
 		// clock it
 		$time_end = microtime(true);

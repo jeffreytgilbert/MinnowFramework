@@ -4,14 +4,17 @@ $jump = $Page->getParentComponent()->getConfig()->get('hybrid_auth_request_page_
 $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParentComponent())->getProviderList());
 ?>
 
-<h1>This is your login page</h1>
-
 <div>
-	<form action="?" method="post" name="LoginForm">
-	<fieldset>
-		<legend>Sign in</legend>
-		
-	</fieldset>
+	<form action="?" method="post" name="LoginForm" class="form-signin">
+	<div>
+		<h2 class="form-signin-heading">Please sign in</h2>
+        <input type="text" class="input-block-level" placeholder="Email address">
+        <input type="password" class="input-block-level" placeholder="Password">
+        <label class="checkbox">
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+        <button class="btn btn-large btn-primary" type="submit">Sign in</button>
+	</div>
 	</form>
 </div>
 
@@ -26,6 +29,9 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 		<a href="<?= $jump ?>?provider=<?= $provider ?>" class="zocial <?= strtolower($provider) ?>"><?= $provider ?></a> 
 		
 		<?php endforeach; ?>
+		
+		<br><br>
+		Login functionality provided by HybridAuth. Logo font by Zocial.
 		
 		<!--  
 		<a href="<?= $jump ?>?provider=Facebook" class="zocial facebook">Facebook</a>

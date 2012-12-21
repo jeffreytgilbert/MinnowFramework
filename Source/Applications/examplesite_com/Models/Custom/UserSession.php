@@ -9,11 +9,13 @@ class UserSession extends DataObject{
 		$this->addAllowedData(array(
 			'user_id'=>DataType::NUMBER,
 			'UserAccount'=>DataType::OBJECT,
-			'login_time'=>DataType::DATETIME,
+			'created_datetime'=>DataType::DATETIME,
 			'last_access'=>DataType::DATETIME,
 			'ip'=>DataType::TEXT,
 			'proxy'=>DataType::TEXT,
-			'unread_messages'=>DataType::NUMBER
+			'user_agent'=>DataType::TEXT,
+			'access_token'=>DataType::TEXT,
+			'php_session_id'=>DataType::TEXT
 		),true);
 		parent::__construct($data);
 	}

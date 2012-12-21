@@ -82,7 +82,8 @@ class AuthenticationComponent extends Component{
 			'UserLogin',
 			'AccessRequest',
 			'OnlineMember',
-			'OnlineGuest'
+			'OnlineGuest',
+			'UserSession'
 		));
 		
 		Run::fromComponents('Authentication/Models/AuthenticationCookie.php');
@@ -92,7 +93,10 @@ class AuthenticationComponent extends Component{
 			'UserSessionActions',
 			'UserLoginProviderActions',
 			'UserAccountActions',
-			'UserLoginActions'
+			'UserLoginActions',
+			'UserSessionActions',
+			'OnlineGuestActions',
+			'OnlineMemberActions'
 		));
 		
 		$this->_HybridAuthHelper = $this->_Controller->getHelpers()->HybridAuth();
@@ -158,10 +162,20 @@ class AuthenticationComponent extends Component{
 	private function authenticate(){
 			// We'll need this IP address for the object that's returned
 		$users_ip = $this->_LocationHelper->guessIP();
+		$users_proxy_ip = $this->_LocationHelper->guessProxyIP();
 		
 		$CookieHelper = RuntimeInfo::instance()->getHelpers()->SecureCookie();
 		
-		pr($users_ip);
+// 		pr($users_ip);
+		
+// 		pr('$Cookie');
+// 		pr($CookieHelper->fetch('MINNOW::COMPONENTS::AUTHENTICATION::ID'));
+		
+		// See if we can get a location from this ip
+		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
+		$NetworkAddress = new NetworkAddress(array(
+			'ip'=>$LocationFromIp->get('ip'),
+		));
 		
 		// Otherwise check cookie
 		if($CookieHelper->fetch('MINNOW::COMPONENTS::AUTHENTICATION::ID')) {
@@ -169,28 +183,106 @@ class AuthenticationComponent extends Component{
 			$Cookie = unserialize($serialized_cookie_data);
 			$Cookie = AuthenticationCookie::cast($Cookie);
 			
-			pr($Cookie);
-			pr($this->getConfig());
+// 			pr($Cookie);
+// 			pr($this->getConfig());
 			
-			// @todo check the cookie to see if the user is logged in already with the cookie
-			if(
-				($this->getConfig()->get('validate_cookie_against_ip') && $Cookie->get('ip')) || // @todo
-				($this->getConfig()->get('validate_cookie_against_user_agent') && $Cookie->get('')) || // @todo
-				($this->getConfig()->get('validate_cookie_against_token') && $Cookie->get('')) // @todo
-			){
-				// @todo log in the user and return their data if all is good
-				return;
-			}
+			// see if the cookie has a user id in it
+			if($Cookie->getInteger('user_id') > 0 && strlen($Cookie->getInteger('access_token')) > 0){
+				// if it does, check it against the settings registered to be checked in the configuration script
+				if(
+					($this->getConfig()->get('validate_cookie_against_ip') && $Cookie->get('ip') == $users_ip) ||
+					($this->getConfig()->get('validate_cookie_against_user_agent') && $Cookie->get('user_agent') == $_SERVER['HTTP_USER_AGENT']) 
+				){
+					
+					$ValidUserSession = UserSessionActions::selectByAccessToken($Cookie->get('access_token'),$Cookie->get('user_id'));
+					
+					if($this->getConfig()->get('validate_cookie_against_token') && $Cookie->get('access_token') && $ValidUserSession->get('access_token')){
+						
+						$user_id = $Cookie->get('user_id');
+						
+						//------------------------------------------------------
+						//------------------------------------------------------
+						
+						// Note: $MyUserLoginCollection should now be a complete collection of current logins from the db and the new sessions
+						
+						// The user needs to be marked as online in the database.
+						UserAccountActions::setUserAsOnline($user_id);
+						
+						// Grab the users account from the db
+						$MyUserAccount = UserAccountActions::selectByUserAccountId($user_id);
+						
+						// The account info should be stored in a member object. 
+						// The member object should inherit from the same parent class as other ID types, ex: Guest, Member, Application, etc. 
+						// Not every auth request contains user info, and in fact none of them contain the same data, but all would have similar 
+						// methods like isOnline(), isApiRequest(), and other such identifiers so common checks can be performed quickly.
+						
+						// The login info should be stored in a session
+						// $_SESSION['ID'] = '';
+						
+						$ID = new OnlineMember(array(
+							'user_id'=>$user_id,
+							'UserAccount'=>$MyUserAccount,
+							'last_active'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+							'LocationFromIp'=>$LocationFromIp,
+							'NetworkAddress'=>$NetworkAddress
+						));
+						
+						// Set this requesters session data so subsequent page loads dont try to log him in
+						$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
+						
+						// just need to generate a unique code. dont need to decrypt it at any time. 
+						$UserSession = new UserSession(array(
+							'user_id'=>$user_id,
+							'UserAccount'=>$ID->getUserAccount(),
+							'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+							'last_access'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+							'ip'=>$users_ip,
+							'proxy'=>$users_proxy_ip,
+							'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+							'access_token'=>$this->getParentController()->getHelpers()->SecureHash()->generateSecureHash(UserSessionActions::createRandomCode()),
+							'php_session_id'=>session_id()
+						));
+						
+						UserSessionActions::insertUserSession($UserSession); // insert a user session to track this login and to secure cookies against
+						
+						OnlineMemberActions::insertOnlineMember($ID); // create a unique counter impression for members stats
+						
+						// Member cookie
+						$AuthenticationCookie = new AuthenticationCookie(array(
+							'user_id'=>$user_id,
+							'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+							'ip'=>$users_ip,
+							'proxy'=>$users_proxy_ip,
+							'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+							'access_token'=>$UserSession->getString('access_token')
+						));
+						
+						$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
+						
+						pr('Cookie was good');
+						
+						return $ID;
+						
+						//------------------------------------------------------
+						//------------------------------------------------------						
+						
+					}
+					
+					
+					return;
+				
+				// Otherwise, if the cookie wasn't valid any longer, delete the cookie and any session data associated with it
+				} else {
+					$this->logout();
+				}
+			// Otherwise, the cookie was a guest cookie, so return this access request as a guest.
+			} else {
+				return $this->setUserAsGuest($CookieHelper, $LocationFromIp, $NetworkAddress, $users_ip, $users_proxy_ip);
+			} // end guest vs member cookie check
 			
-		}
+		} // end cookie check
 		
 		// Otherwise check social sign ins
-		
-		// See if we can get a location from this ip
-		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
-		$NetworkAddress = new NetworkAddress(array(
-			'ip'=>$LocationFromIp->get('ip'),
-		));
 		
 		// collect a list of supported providers for validation of supported social sign in types
 		$ValidUserLoginProviderCollection = UserLoginProviderActions::selectList();
@@ -256,20 +348,10 @@ class AuthenticationComponent extends Component{
 				$user_id = array_pop($user_ids);
 				
 			} else if (count($user_ids) > 1){ // multiple accounts on the site should be connected by social logins. there might need to be an account merge tool.
+				
 				// log all the hybrid auth sessions out if this happens. There is no account merge option at this time
 				$this->_HybridAuthHelper->logoutAllProviders();
-				
-				$ID = new OnlineGuest(array(
-					'php_session_id'=>session_id(),
-					'last_active'=>'now',
-					'LocationFromIp'=>$LocationFromIp,
-					'NetworkAddress'=>$NetworkAddress,
-					'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-					'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat()
-				));
-				// Set this requesters session data so subsequent page loads dont try to log him in
-				$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
-				return $ID;
+				return $this->setUserAsGuest($CookieHelper, $LocationFromIp, $NetworkAddress, $users_ip, $users_proxy_ip);
 				
 			} else { // there are no accounts associated with this/these logins, but there should be, so register one.
 				
@@ -363,7 +445,7 @@ class AuthenticationComponent extends Component{
 			$ID = new OnlineMember(array(
 				'user_id'=>$user_id,
 				'UserAccount'=>$MyUserAccount,
-				'last_active'=>'now',
+				'last_active'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
 				'LocationFromIp'=>$LocationFromIp,
 				'NetworkAddress'=>$NetworkAddress
 			));
@@ -396,22 +478,80 @@ class AuthenticationComponent extends Component{
 				}
 			}
 			
+			//------------------------------------------------------
+			//------------------------------------------------------
+			
+			// Set this requesters session data so subsequent page loads dont try to log him in
 			$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
+			
+			// just need to generate a unique code. dont need to decrypt it at any time. 
+			$UserSession = new UserSession(array(
+				'user_id'=>$user_id,
+				'UserAccount'=>$ID->getUserAccount(),
+				'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+				'last_access'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+				'ip'=>$users_ip,
+				'proxy'=>$users_proxy_ip,
+				'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+				'access_token'=>$this->getParentController()->getHelpers()->SecureHash()->generateSecureHash(UserSessionActions::createRandomCode()),
+				'php_session_id'=>session_id()
+			));
+			
+			UserSessionActions::insertUserSession($UserSession); // insert a user session to track this login and to secure cookies against
+			
+			OnlineMemberActions::insertOnlineMember($ID); // create a unique counter impression for members stats
+			
+			// Member cookie
+			$AuthenticationCookie = new AuthenticationCookie(array(
+				'user_id'=>$user_id,
+				'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+				'ip'=>$users_ip,
+				'proxy'=>$users_proxy_ip,
+				'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+				'access_token'=>$UserSession->getString('access_token')
+			));
+			
+			$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
+			
 			return $ID;
 			
+			//------------------------------------------------------
+			//------------------------------------------------------
+			
 		} else {
-			$ID = new OnlineGuest(array(
-				'php_session_id'=>session_id(),
-				'last_active'=>'now',
-				'LocationFromIp'=>$LocationFromIp,
-				'NetworkAddress'=>$NetworkAddress,
-				'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-				'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat()
-			));
-			$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
-			// no providers connected, so couldn't log in with hybrid auth
-//			return new Guest();
+			return $this->setUserAsGuest($CookieHelper, $LocationFromIp, $NetworkAddress, $users_ip, $users_proxy_ip);
 		}
+	}
+	
+	private function setUserAsGuest($CookieHelper, $LocationFromIp, $NetworkAddress, $users_ip, $users_proxy_ip){
+			
+		$ID = new OnlineGuest(array(
+			'php_session_id'=>session_id(),
+			'last_active'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+			'LocationFromIp'=>$LocationFromIp,
+			'NetworkAddress'=>$NetworkAddress,
+			'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+			'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat()
+		));
+		
+		// Set this requesters session data so subsequent page loads dont try to log him in
+		$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
+
+		OnlineGuestActions::insertOnlineGuest($ID);
+		
+		// Guest cookie
+		$AuthenticationCookie = new AuthenticationCookie(array(
+			'user_id'=>0,
+			'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+			'ip'=>$users_ip,
+			'proxy'=>$users_proxy_ip,
+			'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+			'access_token'=>''
+		));
+		
+		$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
+		
+		return $ID;
 	}
 	
 	/*

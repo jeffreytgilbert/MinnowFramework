@@ -31,7 +31,8 @@ abstract class PageController extends Controller{
 	protected $_ID;
 	public function getID(){
 		if(isset($this->_ID) && $this->_ID instanceof AccessRequest){ return $this->_ID; }
-		return $this->_ID = $this->getAuthentication()->identifyUser();
+		$this->_ID = $this->getAuthentication()->identifyUser();
+		return $this->_ID;
 	}
 	
 	public function __construct($ParentObject=null){

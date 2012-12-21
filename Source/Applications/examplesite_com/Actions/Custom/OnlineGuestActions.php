@@ -8,9 +8,11 @@ final class OnlineGuestActions extends Actions{
 	
 	public static function insertOnlineGuest(OnlineGuest $OnlineGuest){
 		return parent::MySQLCreateAction('
-			INSERT INTO online_guest (
+			REPLACE INTO online_guest (
+				php_session_id,
 				last_active
 			) VALUES (
+				:php_session_id,
 				:last_active
 			)',
 			// bind data to sql variables
@@ -20,8 +22,6 @@ final class OnlineGuestActions extends Actions{
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				
-				':php_session_id'
 			)
 		);
 	}
@@ -40,7 +40,6 @@ final class OnlineGuestActions extends Actions{
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				':php_session_id'
 			)
 		));
 	}
@@ -123,8 +122,6 @@ final class OnlineGuestActions extends Actions{
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				
-				':php_session_id'
 			)
 		);
 	}
@@ -140,7 +137,6 @@ final class OnlineGuestActions extends Actions{
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				':php_session_id'
 			)
 		);
 	}

@@ -9,26 +9,34 @@ final class UserSessionActions extends Actions{
 	public static function insertUserSession(UserSession $UserSession){
 		return parent::MySQLCreateAction('
 			INSERT INTO user_session (
-				login_time,
-				last_access,
-				ip,
-				proxy,
-				unread_messages
+				user_id, 
+				created_datetime, 
+				last_access, 
+				ip, 
+				proxy, 
+				user_agent, 
+				access_token, 
+				php_session_id
 			) VALUES (
-				:login_time,
-				:last_access,
-				:ip,
-				:proxy,
-				:unread_messages
+				:user_id, 
+				:created_datetime, 
+				:last_access, 
+				:ip, 
+				:proxy, 
+				:user_agent, 
+				:access_token, 
+				:php_session_id
 			)',
 			// bind data to sql variables
 			array(
-				':login_time' => $UserSession->getDateTimeObject('login_time')->getMySQLFormat('datetime'),
+				':user_id' => $UserSession->getInteger('user_id'),
+				':created_datetime' => $UserSession->getDateTimeObject('created_datetime')->getMySQLFormat('datetime'),
 				':last_access' => $UserSession->getDateTimeObject('last_access')->getMySQLFormat('datetime'),
 				':ip' => $UserSession->getString('ip'),
 				':proxy' => $UserSession->getString('proxy'),
-				':unread_messages' => $UserSession->getInteger('unread_messages'),
-				':user_id' => $UserSession->getInteger('user_id')
+				':user_agent' => $UserSession->getString('unread_messages'),
+				':access_token' => $UserSession->getString('access_token'),
+				':php_session_id' => $UserSession->getString('php_session_id'),
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
@@ -38,16 +46,18 @@ final class UserSessionActions extends Actions{
 		);
 	}
 	
-	public static function selectByUserSessionId($user_id){
+	public static function selectByUserId($user_id){
 		// Return one object by primary key selection
 		return new UserSession(parent::MySQLReadReturnSingleResultAsArrayAction('
 			SELECT 
-				user_id,
-				login_time,
-				last_access,
-				ip,
-				proxy,
-				unread_messages
+				user_id, 
+				created_datetime, 
+				last_access, 
+				ip, 
+				proxy, 
+				user_agent, 
+				access_token, 
+				php_session_id
 			FROM user_session 
 			WHERE user_id=:user_id',
 			// bind data to sql variables
@@ -61,16 +71,48 @@ final class UserSessionActions extends Actions{
 		));
 	}
 	
+	public static function selectByAccessToken($access_token, $user_id){
+		// Return one object by primary key selection
+		return new UserSession(parent::MySQLReadReturnSingleResultAsArrayAction('
+			SELECT 
+				user_id, 
+				created_datetime, 
+				last_access, 
+				ip, 
+				proxy, 
+				user_agent, 
+				access_token, 
+				php_session_id
+			FROM user_session 
+			WHERE 
+				access_token=:access_token AND 
+				user_id=:user_id
+			LIMIT 1',
+			// bind data to sql variables
+			array(
+				':access_token' => $access_token,
+				':user_id' => (int)$user_id
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
+				':user_id'
+			)
+		));
+	}
+	
+	
 	public static function selectList(PagingConfig $PagingConfig=null){
 		// Return an object collection
 		$UserSessionCollection = new UserSessionCollection(parent::MySQLReadReturnArrayOfObjectsAction('
 			SELECT 
-				user_id,
-				login_time,
-				last_access,
-				ip,
-				proxy,
-				unread_messages
+				user_id, 
+				created_datetime, 
+				last_access, 
+				ip, 
+				proxy, 
+				user_agent, 
+				access_token, 
+				php_session_id
 			FROM user_session 
 			',
 			// bind data to sql variables
@@ -137,25 +179,29 @@ final class UserSessionActions extends Actions{
 	public static function updateUserSession(UserSession $UserSession){
 		return parent::MySQLUpdateAction('
 			UPDATE user_session 
-			SET login_time=:login_time,
-				last_access=:last_access,
-				ip=:ip,
-				proxy=:proxy,
-				unread_messages=:unread_messages
+			SET user_id=:user_id, 
+				created_datetime=:created_datetime, 
+				last_access=:last_access, 
+				ip=:ip, 
+				proxy=:proxy, 
+				user_agent=:user_agent, 
+				access_token=:access_token, 
+				php_session_id=:php_session_id
 			WHERE user_id=:user_id
 			',
 			// bind data to sql variables
 			array(
-				':login_time' => $UserSession->getDateTimeObject('login_time')->getMySQLFormat('datetime'),
+				':user_id' => $UserSession->getInteger('user_id'),
+				':created_datetime' => $UserSession->getDateTimeObject('created_datetime')->getMySQLFormat('datetime'),
 				':last_access' => $UserSession->getDateTimeObject('last_access')->getMySQLFormat('datetime'),
 				':ip' => $UserSession->getString('ip'),
 				':proxy' => $UserSession->getString('proxy'),
-				':unread_messages' => $UserSession->getInteger('unread_messages'),
-				':user_id' => $UserSession->getInteger('user_id')
+				':user_agent' => $UserSession->getInteger('user_agent'),
+				':access_token' => $UserSession->getInteger('access_token'),
+				':php_session_id' => $UserSession->getInteger('php_session_id'),
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
-				':unread_messages',
 				':user_id'
 			)
 		);

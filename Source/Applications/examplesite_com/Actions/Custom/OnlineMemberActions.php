@@ -8,9 +8,11 @@ final class OnlineMemberActions extends Actions{
 	
 	public static function insertOnlineMember(OnlineMember $OnlineMember){
 		return parent::MySQLCreateAction('
-			INSERT INTO online_member (
+			REPLACE INTO online_member (
+				user_id,
 				last_active
 			) VALUES (
+				:user_id,
 				:last_active
 			)',
 			// bind data to sql variables

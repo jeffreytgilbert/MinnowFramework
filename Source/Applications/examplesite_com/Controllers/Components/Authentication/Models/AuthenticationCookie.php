@@ -6,7 +6,6 @@ class AuthenticationCookie extends DataObject{
 		$this->addAllowedData(array(
 			'user_id'=>DataType::NUMBER,
 			'created_datetime'=>DataType::DATETIME,
-// 			'last_access'=>DataType::DATETIME,
 			'ip'=>DataType::TEXT,
 			'proxy'=>DataType::TEXT,
 			'user_agent'=>DataType::TEXT,
