@@ -7,10 +7,7 @@
 abstract class Controller {
 	// these all have getters and shouldn't be manipulated once set
 	private 
-		$_AppSettings,
-		$_RuntimeInfo,
-		$_Helpers,
-		$_Connections;
+		$_AppSettings;
 	
 	protected 
 		$_tpl,
@@ -77,10 +74,7 @@ abstract class Controller {
 			$this->_Input = new DataObject();
 		}
 		
-		$this->_RuntimeInfo = RuntimeInfo::instance();
-		$this->_AppSettings = $this->_RuntimeInfo->appSettings();
-		$this->_Helpers = $this->_RuntimeInfo->helpers();
-		$this->_Connections = $this->_RuntimeInfo->connections();
+		$this->_AppSettings = RuntimeInfo::instance()->appSettings();
 		
 		$initialize_method = 'initialize'.$this->_controller_format;
 		if(method_exists($this,$initialize_method)){
@@ -99,9 +93,9 @@ abstract class Controller {
 	public function getSystemNotifications(){ return DataObject::cast($this->_SystemNotifications); }
 	
 	public function getAppSettings(){ return DataObject::cast($this->_AppSettings); }
-	public function getRuntimeInfo(){ return Startup::cast($this->_RuntimeInfo); }
-	public function getHelpers(){ return Helpers::cast($this->_Helpers); }
-	public function getConnections(){ return Connections::cast($this->_Connections); }
+	public function getRuntimeInfo(){ return RuntimeInfo::instance(); }
+	public function getHelpers(){ return RuntimeInfo::instance()->helpers(); }
+	public function getConnections(){ return RuntimeInfo::instance()->connections(); }
 	
 	abstract protected function loadIncludedFiles();
 	abstract public function handleRequest();

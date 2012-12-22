@@ -26,7 +26,15 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 		
 		<?php foreach($provider_collection as $provider): ?>
 		
+		<?php if($provider == 'Live'): ?>
+		
+		<a href="<?= $jump ?>?provider=<?= $provider ?>" class="zocial windows"><?= $provider ?></a> 
+		
+		<?php else: ?>
+		
 		<a href="<?= $jump ?>?provider=<?= $provider ?>" class="zocial <?= strtolower($provider) ?>"><?= $provider ?></a> 
+		
+		<?php endif; ?>
 		
 		<?php endforeach; ?>
 		

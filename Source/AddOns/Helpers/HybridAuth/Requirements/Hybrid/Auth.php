@@ -53,8 +53,10 @@ class Hybrid_Auth
 		if( ! is_array( $config ) ){
 			$config = include $config;
 		}
-
-		// build some need'd paths
+		
+		$config['proxy'] = isset($config['proxy'])?$config['proxy']:'';
+		
+		// build some needed paths
 		$config["path_base"]        = realpath( dirname( __FILE__ ) )  . "/"; 
 		$config["path_libraries"]   = $config["path_base"] . "thirdparty/";
 		$config["path_resources"]   = $config["path_base"] . "resources/";

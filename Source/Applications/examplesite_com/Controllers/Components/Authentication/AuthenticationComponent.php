@@ -122,18 +122,18 @@ class AuthenticationComponent extends Component{
 			
 			if($ID instanceof AccessRequest && $ID->isOnline()){
 				$ID = OnlineMember::cast($ID);
-				// kill user session in the db
+				// delete user session in the db
 				UserSessionActions::deleteUserSessionByPhpSessionId(session_id());
 			}
 			
-			// kill php session data
+			// delete php session data
 			unset($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID']);
 		}
 		
-		// kill social logins
+		// delete social logins
 		$this->getHybridAuth()->logoutAllProviders();
 		
-		// kill secure cookie
+		// delete secure cookie
 		$CookieHelper = RuntimeInfo::instance()->getHelpers()->SecureCookie();
 		$CookieHelper->delete('MINNOW::COMPONENTS::AUTHENTICATION::ID');
 	}
@@ -160,16 +160,11 @@ class AuthenticationComponent extends Component{
 	}
 	
 	private function authenticate(){
-			// We'll need this IP address for the object that's returned
+		// We'll need this IP address for the object that's returned
 		$users_ip = $this->_LocationHelper->guessIP();
 		$users_proxy_ip = $this->_LocationHelper->guessProxyIP();
 		
 		$CookieHelper = RuntimeInfo::instance()->getHelpers()->SecureCookie();
-		
-// 		pr($users_ip);
-		
-// 		pr('$Cookie');
-// 		pr($CookieHelper->fetch('MINNOW::COMPONENTS::AUTHENTICATION::ID'));
 		
 		// See if we can get a location from this ip
 		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
@@ -182,9 +177,6 @@ class AuthenticationComponent extends Component{
 			$serialized_cookie_data = $CookieHelper->fetch('MINNOW::COMPONENTS::AUTHENTICATION::ID');
 			$Cookie = unserialize($serialized_cookie_data);
 			$Cookie = AuthenticationCookie::cast($Cookie);
-			
-// 			pr($Cookie);
-// 			pr($this->getConfig());
 			
 			// see if the cookie has a user id in it
 			if($Cookie->getInteger('user_id') > 0 && strlen($Cookie->getInteger('access_token')) > 0){
@@ -215,9 +207,6 @@ class AuthenticationComponent extends Component{
 						// The member object should inherit from the same parent class as other ID types, ex: Guest, Member, Application, etc. 
 						// Not every auth request contains user info, and in fact none of them contain the same data, but all would have similar 
 						// methods like isOnline(), isApiRequest(), and other such identifiers so common checks can be performed quickly.
-						
-						// The login info should be stored in a session
-						// $_SESSION['ID'] = '';
 						
 						$ID = new OnlineMember(array(
 							'user_id'=>$user_id,
@@ -290,9 +279,6 @@ class AuthenticationComponent extends Component{
 			$supported_providers[$UserLoginProvider->getString('user_login_provider_id')] = $UserLoginProvider->getString('provider_name');
 		}
 		
-// 		pr($ValidUserLoginProviderCollection);
-// 		pr($supported_providers);
-		
 		// get a list of connected providers so the logins can be checked against the database for matches
 		$connected_providers = $this->_HybridAuthHelper->getConnectedProviders();
 		//pr($connected_providers);
@@ -331,16 +317,6 @@ class AuthenticationComponent extends Component{
 			// grab just the unique account ids 
 			$user_ids = $DatabaseUserLoginCollection->getUniqueArrayByField('user_id');
 			
-			// this is to check to see whats actually in the access token
-// 			pr('$authenticated_identifiers');
-// 			pr($authenticated_identifiers);
-// 			pr('$HybridAuthApprovedUserLoginCollection');
-// 			pr($HybridAuthApprovedUserLoginCollection);
-// 			pr('$DatabaseUserLoginCollection');
-// 			pr($DatabaseUserLoginCollection);
-// 			pr('$user_ids');
-// 			pr($user_ids);
-			
 			// make sure there is only 1 user these unique ids are attached to
 			if(count($user_ids) == 1){ // there's one account that matches one or more of the hybrid auth providers that are linked to this session
 				
@@ -370,25 +346,14 @@ class AuthenticationComponent extends Component{
 			// pull out just the unique identifiers that belong to this user and toss them in an array.
 			$this_users_identifier_ids = $MyUserLoginCollection->getUniqueArrayByField('unique_identifier');
 			
-//  			pr('$MyUserLoginCollection');
-//  			pr($MyUserLoginCollection);
-//  			pr('$this_users_identifier_ids');
-//  			pr($this_users_identifier_ids);
-			
 			// loop through sessions collection prepared earlier for entry into the db if needed
 			foreach($HybridAuthApprovedUserLoginCollection as $UserLogin){
-				
-// 				pr($this_users_identifier_ids);
-// 				pr($UserLogin->getString('unique_identifier'));
 				
 				// Check this unique identifier from the session against the registered unique identifiers for this account. 
 				if(in($UserLogin->getString('unique_identifier'), $this_users_identifier_ids)){
 					
 					// If it exists in the db, may need to continue to the next check, but need to verify the providers match if so
 					$matching_objects = $MyUserLoginCollection->getObjectArrayByFieldValue('unique_identifier', $UserLogin->getString('unique_identifier'));
-					
-// 					pr('$matching_objects');
-// 					pr($matching_objects);
 					
 					foreach($matching_objects as $Object){
 						
@@ -399,8 +364,6 @@ class AuthenticationComponent extends Component{
 						} else {
 							
 // 							pr('Add this login to the account because none matched exactly in the logins table');
-// 							pr('$UserLogin');
-// 							pr($UserLogin);
 							
 							// Set the user id associated with this identifier
 							$UserLogin->set('user_id',$user_id);
@@ -414,8 +377,6 @@ class AuthenticationComponent extends Component{
 				} else {
 					
 // 					pr('Add this login to the account because one wasnt found that matched at all in the login table');
-// 					pr('$UserLogin');
-// 					pr($UserLogin);
 					
 					// Set the user id associated with this identifier
 					$UserLogin->set('user_id',$user_id);
@@ -439,9 +400,6 @@ class AuthenticationComponent extends Component{
 			// Not every auth request contains user info, and in fact none of them contain the same data, but all would have similar 
 			// methods like isOnline(), isApiRequest(), and other such identifiers so common checks can be performed quickly.
 			
-			// The login info should be stored in a session
-			// $_SESSION['ID'] = '';
-			
 			$ID = new OnlineMember(array(
 				'user_id'=>$user_id,
 				'UserAccount'=>$MyUserAccount,
@@ -449,14 +407,6 @@ class AuthenticationComponent extends Component{
 				'LocationFromIp'=>$LocationFromIp,
 				'NetworkAddress'=>$NetworkAddress
 			));
-			
-			// Cookies should be made to link back to the sessions
-			//
-			// so this is where a secure cookie needs to be created. ideas?
-			// needs to be decryptable, so it can be secure from cookie forgers through:
-			// encryption, containing an expiration date, validation against an authorization token stored in cache
-			// if the token cant be found in the cache, then delete the cookie and log the user out. consider them expired or retired
-			
 			
 			// Now, whichever social sign ins are not currently logged in, log them in.
 			
@@ -511,6 +461,7 @@ class AuthenticationComponent extends Component{
 				'access_token'=>$UserSession->getString('access_token')
 			));
 			
+			// Cookies link back to the user sessions table to validate against the token in the db
 			$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
 			
 			return $ID;
@@ -555,8 +506,6 @@ class AuthenticationComponent extends Component{
 	}
 	
 	/*
-	
-	// 		$this->_HybridAuth->authenticate($provider);
 	
 	public function authenticateFromForm($login, $password){
 		// check form
@@ -664,30 +613,6 @@ class AuthenticationComponent extends Component{
 			return false;
 		}
 		
-	}
-	
-	private function isDead($user_id)
-	{
-		$Result = parent::MySQLReadAction('
-			SELECT is_suicide, is_killed 
-			FROM user_account 
-			WHERE user_id=:user_id',
-			array(
-				':user_id'=>(int)$user_id
-			),
-			array(':user_id')
-		)->getItemAt(0);
-		
-		if(isset($Result) && $Result->getData('is_killed','Is::set'))
-		{
-			if($Result->getData('is_killed','Is::set'))			{ return true; }
-		}
-		elseif(isset($Result) && $Result->getData('is_suicide','Is::set'))
-		{
-			if($Result->getData('is_suicide','Is::set'))		{ return true; }
-		}
-		
-		return false;
 	}
 	
 	*/

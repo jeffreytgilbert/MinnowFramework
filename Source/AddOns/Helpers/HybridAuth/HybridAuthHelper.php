@@ -33,7 +33,7 @@ final class HybridAuthHelper extends Helper{
 			$HybridAuthConfig['providers'][$key]['enabled'] = $enabled;
 			if(count($value) > 0){ $HybridAuthConfig['providers'][$key]['keys'] = $value; }
 		}
-
+		
 		$this->_instance = new HybridAuthAbstraction( $HybridAuthConfig );
 	}
 
