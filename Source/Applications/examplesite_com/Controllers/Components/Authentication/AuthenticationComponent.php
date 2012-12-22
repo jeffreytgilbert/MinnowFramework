@@ -195,8 +195,6 @@ class AuthenticationComponent extends Component{
 						//------------------------------------------------------
 						//------------------------------------------------------
 						
-						// Note: $MyUserLoginCollection should now be a complete collection of current logins from the db and the new sessions
-						
 						// The user needs to be marked as online in the database.
 						UserAccountActions::setUserAsOnline($user_id);
 						
@@ -236,17 +234,19 @@ class AuthenticationComponent extends Component{
 						
 						OnlineMemberActions::insertOnlineMember($ID); // create a unique counter impression for members stats
 						
-						// Member cookie
-						$AuthenticationCookie = new AuthenticationCookie(array(
-							'user_id'=>$user_id,
-							'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-							'ip'=>$users_ip,
-							'proxy'=>$users_proxy_ip,
-							'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-							'access_token'=>$UserSession->getString('access_token')
-						));
+						// Cookies should eventually expire. 
 						
-						$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
+						// Member cookie
+// 						$AuthenticationCookie = new AuthenticationCookie(array(
+// 							'user_id'=>$user_id,
+// 							'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+// 							'ip'=>$users_ip,
+// 							'proxy'=>$users_proxy_ip,
+// 							'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+// 							'access_token'=>$UserSession->getString('access_token')
+// 						));
+						
+// 						$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
 						
 						mail('jeffreytgilbert@gmail.com','Cookie was good','The cookie you saved was successfully used to reauthenticate the user after the session had expired.');
 						

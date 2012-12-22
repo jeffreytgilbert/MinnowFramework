@@ -5,11 +5,28 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 ?>
 
 <div>
-	<form action="?" method="post" name="LoginForm" class="form-signin">
+	<form action="?" method="post" id="LoginForm" name="Login" class="form-signin">
 	<div>
 		<h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" class="input-block-level" placeholder="Email address">
-        <input type="password" class="input-block-level" placeholder="Password">
+        <input 
+        	type="text" 
+        	id="Login_unique_identifier"
+        	name="Login[unique_identifier]"
+        	class="input-block-level required email" 
+        	required="required" 
+        	rel="popover" 
+        	data-content="Please enter a valid email address." 
+        	placeholder="Email address">
+        <input 
+        	type="password" 
+        	id="Login_password"
+        	name="Login[password]"
+        	class="input-block-level required" 
+        	required="required" 
+        	rel="popover" 
+        	data-content="Please enter a password of at least 6 characters in length." 
+        	placeholder="Password" 
+        	minlength="6">
         <label class="checkbox">
           <input type="checkbox" value="remember-me"> Remember me
         </label>

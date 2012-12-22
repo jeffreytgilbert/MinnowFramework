@@ -1,0 +1,9 @@
+////////////////////////////////////////////////////////////////
+// This is the Login.js for the Authentication Component
+////////////////////////////////////////////////////////////////
+
+$(document).ready(function(){
+	
+	ValidateForm('#LoginForm', ['#Login_unique_identifier','#Login_password']);
+	
+});

@@ -22,4 +22,3 @@ class AccountPage extends PageController implements HTMLCapable, JSONCapable, XM
 	public function renderHTML(){ return $this->_page_body = $this->_AuthenticationComponentController->renderHTML(); }
 	
 }
-
