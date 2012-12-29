@@ -36,14 +36,18 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 		$CookieHelper = $PageController->getHelpers()->SecureCookie();
 		
 		// Set for form object
-		$Form = $this->_Input->getObject('Login');
+		$Form = $this->getInput()->getObject('Login');
 		
 		// Check for form login from local page request
 		if($Form->length() > 0){
+
 			// If data exists in expected form, check it as a login against the db
-			if(trim($Form->getString('unique_identifier')) != ''){
+			if(trim($Form->getString('unique_identifier')) != '' 
+				&& $Form->getString('password') != ''){
 				// If login request is legit, log out anyone currently logged in, and then login user from result set
 				if(1){
+					pr('Do a database lookup for the persons record matching this:');
+					pr($Form);
 					// query results from db for user data cache
 					// log person out if logged in
 					// log person in with data from db by saving data to the: 

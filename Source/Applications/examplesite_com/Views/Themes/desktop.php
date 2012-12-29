@@ -104,19 +104,21 @@ echo $css;
 			</div>
 		</div>
 	</div>
+	
+	<header></header>
 
 	<div class="container">
 
 		<?= $Page->getPageBody(); ?>
 		
-		<hr>
-
-		<footer>
-			<p>Credits: <a href="http://www.initializr.com/">Initializr</a> (H5BP 4.0.1, Modernizr 2.6.2, jQuery 1.8.3), <a href="http://hybridauth.sourceforge.net/">HybridAuth</a>, and many more.</p>
-		</footer>
-
 	</div> <!-- /container -->
 
+	<footer class="footer navbar navbar-fixed-bottom">
+		<div class="container">
+			<p>Credits: <a href="http://www.initializr.com/">Initializr</a> (H5BP 4.0.1, Modernizr 2.6.2, jQuery 1.8.3), <a href="http://hybridauth.sourceforge.net/">HybridAuth</a>, and many more.</p>
+		</div>
+	</footer>
+	
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/Libraries/jQuery/jquery-1.8.2.min.js"><\/script>');</script>
 <script src="/js/Libraries/Bootstrap/bootstrap.min.js"></script>

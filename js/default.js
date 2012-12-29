@@ -12,6 +12,9 @@ function ValidateForm(jquery_selector, popovers){
 		highlight: function (element, errorClass) {
 			if($.inArray(element, errorStates) == -1){
 				errorStates[errorStates.length] = element;
+				$.each(errorStates,function(index,value){
+					$(value).popover('hide');
+				});
 				$(element).popover('show');
 			}
 		},
