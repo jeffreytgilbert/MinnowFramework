@@ -24,8 +24,6 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 		if($ID->isOnline()){
 			// if they're logged in already, send them to the welcome page
 			$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url')); // have the welcome page handle further registration steps. This is the social sign in forwarding page.
-			
-		// This page requires a provider to be provided to function as a social sign on page. Check for that provider
 		}
 		
 		$PageController = PageController::cast($this->getParentComponent()->getParentController());
@@ -39,33 +37,26 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 		$Form = $this->getInput()->getObject('Login');
 		
 		// Check for form login from local page request
-		if($Form->length() > 0){
+		// If data exists in expected form, check it as a login against the db
+		if($Form->length() > 0 && 
+			trim($Form->getString('unique_identifier')) != '' && 
+			$Form->getString('password') != ''){
 
-			// If data exists in expected form, check it as a login against the db
-			if(trim($Form->getString('unique_identifier')) != '' 
-				&& $Form->getString('password') != ''){
-				// If login request is legit, log out anyone currently logged in, and then login user from result set
-				if(1){
-					pr('Do a database lookup for the persons record matching this:');
-					pr($Form);
-					// query results from db for user data cache
-					// log person out if logged in
-					// log person in with data from db by saving data to the: 
-					// Session
-					// SecureCookie
-					// Db as a user_session for auditing and logging people out (links to php session id and also cookie token so either can be canceled)
-					
-				} else {
-					// if request is bad, set error messages 
-					$this->getErrors()->set('ErrorCode',''); // how to set an error in the component controller
-					$PageController->getErrors()->set('ErrorCode',''); // how to set an error in the controller calling this component controller
+			try{
+				$ID = $this->_Authentication->authenticateForm($Form);
+				if($ID instanceof OnlineMember){
+					$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url'));
 				}
+			} catch(AuthenticationException $e){
+				$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
+				$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
 			}
+			
 		}
 		
 		$HybridAuth = $this->getHelpers()->HybridAuth();
 		$this->getDataObject()->set('providers', array_keys($HybridAuth->getAvailableProviders()));
-
+		
 	}
 	
 	public function renderJSON(){ return parent::renderJSON(); }

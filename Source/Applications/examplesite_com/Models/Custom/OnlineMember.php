@@ -9,7 +9,8 @@ class OnlineMember extends AccessRequest{
 		$this->addAllowedData(array(
 			'user_id'=>DataType::NUMBER,
 			'UserAccount'=>DataType::OBJECT,
-			'last_active'=>DataType::DATETIME
+			'last_active'=>DataType::DATETIME,
+			'UserSession'=>DataType::OBJECT
 		),true);
 		parent::__construct($data);
 	}
@@ -29,6 +30,11 @@ class OnlineMember extends AccessRequest{
 			:new UserAccount();
 	}
 	
+	public function getUserSession(){
+		return ($this->getObject('UserSession') instanceof UserSession)
+			?$this->_data['UserSession']
+			:new UserSession();
+	}
 }
 
 class OnlineMemberCollection extends DataCollection{

@@ -129,7 +129,7 @@ class Model implements Iterator, Serializable{
 	}
 	
 	public function getDateTimeObject($key_name, $timezone='UTC'){
-		$result = isset($this->_data[$key_name])?$this->_data[$key_name]:0; // same
+		$result = isset($this->_data[$key_name])?$this->_data[$key_name]:'+0 seconds'; // same
 		try{
 			return new DateTimeObject($result, new DateTimeZone($timezone));
 		} catch(Exception $e){

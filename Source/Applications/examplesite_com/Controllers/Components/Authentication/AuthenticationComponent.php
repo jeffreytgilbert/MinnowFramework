@@ -86,6 +86,7 @@ class AuthenticationComponent extends Component{
 			'UserSession'
 		));
 		
+		Run::fromComponents('Authentication/AuthenticationException.php');
 		Run::fromComponents('Authentication/Models/AuthenticationCookie.php');
 		
 		$this->_Controller->loadActions(array(
@@ -169,7 +170,8 @@ class AuthenticationComponent extends Component{
 		// See if we can get a location from this ip
 		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
 		$NetworkAddress = new NetworkAddress(array(
-			'ip'=>$LocationFromIp->get('ip'),
+			'ip'=>$users_ip,
+			'proxy'=>$users_proxy_ip
 		));
 		
 		// Otherwise check cookie
@@ -192,69 +194,12 @@ class AuthenticationComponent extends Component{
 						
 						$user_id = $Cookie->get('user_id');
 						
-						//------------------------------------------------------
-						//------------------------------------------------------
-						
-						// The user needs to be marked as online in the database.
-						UserAccountActions::setUserAsOnline($user_id);
-						
 						// Grab the users account from the db
 						$MyUserAccount = UserAccountActions::selectByUserAccountId($user_id);
 						
-						// The account info should be stored in a member object. 
-						// The member object should inherit from the same parent class as other ID types, ex: Guest, Member, Application, etc. 
-						// Not every auth request contains user info, and in fact none of them contain the same data, but all would have similar 
-						// methods like isOnline(), isApiRequest(), and other such identifiers so common checks can be performed quickly.
-						
-						$ID = new OnlineMember(array(
-							'user_id'=>$user_id,
-							'UserAccount'=>$MyUserAccount,
-							'last_active'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-							'LocationFromIp'=>$LocationFromIp,
-							'NetworkAddress'=>$NetworkAddress
-						));
-						
-						// Set this requesters session data so subsequent page loads dont try to log him in
-						$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
-						
-						// just need to generate a unique code. dont need to decrypt it at any time. 
-						$UserSession = new UserSession(array(
-							'user_id'=>$user_id,
-							'UserAccount'=>$ID->getUserAccount(),
-							'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-							'last_access'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-							'ip'=>$users_ip,
-							'proxy'=>$users_proxy_ip,
-							'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-							'access_token'=>$this->getParentController()->getHelpers()->SecureHash()->generateSecureHash(UserSessionActions::createRandomCode()),
-							'php_session_id'=>session_id()
-						));
-						
-						UserSessionActions::insertUserSession($UserSession); // insert a user session to track this login and to secure cookies against
-						
-						OnlineMemberActions::insertOnlineMember($ID); // create a unique counter impression for members stats
-						
-						// Cookies should eventually expire. 
-						
-						// Member cookie
-// 						$AuthenticationCookie = new AuthenticationCookie(array(
-// 							'user_id'=>$user_id,
-// 							'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-// 							'ip'=>$users_ip,
-// 							'proxy'=>$users_proxy_ip,
-// 							'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-// 							'access_token'=>$UserSession->getString('access_token')
-// 						));
-						
-// 						$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
-						
-						mail('jeffreytgilbert@gmail.com','Cookie was good','The cookie you saved was successfully used to reauthenticate the user after the session had expired.');
+						$ID = $this->createUserSession($MyUserAccount, $LocationFromIp, $NetworkAddress);
 						
 						return $ID;
-						
-						//------------------------------------------------------
-						//------------------------------------------------------						
-						
 					}
 					
 					// bad cookie. Delete it and check the rest of the auth steps.
@@ -303,7 +248,7 @@ class AuthenticationComponent extends Component{
 						'is_verified'=>true,
 						'serialized_credentials'=>serialize($HybridAuthAdapter->getAccessToken())
 					)));
-
+					
 				}
 			}
 			
@@ -389,24 +334,11 @@ class AuthenticationComponent extends Component{
 			
 			// Note: $MyUserLoginCollection should now be a complete collection of current logins from the db and the new sessions
 			
-			// The user needs to be marked as online in the database.
-			UserAccountActions::setUserAsOnline($user_id);
-			
 			// Grab the users account from the db
 			$MyUserAccount = UserAccountActions::selectByUserAccountId($user_id);
 			
-			// The account info should be stored in a member object. 
-			// The member object should inherit from the same parent class as other ID types, ex: Guest, Member, Application, etc. 
-			// Not every auth request contains user info, and in fact none of them contain the same data, but all would have similar 
-			// methods like isOnline(), isApiRequest(), and other such identifiers so common checks can be performed quickly.
-			
-			$ID = new OnlineMember(array(
-				'user_id'=>$user_id,
-				'UserAccount'=>$MyUserAccount,
-				'last_active'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-				'LocationFromIp'=>$LocationFromIp,
-				'NetworkAddress'=>$NetworkAddress
-			));
+			// Create the users session and give back an ID that can be returned 
+			$ID = $this->createUserSession($MyUserAccount, $LocationFromIp, $NetworkAddress);
 			
 			// Now, whichever social sign ins are not currently logged in, log them in.
 			
@@ -428,50 +360,161 @@ class AuthenticationComponent extends Component{
 				}
 			}
 			
-			//------------------------------------------------------
-			//------------------------------------------------------
-			
-			// Set this requesters session data so subsequent page loads dont try to log him in
-			$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
-			
-			// just need to generate a unique code. dont need to decrypt it at any time. 
-			$UserSession = new UserSession(array(
-				'user_id'=>$user_id,
-				'UserAccount'=>$ID->getUserAccount(),
-				'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-				'last_access'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-				'ip'=>$users_ip,
-				'proxy'=>$users_proxy_ip,
-				'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-				'access_token'=>$this->getParentController()->getHelpers()->SecureHash()->generateSecureHash(UserSessionActions::createRandomCode()),
-				'php_session_id'=>session_id()
-			));
-			
-			UserSessionActions::insertUserSession($UserSession); // insert a user session to track this login and to secure cookies against
-			
-			OnlineMemberActions::insertOnlineMember($ID); // create a unique counter impression for members stats
-			
-			// Member cookie
-			$AuthenticationCookie = new AuthenticationCookie(array(
-				'user_id'=>$user_id,
-				'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-				'ip'=>$users_ip,
-				'proxy'=>$users_proxy_ip,
-				'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-				'access_token'=>$UserSession->getString('access_token')
-			));
-			
-			// Cookies link back to the user sessions table to validate against the token in the db
-			$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
+			// Set a cookie so this person can log back in later when their session expires. Always do this when logging in from single sign on. ( @todo or do we? Test this )
+			$this->setRememberMeCookie($ID);
 			
 			return $ID;
-			
-			//------------------------------------------------------
-			//------------------------------------------------------
 			
 		} else {
 			return $this->setUserAsGuest($CookieHelper, $LocationFromIp, $NetworkAddress, $users_ip, $users_proxy_ip);
 		}
+	}
+	
+	public function authenticateForm(DataObject $Form){
+		
+		// If login request is legit, log out anyone currently logged in to prevent issues with logins
+		$this->logout();
+		
+		// Query the db for a login
+		$UserLogin = UserLoginActions::selectListByUniqueIdentifierAndProviderTypeId(
+			$Form->getString('unique_identifier'),
+			1 // 1 is the id for Email auth through minnow auth component
+		);
+		
+		// If there was a match in the db, check it against the account holders password
+		if($UserLogin->getInteger('user_login_id') > 0){
+			
+			// Check last login against login attempts and if the account is locked, skip the rest of the login check
+
+			// First, get the last login time
+			$LastLoginDateTimeObject = clone $UserLogin->getDateTimeObject('last_failed_attempt');
+			
+			// Then you want to get what time it is now
+			$Now = clone RuntimeInfo::instance()->now();
+			
+			// Add 15 minutes to the last login time (or a time from the components settings for brute force timeout)
+			$LastLoginDateTimeObject->add(DateInterval::createFromDateString('+15 minutes'));
+			
+			// Get the number of seconds it would have been 
+			$difference = $Now->getTimestamp() - $LastLoginDateTimeObject->getTimestamp();
+			
+			if(
+				$difference > 0 || // if the time limit has expired since the last attempt
+				$UserLogin->getInteger('current_failed_attempts') < 15 // or if the current failed attempts are very low
+			){
+				UserLoginActions::resetFailedAttemptCounter($UserLogin->getInteger('user_login_id'));
+				
+				$UserAccount = UserAccountActions::selectByUserAccountId($UserLogin->getInteger('user_id'));
+				// If the password exists and is valid, log the user in
+				if(
+					$UserAccount->getString('password_hash') != '' &&
+					$this->getHelpers()->SecureHash()->validatePassword($Form->getString('password'),$UserAccount->getString('password_hash'))
+				){
+					// @todo check to see if account is closed, and if it is, reopen it before logging in
+					
+					$users_ip = $this->_LocationHelper->guessIP();
+					$users_proxy_ip = $this->_LocationHelper->guessProxyIP();
+					
+					// See if we can get a location from this ip
+					$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
+					$NetworkAddress = new NetworkAddress(array(
+						'ip'=>$users_ip,
+						'proxy'=>$users_proxy_ip
+					));
+					
+					// create the users session
+					$ID = $this->createUserSession($UserAccount, $LocationFromIp, $NetworkAddress);
+					
+					// if requested, set a login cookie using this data
+					if(1){ // @todo remember me cookie
+						$this->setRememberMeCookie($ID);
+					}
+					
+					return $ID;
+					
+				} else {
+					UserLoginActions::iterateAttemptCount($UserLogin->getInteger('user_login_id'));
+					throw new AuthenticationException(
+						'Sorry, we could not log you in with those credentials.', 
+						AuthenticationException::BAD_CREDENTIALS
+					);
+				}
+				
+			} else {
+				UserLoginActions::iterateAttemptCount($UserLogin->getInteger('user_login_id'));
+				throw new AuthenticationException(
+					'Account temporarily locked due to an excess of bad attempts. Account will be reactivated in 15 minutes.', 
+					AuthenticationException::TOO_MANY_BAD_REQUESTS
+				);
+			}
+			
+		} else {
+			throw new AuthenticationException(
+				'Sorry, no user could be found with those credentials.', 
+				AuthenticationException::USER_ACCOUNT_NOT_REGISTERED
+			);
+		}		
+		
+	}
+	
+	private function createUserSession(UserAccount $UserAccount, LocationFromIp $LocationFromIp, NetworkAddress $NetworkAddress){
+		
+		// The user needs to be marked as online in the database.
+		UserAccountActions::setUserAsOnline($UserAccount->getInteger('user_id'));
+		
+		// The account info should be stored in a member object. 
+		// The member object should inherit from the same parent class as other ID types, ex: Guest, Member, Application, etc. 
+		// Not every auth request contains user info, and in fact none of them contain the same data, but all would have similar 
+		// methods like isOnline(), isApiRequest(), and other such identifiers so common checks can be performed quickly.
+		
+		$ID = new OnlineMember(array(
+			'user_id'=>$UserAccount->getInteger('user_id'),
+			'UserAccount'=>$UserAccount,
+			'last_active'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+			'LocationFromIp'=>$LocationFromIp,
+			'NetworkAddress'=>$NetworkAddress
+		));
+		
+		// Set this requesters session data so subsequent page loads dont try to log him in
+		$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
+		
+		// just need to generate a unique code. dont need to decrypt it at any time. 
+		$UserSession = new UserSession(array(
+			'user_id'=>$UserAccount->getInteger('user_id'),
+			'UserAccount'=>$ID->getUserAccount(),
+			'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+			'last_access'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+			'ip'=>$NetworkAddress->getString('ip'),
+			'proxy'=>$NetworkAddress->getString('proxy'),
+			'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+			'access_token'=>$this->getParentController()->getHelpers()->SecureHash()->generateSecureHash(UserSessionActions::createRandomCode()),
+			'php_session_id'=>session_id()
+		));
+		
+		$ID->set('UserSession',$UserSession);
+		
+		UserSessionActions::insertUserSession($UserSession); // insert a user session to track this login and to secure cookies against
+		
+		OnlineMemberActions::insertOnlineMember($ID); // create a unique counter impression for members stats
+		
+		return $ID;
+	}
+	
+	public function setRememberMeCookie(OnlineMember $ID){
+		
+		// Member cookie
+		$AuthenticationCookie = new AuthenticationCookie(array(
+			'user_id'=>$ID->get('user_id'),
+			'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
+			'ip'=>$ID->getNetworkAddress()->get('ip'),
+			'proxy'=>$ID->getNetworkAddress()->get('proxy'),
+			'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+			'access_token'=>$ID->getUserSession()->get('access_token')
+		));
+		
+		// Cookies link back to the user sessions table to validate against the token in the db
+		$CookieHelper = RuntimeInfo::instance()->getHelpers()->SecureCookie();
+		$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
 	}
 	
 	private function setUserAsGuest($CookieHelper, $LocationFromIp, $NetworkAddress, $users_ip, $users_proxy_ip){
@@ -490,130 +533,9 @@ class AuthenticationComponent extends Component{
 
 		OnlineGuestActions::insertOnlineGuest($ID);
 		
-		// Guest cookie
-		$AuthenticationCookie = new AuthenticationCookie(array(
-			'user_id'=>0,
-			'created_datetime'=>RuntimeInfo::instance()->now()->getMySQLFormat(),
-			'ip'=>$users_ip,
-			'proxy'=>$users_proxy_ip,
-			'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
-			'access_token'=>''
-		));
-		
-		$CookieHelper->store('MINNOW::COMPONENTS::AUTHENTICATION::ID', serialize($AuthenticationCookie));
+		// don't save a cookie because guests should be session based only
 		
 		return $ID;
 	}
 	
-	/*
-	
-	public function authenticateFromForm($login, $password){
-		// check form
-			$login=$_POST['login']['l'];
-		$hash_password=e($_POST['login']['p']);
-		// echo $hash_password;
-		if(isset($_POST['login']['s']) && $_POST['login']['s'] == 'true') { $secure=true; }
-		else { $secure=false; }
-		
-		//clear old failed attempts if last login attempt was longer than 15 minutes ago
-		parent::MySQLUpdateAction('
-			UPDATE user_account SET current_failed_attempts = 0 
-			WHERE login_name = :login_name AND 
-				last_failed_attempt BETWEEN (NOW() - INTERVAL 10 YEAR) AND 
-				(NOW() - INTERVAL 15 MINUTE)',
-			array(':login_name'=>$login)
-		);
-		
-		$Result = parent::MySQLReadAction('
-			SELECT user_id, `password`, is_killed, is_suicide, current_failed_attempts, last_failed_attempt 
-			FROM user_account WHERE login_name = :login_name',
-			array(':login_name'=>$login)
-		)->getItemAt(0);
-		
-		if(isset($Result) && $Result->get('user_id','Is::set') && ($Result->get('current_failed_attempts') > 15 
-		&& CalculateDate::difference($Result->get('last_failed_attempt')) < 3600)) // 15 attempts per hour
-		{
-			$this->recordLoginHistory('Excessive login attempts', $Result->get('user_id'), 0);
-			$this->logout();
-			prompt_login(8); // Your account has been disabled temporarily due to excessive login attempts. Please try again later, and if you\'re having trouble logging in check out "FAQ" and "Contact Us" Pages.
-			return false;
-		}
-		// If the account isnt being hacked, check to see if its valid.
-		else if(isset($Result) && $Result->get('user_id','Is::set'))
-		{
-			$user_id=$Result->get('user_id');
-			
-			if($Result->getData('is_killed','Is::set') && !$Result->getData('is_suicide','Is::set'))
-			{
-				$this->recordLoginHistory('Killed account', $user_id, 0);
-				$this->logout();
-				prompt_login(10); // This account has been closed for abusive behavior.
-				return false;
-			}
-			else 
-			{
-				// Does the account login exist, and if so do the passwords match?
-				
-				if($Result->getData('is_suicide','Is::set')){ 
-//					echo 'I think this is a suicide.';
-					$this->redirect('/Account/Reopen/'); 
-				}
-				
-				if($hash_password === $Result->get('password')){
-					// Success! Create a session and a cookie
-					$timeout=$this->createSecureCookie($user_id,$hash_password,$secure);			
-					$this->createSessionReference($user_id,$timeout);
-					// Reset the bad login counter //last_failed_attempt="0000-00-00 00:00:00" '
-					parent::MySQLUpdateAction('
-						UPDATE user_account 
-						SET current_failed_attempts=0 
-						WHERE user_id=:user_id',
-						array(':user_id'=>(int)$user_id),
-						array(':user_id')
-					);
-					
-					// Record this event to login history
-					$this->recordLoginHistory('Successful Login', $user_id, 1);
-					$ID = new Member();
-					$ID->loginAsUserId($user_id);
-					$ID->setLocation($this->location);
-					$_SESSION['ID']=serialize($ID);
-					$this->updateMembersOnline($user_id);
-					return $ID;
-				}
-				// If the account exists but the password doesnt match, record the bad attempt
-				else
-				{
-					parent::MySQLUpdateAction('
-						UPDATE user_account 
-						SET current_failed_attempts=current_failed_attempts+1, 
-							total_failed_attempts=total_failed_attempts+1, 
-							last_failed_attempt=:last_failed_attempt 
-						WHERE user_id=:user_id',
-						array(
-							':user_id'=>(int)$user_id, 
-							':last_failed_attempt'=>RIGHT_NOW_GMT
-						),
-						array(':user_id')
-					);
-					$this->recordLoginHistory('Bad password', $user_id, 0);
-					$this->logout();
-					prompt_login(5); // Your login attempt failed because the information you supplied was invalid.
-					return false;
-				}
-			}
-		}
-		// The account is dead or the login information is gone. Report this to the user.
-		else
-		{
-//			echo __LINE__.'<br>';
-			$this->recordLoginHistory('Dead account', 0 , 0);
-			$this->logout();
-			prompt_login(3); // The login you were attempting to use does not exist. Please make sure you are typing an Email address for your user name, not your screen name.
-			return false;
-		}
-		
-	}
-	
-	*/
 }

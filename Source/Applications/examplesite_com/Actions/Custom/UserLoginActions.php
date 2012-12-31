@@ -102,6 +102,41 @@ final class UserLoginActions extends Actions{
 		return $UserLoginCollection;
 	}
 	
+	public static function selectListByUniqueIdentifierAndProviderTypeId($unique_identifier, $provider_type_id){
+		
+		// Return an object collection
+		$UserLogin = new UserLogin(parent::MySQLReadReturnSingleResultAsArrayAction('
+			SELECT 
+				user_login_id,
+				user_id,
+				created_datetime,
+				modified_datetime,
+				unique_identifier,
+				user_login_provider_id,
+				serialized_credentials,
+				current_failed_attempts,
+				total_failed_attempts,
+				last_failed_attempt,
+				is_verified
+			FROM user_login 
+			WHERE 
+				unique_identifier=:unique_identifier AND 
+				user_login_provider_id=:user_login_provider_id
+			',
+			// bind data to sql variables
+			array(
+				':unique_identifier' => $unique_identifier,
+				':user_login_provider_id' => $provider_type_id
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
+				':user_login_provider_id'
+			)
+		));
+		
+		return $UserLogin;
+	}
+	
 	public static function selectListByUniqueIdentifiers(Array $unique_identifiers){
 		if(count($unique_identifiers) == 0) { return new UserLoginCollection(); }
 		
@@ -215,6 +250,45 @@ final class UserLoginActions extends Actions{
 				':user_login_provider_id',
 				':current_failed_attempts',
 				':total_failed_attempts',
+				':user_login_id'
+			)
+		);
+	}
+	
+	public static function resetFailedAttemptCounter($user_login_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_login 
+			SET modified_datetime=:modified_datetime,
+				current_failed_attempts=0
+			WHERE user_login_id=:user_login_id
+			',
+			// bind data to sql variables
+			array(
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':user_login_id' => $user_login_id
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
+				':user_login_id'
+			)
+		);
+	}
+
+	public static function iterateAttemptCount($user_login_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_login 
+			SET modified_datetime=:modified_datetime,
+				current_failed_attempts=current_failed_attempts+1,
+				total_failed_attempts=total_failed_attempts+1
+			WHERE user_login_id=:user_login_id
+			',
+			// bind data to sql variables
+			array(
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':user_login_id' => $user_login_id
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
 				':user_login_id'
 			)
 		);

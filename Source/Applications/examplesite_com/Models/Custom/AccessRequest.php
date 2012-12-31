@@ -37,11 +37,17 @@ abstract class AccessRequest extends DataObject{
 		$this->set('NetworkAddress',$NetworkAddress);
 	}
 	
-	public function setLocation(LocationFromIp $LocationFromIp){
+	public function getNetworkAddress(){
+		return ($this->getObject('NetworkAddress') instanceof NetworkAddress)
+			?$this->_data['NetworkAddress']
+			:new NetworkAddress();
+	}
+	
+	public function setLocationFromIp(LocationFromIp $LocationFromIp){
 		$this->set('LocationFromIp',$LocationFromIp);
 	}
 	
-	public function getLocation(){
+	public function getLocationFromIp(){
 		return ($this->getObject('LocationFromIp') instanceof LocationFromIp)
 			?$this->_data['LocationFromIp']
 			:new LocationFromIp();

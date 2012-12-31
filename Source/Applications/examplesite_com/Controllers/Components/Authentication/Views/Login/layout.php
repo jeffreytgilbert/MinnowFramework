@@ -6,7 +6,7 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 
 <div class="row show-grid">
 	
-	<div class="span4">
+	<div class="span5">
 		<form action="?" method="post" id="LoginForm" name="Login" class="form-signin">
 		<div>
 			<h2 class="form-signin-heading">Please sign in</h2>
