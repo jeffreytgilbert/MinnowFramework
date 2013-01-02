@@ -4,35 +4,46 @@ $jump = $Page->getParentComponent()->getConfig()->get('hybrid_auth_request_page_
 $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParentComponent())->getProviderList());
 ?>
 
+<?php foreach($Page->getErrors() as $error): ?>
+
+	<div class="alert alert-error"><span class="label label-important">&nbsp;!&nbsp;</span> <?= $error; ?></div>
+
+<?php endforeach; ?>
+		
 <div class="row show-grid">
 	
 	<div class="span5">
 		<form action="?" method="post" id="LoginForm" name="Login" class="form-signin">
+		
 		<div>
 			<h2 class="form-signin-heading">Please sign in</h2>
-	        <input 
-	        	type="text" 
-	        	id="Login_unique_identifier"
-	        	name="Login[unique_identifier]"
-	        	class="input-block-level required email" 
-	        	required="required" 
-	        	rel="popover" 
-	        	data-content="Please enter a valid email address." 
-	        	placeholder="Email address">
-	        <input 
-	        	type="password" 
-	        	id="Login_password"
-	        	name="Login[password]"
-	        	class="input-block-level required" 
-	        	required="required" 
-	        	rel="popover" 
-	        	data-content="Please enter a password of at least 6 characters in length." 
-	        	placeholder="Password" 
-	        	minlength="6">
-	        <label class="checkbox">
-	          <input type="checkbox" value="remember-me"> Remember me
-	        </label>
-	        <button class="btn btn-large btn-primary" type="submit">Sign in</button>
+			<input 
+				type="text" 
+				id="Login_unique_identifier"
+				name="Login[unique_identifier]"
+				class="input-block-level required email" 
+				required="required" 
+				rel="popover" 
+				data-content="Please enter a valid email address." 
+				placeholder="Email address"
+				value="<?= $Page->getInput('Login')->getStringAsHTMLEntities('unique_identifier') ?>"
+			>
+			<input 
+				type="password" 
+				id="Login_password"
+				name="Login[password]"
+				class="input-block-level required" 
+				required="required" 
+				rel="popover" 
+				data-content="Please enter a password of at least 6 characters in length." 
+				placeholder="Password" 
+				minlength="6">
+			<label class="checkbox">
+				<input type="checkbox" name="Login[remember_me]" value="true"<?= 
+				 ($Page->getInput('Login')->getBoolean('remember_me'))?'checked="checked"':''
+				?>> Remember me
+			</label>
+			<button class="btn btn-large btn-primary" type="submit">Sign in</button>
 		</div>
 		</form>
 	</div>
@@ -56,9 +67,6 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 			<?php endif; ?>
 			
 			<?php endforeach; ?>
-			
-			<br><br>
-			Login functionality provided by HybridAuth. Logo font by Zocial.
 			
 			<!--  
 			<a href="<?= $jump ?>?provider=Facebook" class="zocial facebook">Facebook</a>

@@ -48,8 +48,17 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 					$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url'));
 				}
 			} catch(AuthenticationException $e){
-				$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
-				$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
+				// At whatever point, developer can decide how they'd like the login to handle these exceptions. This is convenience code.
+				switch($e->getCode()){
+					case AuthenticationException::BAD_CREDENTIALS:
+					case AuthenticationException::TOO_MANY_BAD_REQUESTS:
+					case AuthenticationException::USER_ACCOUNT_NOT_REGISTERED:
+					case AuthenticationException::USER_BAN:
+					default:
+						$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
+						$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
+						break;
+				}
 			}
 			
 		}

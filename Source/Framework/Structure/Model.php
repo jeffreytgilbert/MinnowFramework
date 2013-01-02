@@ -156,12 +156,26 @@ class Model implements Iterator, Serializable{
 		number_format($result, $decimals, $dec_point, $delimiter);
 	}
 	
-	public function getStringAndConvertEntitiesToHTML($key_name, $character_limit=null, $trim_output=true){
+	public function getStringAsHTML($key_name, $character_limit=null, $trim_output=true){
 		return html_entity_decode(self::getString($key_name,$character_limit, $trim_output));
 	}
 	
-	public function getStringAndConvertHTMLToEntities($key_name, $character_limit=null, $trim_output=true){
+	/*
+	 * @deprecated Use getStringAsHTMLEntities
+	 */
+	public function getStringAndConvertEntitiesToHTML($key_name, $character_limit=null, $trim_output=true){
+		return $this->getStringAsHTML($key_name, $character_limit, $trim_output);
+	}
+	
+	public function getStringAsHTMLEntities($key_name, $character_limit=null, $trim_output=true){
 		return htmlentities(self::getString($key_name,$character_limit, $trim_output));
+	}
+	
+	/*
+	 * @deprecated Use getStringAsHTMLEntities
+	 */
+	public function getStringAndConvertHTMLToEntities($key_name, $character_limit=null, $trim_output=true){
+		return $this->getStringAsHTMLEntities($key_name, $character_limit, $trim_output);
 	}
 	
 	public function getInteger($key_name, $min=null, $max=null){

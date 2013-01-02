@@ -86,10 +86,16 @@ abstract class Controller {
 	public function getDataObject(){ return DataObject::cast($this->_Data); }
 	public function getDataValue($field_name){ return $this->_Data->get($field_name); }
 	public function setData($key_name, $data_value){ return $this->_Data->set($key_name, $data_value); }
-	public function getInput(){ return DataObject::cast($this->_Input); }
+	public function getInput($form_name=null){
+		if(is_null($form_name)){ 
+			return DataObject::cast($this->_Input); 
+		} else {
+			return $this->_Input->getObject($form_name); 
+		}
+	}
 	public function getNotices(){ return DataObject::cast($this->_Notices); }
 	public function getConfirmations(){ return DataObject::cast($this->_Confirmations); }
-	public function getErrors(){ return DataObject::cast($this->_Input); }
+	public function getErrors(){ return DataObject::cast($this->_Errors); }
 	public function getSystemNotifications(){ return DataObject::cast($this->_SystemNotifications); }
 	
 	public function getAppSettings(){ return DataObject::cast($this->_AppSettings); }
@@ -160,7 +166,107 @@ abstract class Controller {
 	
 	protected $_output='';
 	public function getOutput(){ return $this->_output; }
+	
+	public function redirect($url, $status = null, $exit = true){
 		
+		// Handle redirects for JSON, XML, etc requests.
+		if(!in(strtolower($this->_controller_format),array('html','page',''))){
+			if($exit){
+				if($status >= 400 && $status <= 599){
+					$this->_Errors->set('Redirect',$status);
+				} else {
+					$this->_Notices->set('Redirect',$status);
+				}
+				$render_method_name = 'render'.$this->_controller_format;
+				if(method_exists($this, $render_method_name)){
+					echo $this->$render_method_name();
+					exit;
+				} else {
+					die('Specified format not supported');
+				}
+			}
+		}
+		
+		if (!empty($status)) {
+			$codes = array(
+				100 => 'Continue',
+				101 => 'Switching Protocols',
+				200 => 'OK',
+				201 => 'Created',
+				202 => 'Accepted',
+				203 => 'Non-Authoritative Information',
+				204 => 'No Content',
+				205 => 'Reset Content',
+				206 => 'Partial Content',
+				300 => 'Multiple Choices',
+				301 => 'Moved Permanently',
+				302 => 'Found',
+				303 => 'See Other',
+				304 => 'Not Modified',
+				305 => 'Use Proxy',
+				307 => 'Temporary Redirect',
+				400 => 'Bad Request',
+				401 => 'Unauthorized',
+				402 => 'Payment Required',
+				403 => 'Forbidden',
+				404 => 'Not Found',
+				405 => 'Method Not Allowed',
+				406 => 'Not Acceptable',
+				407 => 'Proxy Authentication Required',
+				408 => 'Request Time-out',
+				409 => 'Conflict',
+				410 => 'Gone',
+				411 => 'Length Required',
+				412 => 'Precondition Failed',
+				413 => 'Request Entity Too Large',
+				414 => 'Request-URI Too Large',
+				415 => 'Unsupported Media Type',
+				416 => 'Requested range not satisfiable',
+				417 => 'Expectation Failed',
+				500 => 'Internal Server Error',
+				501 => 'Not Implemented',
+				502 => 'Bad Gateway',
+				503 => 'Service Unavailable',
+				504 => 'Gateway Time-out'
+			);
+			if (is_string($status)) {
+				$codes = array_combine(array_values($codes), array_keys($codes));
+			}
+
+			if (isset($codes[$status])) {
+				$code = $msg = $codes[$status];
+				if (is_numeric($status)) {
+					$code = $status;
+				}
+				if (is_string($status)) {
+					$msg = $status;
+				}
+				$status = "HTTP/1.1 {$code} {$msg}";
+			} else {
+				$status = null;
+			}
+		}
+
+		if (!empty($status)) {
+			header($status);
+		}
+		
+		if ($url !== null) {
+			header('Location: '.$url);
+		}
+
+		if (!empty($status) && ($status >= 300 && $status < 400)) {
+			header($status);
+		}
+
+		if ($exit) {
+			if (function_exists('session_write_close')) {
+				session_write_close();
+			}
+			exit;
+		}
+	}
+	
 	public function runCodeReturnOutput($path, $start_path_in_view_folder=true){
 //		$ID = RuntimeInfo::instance()->id();
 		
