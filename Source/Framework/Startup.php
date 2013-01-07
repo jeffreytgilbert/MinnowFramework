@@ -209,6 +209,32 @@ final class Startup{
 		// Load the sugar methods in actions so the actions accessors can better format the output to DataObjects and DataCollections
 		Run::fromActions('Actions.php');
 		
+		// Base classes that others inherit from 
+		Run::fromFramework('AddOns/Validation/Validators/ValidationRule.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidString.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidNumber.php');
+		
+		// Basic rules for forms to follow
+		Run::fromFramework('AddOns/Validation/Validators/ValidColor.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidCreditCard.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidCurrency.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidDate.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidEmail.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidInteger.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidIP.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidPhoneNumber.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidPostalCode.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidSocialSecurityNumber.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidTime.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidURL.php');
+		
+		// Load Validator class and the extended class 
+		Run::fromFramework('AddOns/Validation/Validator.php');
+		
+		// Reference your custom rules in this empty FormValidator class
+		Run::fromFormValidators('FormValidator.php');
+		
+		FormValidator::loadCustomValidators();
 		
 		// Load the PageController which is the base of all page requests and allows the user to override controller behaviors for things like themes, logins, etc
 		Run::fromControllers('PageController.php');

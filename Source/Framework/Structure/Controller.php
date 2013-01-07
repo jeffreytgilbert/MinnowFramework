@@ -50,6 +50,8 @@ abstract class Controller {
 		$this->_Notices = new DataObject();			// store info notices  
 		$this->_Data = new DataObject();			// store data that goes to the view as an array 
 		
+		// @todo Legacy functionality for form handling. May or may not be required. Will have to further research this to decide if its necessary for autofill forms.
+		
 		// store data from the form
 		if(isset($_POST) && is_array($_POST)){
 			$total_post_forms = count($_POST);
@@ -296,5 +298,28 @@ abstract class Controller {
 		ob_end_clean();
 		return $output;
 	}
+	
+
+	private $_forms = array(
+		FormValidator::METHOD_POST=>array(),
+		FormValidator::METHOD_GET=>array()	
+	);
+	
+	// for overwriting whats in a form
+	public function setForm($form_name, $method=FormValidator::METHOD_POST){
+		$this->_forms[$method][$form_name] = $FormValidator = new FormValidator($form_name, $method);
+		return $FormValidator;
+	}
+	
+	public function getForm($form_name, $method=FormValidator::METHOD_POST){
+		$FormValidator = isset($this->_forms[$method][$form_name])?$this->_forms[$method][$form_name]:array();
+		if($FormValidator instanceof FormValidator){
+			return $FormValidator;
+		} else {
+			$this->_forms[$method][$form_name] = $FormValidator = new FormValidator($form_name, $method);
+			return $FormValidator;
+		}
+	}	
+	
 }
 

@@ -199,6 +199,10 @@ class Model implements Iterator, Serializable{
 		return ($result instanceof DataObject)?$result:new $object_type_if_null();
 	}
 	
+	public function getDataAsOriginallyCast($key_name){
+		return isset($this->_data[$key_name])?$this->_data[$key_name]:null;
+	}
+	
 	public function getString($key_name, $character_limit=null, $trim_output=true){
 		$result = isset($this->_data[$key_name])?$this->_data[$key_name]:'';
 		$result = $trim_output?trim($result):$result;

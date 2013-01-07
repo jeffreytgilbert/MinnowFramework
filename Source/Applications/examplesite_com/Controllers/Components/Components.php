@@ -25,7 +25,7 @@ class Components{
 	}
 	
 	// example usage: 
-	// RuntimeInfo->Components->MySQL('default')->prepare($query, $line, $file);
+	// RuntimeInfo->Components->Authentication($this)->authenticate();
 	
 	// 	this is how connector/drivers should be installed. This code can be reused identically while just changing the instance name of each instance type
 	
@@ -38,14 +38,6 @@ class Components{
 		$this->_components['Authentication'][$instance_name] = $AuthenticationComponent = new AuthenticationComponent($Controller, $this->config('Controllers/Components/Authentication/', $instance_name));
 		return $AuthenticationComponent->getInstance();
 	}
-	
-	// @todo
-	// how do the controller urls in components work from the base url of a controller
-	// how are database naming conflicts avoided? or are they?
-	// eventually namespace support will work and when it does, component models wont collide with user models. views dont collide. controllers need to be specialized to ComponentControllers 
-	// need new structured object type FormController or ComponentController (or both). 
-	// May require a tiny bit of refactoring Controller class to be the base class for all controller types, but there being parent types for page controller, form controller, component controller, etc. 
-	// 	
 	
 // if it were single config
 // 	public function Authentication(){

@@ -19,7 +19,11 @@ final class Run{
 	public static function fromHelpers($source_path){
 		self::fromRoot('Source/AddOns/Helpers/'.$source_path);
 	}
-
+	
+	public static function fromFormValidators($source_path){
+		self::fromRoot('Source/AddOns/FormValidators/'.$source_path);
+	}
+	
 	public static function fromWidgets($source_path){
 		self::fromRoot('Source/AddOns/Widgets/'.$source_path);
 	}

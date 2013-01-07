@@ -63,6 +63,10 @@ final class Path{
 		return self::toRoot().File::osPath('Source/AddOns/Helpers/');
 	}
 
+	public static function toFormValidators($app_name=null){
+		return self::toRoot().File::osPath('Source/AddOns/FormValidators/');
+	}
+
 	public static function toActions($app_name=null){
 		return self::toApplication($app_name).File::osPath('Actions/');
 	}
