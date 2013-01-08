@@ -41,16 +41,67 @@ class RegistrationComponentController extends ComponentController implements HTM
 		if($Form->hasBeenSubmitted()){
 			
 			// Handle errors one at a time (if you want to handle them all at the same time, throw each one in a try catch block of its own
+			$errors = array();
 			
 			try{
-				$Form->checkPassword('password')->required()->strong();
+				$Form->checkPassword('password')->required(); // ->strong();
 				$Form->checkEmail('unique_identifier')->required()->validate();
 			} catch(Exception $e){
 				$errors = $Form->getCurrentErrors();
 			}
 			
 			if(count($errors) == 0){
-				$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url'));
+				
+				$UserLogin = UserLoginActions::selectByUniqueIdentifierAndProviderTypeId($Form->getFieldData('unique_identifier'), 1);
+				
+				if($UserLogin->getInteger('user_id') > 0){
+					$this->getErrors()->set('unique_identifier','Sorry, but an account is already registered with this email address.');
+					$HybridAuth = $this->getHelpers()->HybridAuth();
+					$this->getDataObject()->set('providers', array_keys($HybridAuth->getAvailableProviders()));
+					return;
+				}
+				
+				// create a user account for subsequent logins
+				
+				$UserAccount = new UserAccount(array(
+// 					'first_name'=>DataType::TEXT,
+// 					'middle_name'=>DataType::TEXT,
+// 					'last_name'=>DataType::TEXT,
+// 					'alternative_name'=>DataType::TEXT,
+					'latitude'=>$ID->getLocationFromIp()->getNumber('latitude'),
+					'longitude'=>$ID->getLocationFromIp()->getNumber('longitude'),
+					'gmt_offset'=>$ID->getLocationFromIp()->getNumber('gmt_offset'),
+					'password_hash'=>$this->getHelpers()->SecureHash()->generateSecureHash($Form->getFieldData('password'))
+				));
+				
+				// Create a user account to link user logins and other bits of info to
+				$user_id = UserAccountActions::insertUserAccountFromForm($UserAccount);
+				
+				UserLoginActions::insertUserLogin(new UserLogin(array(
+					'user_id'=>$user_id,
+					'unique_identifier'=>$Form->getFieldData('unique_identifier'),
+					'user_login_provider_id'=>1 // provider type id for emails
+				)));
+				
+				try{
+					$ID = $this->_Authentication->authenticateForm($Form->getFormDataAsDataObject());
+				
+					if($ID instanceof OnlineMember){
+						$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url'));
+					}
+				} catch(AuthenticationException $e){
+					// At whatever point, developer can decide how they'd like the login to handle these exceptions. This is convenience code.
+					switch($e->getCode()){
+						case AuthenticationException::BAD_CREDENTIALS:
+						case AuthenticationException::TOO_MANY_BAD_REQUESTS:
+						case AuthenticationException::USER_ACCOUNT_NOT_REGISTERED:
+						case AuthenticationException::USER_BAN:
+						default:
+							$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
+							$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
+							break;
+					}
+				}
 			} else {
 				foreach($errors as $field => $error){
 					$this->getErrors()->set($field, key($error));

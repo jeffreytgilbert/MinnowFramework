@@ -2,6 +2,7 @@
 $Page = ComponentController::cast($this);
 $jump = $Page->getParentComponent()->getConfig()->get('hybrid_auth_request_page_url');
 $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParentComponent())->getProviderList());
+$registration_url = $Page->getParentComponent()->getConfig()->get('registration_page_url');
 ?>
 
 <?php foreach($Page->getErrors() as $error): ?>
@@ -43,7 +44,11 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 				 ($Page->getInput('Login')->getBoolean('remember_me'))?'checked="checked"':''
 				?>> Remember me
 			</label>
-			<button class="btn btn-large btn-primary" type="submit">Sign in</button>
+			
+			<div>
+				<a style="float:right; line-height:38px; height:38px;" href="<?= $registration_url ?>">Need an account?</a>
+				<button class="btn btn-large btn-primary" type="submit">Sign in</button>
+			</div>
 		</div>
 		</form>
 	</div>

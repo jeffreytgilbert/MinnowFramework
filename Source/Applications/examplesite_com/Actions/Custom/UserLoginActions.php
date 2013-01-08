@@ -102,7 +102,7 @@ final class UserLoginActions extends Actions{
 		return $UserLoginCollection;
 	}
 	
-	public static function selectListByUniqueIdentifierAndProviderTypeId($unique_identifier, $provider_type_id){
+	public static function selectByUniqueIdentifierAndProviderTypeId($unique_identifier, $provider_type_id){
 		
 		// Return an object collection
 		$UserLogin = new UserLogin(parent::MySQLReadReturnSingleResultAsArrayAction('

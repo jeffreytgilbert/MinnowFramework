@@ -30,9 +30,9 @@ final class UserAccountActions extends Actions{
 			array(
 				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':last_online' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
-				':latitude' => $UserAccount->getInteger('latitude'),
-				':longitude' => $UserAccount->getInteger('longitude'),
-				':gmt_offset' => $UserAccount->getInteger('gmt_offset'),
+				':latitude' => $UserAccount->getNumber('latitude'),
+				':longitude' => $UserAccount->getNumber('longitude'),
+				':gmt_offset' => $UserAccount->getNumber('gmt_offset'),
 				':is_login_collection_validated' => true,
 				':is_online' => true
 			),
@@ -78,18 +78,18 @@ final class UserAccountActions extends Actions{
 			)',
 			// bind data to sql variables
 			array(
-				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat(),
 				':first_name' => $UserAccount->getString('first_name'),
 				':middle_name' => $UserAccount->getString('middle_name'),
 				':last_name' => $UserAccount->getString('last_name'),
 				':alternative_name' => $UserAccount->getString('alternative_name'),
-				':last_online' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
-				':latitude' => $UserAccount->getInteger('latitude'),
-				':longitude' => $UserAccount->getInteger('longitude'),
-				':gmt_offset' => $UserAccount->getInteger('gmt_offset'),
+				':last_online' => RuntimeInfo::instance()->now()->getMySQLFormat(),
+				':latitude' => $UserAccount->getNumber('latitude'),
+				':longitude' => $UserAccount->getNumber('longitude'),
+				':gmt_offset' => $UserAccount->getNumber('gmt_offset'),
 				':is_login_collection_validated' => false,
 				':is_online' => true,
-				':password_hash' => $UserAccount->getString('password_hash')
+				':password_hash' => $UserAccount->getDataAsOriginallyCast('password_hash')
 			),
 			// which fields are integers
 			array(

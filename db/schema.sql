@@ -250,9 +250,6 @@ CREATE TABLE `php_session` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-INSERT INTO `php_session` (`id`, `access`, `data`) VALUES
-('f0f504f6d9b8abb8e26d59918fc5c7ce', 1356127331, 'HA::CONFIG|a:3:{s:14:"php_session_id";s:40:"s:32:"f0f504f6d9b8abb8e26d59918fc5c7ce";";s:7:"version";s:16:"s:9:"2.1.0-dev";";s:6:"config";s:1705:"a:8:{s:10:"debug_mode";s:0:"";s:10:"debug_file";s:0:"";s:8:"base_url";s:54:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/";s:9:"providers";a:10:{s:6:"OpenID";a:1:{s:7:"enabled";s:1:"1";}s:5:"Yahoo";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:3:"key";s:0:"";s:6:"secret";s:0:"";}}s:3:"AOL";a:1:{s:7:"enabled";s:1:"1";}s:6:"Google";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:2:"id";s:0:"";s:6:"secret";s:0:"";}}s:8:"Facebook";a:2:{s:7:"enabled";s:1:"1";s:4:"keys";a:2:{s:2:"id";s:15:"461820303860356";s:6:"secret";s:32:"fd6a75169c964c926835d3609b9d761b";}}s:7:"Twitter";a:2:{s:7:"enabled";s:1:"1";s:4:"keys";a:2:{s:3:"key";s:22:"xwsjQ8mp4RZpRWDJaNE0YA";s:6:"secret";s:42:"EznZlkdYQoRB8iuCleD6HmhNmyVJvfVMpzD9jLfxL4";}}s:4:"Live";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:2:"id";s:0:"";s:6:"secret";s:0:"";}}s:7:"MySpace";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:3:"key";s:0:"";s:6:"secret";s:0:"";}}s:8:"LinkedIn";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:3:"key";s:0:"";s:6:"secret";s:0:"";}}s:10:"FourSquare";a:2:{s:7:"enabled";s:0:"";s:4:"keys";a:2:{s:2:"id";s:0:"";s:6:"secret";s:0:"";}}}s:9:"path_base";s:112:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/";s:14:"path_libraries";s:123:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/thirdparty/";s:14:"path_resources";s:122:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/resources/";s:14:"path_providers";s:122:"/Users/jeffreytgilbert/Documents/git-repos/MinnowFramework/Source/AddOns/Helpers/HybridAuth/Requirements/Hybrid/Providers/";}";}HA::STORE|a:3:{s:38:"hauth_session.facebook.hauth_return_to";s:75:"s:67:"http://localhost/Account/-/HybridAuthLoginRequest?provider=Facebook";";s:37:"hauth_session.facebook.hauth_endpoint";s:82:"s:74:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/?hauth.done=Facebook";";s:41:"hauth_session.facebook.id_provider_params";s:418:"a:5:{s:15:"hauth_return_to";s:67:"http://localhost/Account/-/HybridAuthLoginRequest?provider=Facebook";s:11:"hauth_token";s:32:"f0f504f6d9b8abb8e26d59918fc5c7ce";s:10:"hauth_time";i:1356127331;s:11:"login_start";s:97:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/?hauth.start=Facebook&hauth.time=1356127331";s:10:"login_done";s:74:"http://minnow.badpxl.com/Account/-/HybridAuthEndpoint/?hauth.done=Facebook";}";}');
-
 CREATE TABLE `power` (
   `power_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
@@ -566,17 +563,14 @@ CREATE TABLE `user_account` (
   `is_login_collection_validated` tinyint(1) unsigned DEFAULT NULL,
   `is_online` tinyint(1) unsigned DEFAULT NULL,
   `is_closed` tinyint(1) unsigned DEFAULT NULL,
-  `password_hash` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password_hash` mediumblob,
   `unread_messages` smallint(4) unsigned DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `last_online` (`last_online`),
   KEY `longitude` (`longitude`),
   KEY `latitude` (`latitude`),
   KEY `account_status_id` (`account_status_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-INSERT INTO `user_account` (`user_id`, `created_datetime`, `modified_datetime`, `first_name`, `middle_name`, `last_name`, `alternative_name`, `account_status_id`, `thumbnail_id`, `avatar_path`, `last_online`, `latitude`, `longitude`, `gmt_offset`, `is_login_collection_validated`, `is_online`, `is_closed`, `password_hash`, `unread_messages`) VALUES
-(1, '2012-11-28 11:21:18', NULL, '', '', '', '', NULL, NULL, '', '2012-12-18 08:43:06', 0, 0, 0, 1, 1, NULL, NULL, NULL);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `user_achievement` (
   `user_id` mediumint(8) unsigned NOT NULL,
@@ -629,15 +623,11 @@ CREATE TABLE `user_login` (
   `current_failed_attempts` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `total_failed_attempts` smallint(5) unsigned NOT NULL DEFAULT '0',
   `last_failed_attempt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `is_verified` mediumint(8) unsigned DEFAULT NULL,
+  `is_verified` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`user_login_id`),
   UNIQUE KEY `unique_identifier` (`unique_identifier`,`user_login_provider_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-INSERT INTO `user_login` (`user_login_id`, `user_id`, `created_datetime`, `modified_datetime`, `unique_identifier`, `user_login_provider_id`, `serialized_credentials`, `current_failed_attempts`, `total_failed_attempts`, `last_failed_attempt`, `is_verified`) VALUES
-(1, 1, '2012-11-28 11:21:18', NULL, '642257142', 3, 'a:5:{s:12:"access_token";s:110:"AAAGkBespYoQBAPhvQTMJeNvpFvfYpiWc3w7syP6R1jRctXJuaUuyfEw99Cp7aZAalXYsKICERoutZAhrlK364TNiZADXyk4gX8FrdAtEQZDZD";s:19:"access_token_secret";N;s:13:"refresh_token";N;s:10:"expires_in";N;s:10:"expires_at";N;}', 0, 0, '0000-00-00 00:00:00', 1),
-(2, 1, '2012-11-28 11:21:18', NULL, '969488239', 4, 'a:5:{s:12:"access_token";s:50:"969488239-N4wL46qjjXKMLCF4uQJStt2sq345fr8Km0eVimSC";s:19:"access_token_secret";s:41:"TXRa6a9fqDiHbLh3dhfOEN8tQ2M3odPvkv75a3rJU";s:13:"refresh_token";N;s:10:"expires_in";N;s:10:"expires_at";N;}', 0, 0, '0000-00-00 00:00:00', 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `user_login_history` (
   `user_id` mediumint(8) unsigned DEFAULT NULL,

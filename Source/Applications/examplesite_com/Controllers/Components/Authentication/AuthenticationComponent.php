@@ -40,6 +40,7 @@ class AuthenticationComponent extends Component{
 	public function getHybridAuth(){ return $this->_HybridAuthHelper; }
 	public function getLocationHelper(){ return $this->_LocationHelper; }
 	public function getSecureCookieHelper(){ return $this->_SecureCookieHelper; }
+	public function getSecureHashHelper(){ return $this->_SecureHashHelper; }
 	public function getSessionHelper(){ return $this->_SessionHelper; }
 	
 // 	const REQUEST_FULL_REGISTRATION = 'FullRegistration';
@@ -103,7 +104,7 @@ class AuthenticationComponent extends Component{
 		$this->_HybridAuthHelper = $this->_Controller->getHelpers()->HybridAuth();
 		$this->_LocationHelper = $this->_Controller->getHelpers()->Location();
 		$this->_SecureCookieHelper = $this->_Controller->getHelpers()->SecureCookie();
-		$this->_SecureHash = $this->_Controller->getHelpers()->SecureHash();
+		$this->_SecureHashHelper = $this->_Controller->getHelpers()->SecureHash();
 		$this->_SessionHelper = $this->_Controller->getHelpers()->Session();
 	}
 	
@@ -376,7 +377,7 @@ class AuthenticationComponent extends Component{
 		$this->logout();
 		
 		// Query the db for a login
-		$UserLogin = UserLoginActions::selectListByUniqueIdentifierAndProviderTypeId(
+		$UserLogin = UserLoginActions::selectByUniqueIdentifierAndProviderTypeId(
 			$Form->getString('unique_identifier'),
 			1 // 1 is the id for Email auth through minnow auth component
 		);
@@ -405,10 +406,11 @@ class AuthenticationComponent extends Component{
 				UserLoginActions::resetFailedAttemptCounter($UserLogin->getInteger('user_login_id'));
 				
 				$UserAccount = UserAccountActions::selectByUserAccountId($UserLogin->getInteger('user_id'));
+				
 				// If the password exists and is valid, log the user in
 				if(
 					$UserAccount->getString('password_hash') != '' &&
-					$this->getHelpers()->SecureHash()->validatePassword($Form->getString('password'),$UserAccount->getString('password_hash'))
+					$this->getSecureHashHelper()->validatePassword($Form->getString('password'),$UserAccount->getString('password_hash'))
 				){
 					// @todo check to see if account is closed, and if it is, reopen it before logging in
 					
