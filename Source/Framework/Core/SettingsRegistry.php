@@ -34,7 +34,7 @@ class SettingsRegistry{
 		if(self::settings($ini_path)){
 			return self::settings($ini_path);
 		} else {
-			if(file_exists($ini_path)){
+			if(File::exists($ini_path)){
 				$settings = parse_ini_file($ini_path, true);
 				if (!$settings) {
 					throw new Exception(self::getErrorMessage($ini_path,$example_ini_path));
@@ -49,7 +49,7 @@ class SettingsRegistry{
 	}
 	
 	private static function getErrorMessage($ini_path, $example_ini_path){
-		if(file_exists($example_ini_path)){
+		if(File::exists($example_ini_path)){
 			$example_settings = file_get_contents($example_ini_path);
 			if($example_settings != ''){
 				return '<h1>Settings file missing.</h1>'."\n"

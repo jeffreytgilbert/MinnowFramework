@@ -9,7 +9,8 @@
 //
 
 if(!defined('SLASH')){
-	if(stristr($_SERVER['SERVER_SOFTWARE'],'Win32')){ $slash = '\\'; }
+	// it seems foolish to only check for win32 or win64
+	if(stristr($_SERVER['SERVER_SOFTWARE'],'Win32') || stristr($_SERVER['SERVER_SOFTWARE'],'Win64')){ $slash = '\\'; }
 	else { $slash = '/'; }
 	define('SLASH',$slash);
 	unset($slash);
@@ -122,8 +123,14 @@ final class Startup{
 		
 		// this is where i need to collect the settings information from the settings folder. 
 		
-		SettingsRegistry::configPath($settings_folder_path);
-		$settings = SettingsRegistry::get($this->_application_name.'.ini', dirname(__FILE__).'example.ini');
+		try{
+			SettingsRegistry::configPath($settings_folder_path);
+			$settings = SettingsRegistry::get($this->_application_name.'.ini', dirname(__FILE__).'/example.ini');
+		} catch(Exception $e){
+			echo $e->getMessage();
+			die;
+		}
+			
 		$this->_config[''] = $settings;
 		
 		// set error handling based on debug mode in settings file
