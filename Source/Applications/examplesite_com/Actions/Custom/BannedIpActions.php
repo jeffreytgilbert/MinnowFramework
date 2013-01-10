@@ -6,6 +6,13 @@
 
 final class BannedIpActions extends Actions{
 	
+	public static function isBanned(Array $ip_list){
+		$BannedIpCollection = new BannedIpCollection(parent::MySQLReadReturnArrayOfObjectsAction('
+			SELECT banned_ip FROM banned_ip WHERE banned_ip IN ('.MySQLAbstraction::strings($ip_list).')'
+		));
+		return ($BannedIpCollection->length() > 0)?true:false;
+	}
+	
 	public static function insertBannedIp(BannedIp $BannedIp){
 		return parent::MySQLCreateAction('
 			INSERT INTO banned_ip (
@@ -35,7 +42,7 @@ final class BannedIpActions extends Actions{
 		);
 	}
 	
-	public static function selectByBannedIpId($user_id){
+	public static function selectByUserId($user_id){
 		// Return one object by primary key selection
 		return new BannedIp(parent::MySQLReadReturnSingleResultAsArrayAction('
 			SELECT 
@@ -153,7 +160,7 @@ final class BannedIpActions extends Actions{
 		);
 	}
 	
-	public static function deleteBannedIpById($user_id){
+	public static function deleteBannedIpByUserId($user_id){
 		return parent::MySQLUpdateAction('
 			DELETE 
 			FROM banned_ip 

@@ -35,6 +35,19 @@ abstract class PageController extends Controller{
 		return $this->_ID;
 	}
 	
+	// shorthand methods for saving messages to sessions for page redirects after form submissions
+	public function flashError($error_name, $message){
+		$this->getSession()->setError($message, $error_name);
+	}
+	
+	public function flashNotice($notice_name, $message){
+		$this->getSession()->setNotice($message, $notice_name);
+	}
+	
+	public function flashConfirmation($confirmation_name, $message){
+		$this->getSession()->setConfirmation($message, $confirmation_name);
+	}
+	
 	public function __construct($ParentObject=null){
 		parent::__construct($ParentObject);
 		
@@ -45,7 +58,9 @@ abstract class PageController extends Controller{
 		RuntimeInfo::instance()->now()->setTimestamp(strtotime($MasterConnection->row_data['right_now_gmt']));
 		
 		// Load sessions straight away because anything afterwards needs to use the db session handler
-		$this->_Session = $this->getHelpers()->Session()->start(); // especially sessions, since it needs to run before anything else starts a session
+		$this->getHelpers()->Session()->start(); // especially sessions, since it needs to run before anything else starts a session
+		
+		$this->_Session = $this->getHelpers()->Session();
 		
 		// load required files for this controller automatically and do so before components so components can use included files
 		$this->loadIncludedFiles();
@@ -68,6 +83,17 @@ abstract class PageController extends Controller{
 		));
 		
 		$this->handleRequest();
+		
+		$message_types = $this->getSession()->flushMessages();
+		foreach($message_types as $message_type => $messages){
+			$message_method = 'get'.$message_type;
+			if(is_array($messages) && count($messages)>0){
+				foreach($messages as $message_code => $message){
+// 					$this->getConfirmations()->set($message_code,$message);
+					$this->$message_method()->set($message_code,$message);
+				}
+			}
+		}
 	}
 	
 	public function renderThemedHTMLPage(){

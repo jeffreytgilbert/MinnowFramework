@@ -3,12 +3,6 @@ $Page = ComponentController::cast($this);
 $jump = $Page->getParentComponent()->getConfig()->get('hybrid_auth_request_page_url');
 $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParentComponent())->getProviderList());
 ?>
-
-<?php foreach($Page->getErrors() as $error): ?>
-
-	<div class="alert alert-error"><span class="label label-important">&nbsp;!&nbsp;</span> <?= $error; ?></div>
-
-<?php endforeach; ?>
 		
 <div class="row show-grid">
 	

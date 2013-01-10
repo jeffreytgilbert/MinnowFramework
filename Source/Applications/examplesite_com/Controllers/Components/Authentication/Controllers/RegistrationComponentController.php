@@ -6,7 +6,7 @@
 
 // Prompt user to login via social plugins (if supported) and form
 
-class RegistrationComponentController extends ComponentController implements HTMLCapable, JSONCapable, XMLCapable{
+class RegistrationComponentController extends ComponentController{
 	protected function loadIncludedFiles(){
 	}
 	

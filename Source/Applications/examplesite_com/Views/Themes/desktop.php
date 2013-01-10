@@ -109,6 +109,22 @@ echo $css;
 
 	<div class="container">
 
+		<?php foreach($Page->getErrors() as $error): ?>
+
+			<div class="alert alert-error"><span class="label label-important">&nbsp;!&nbsp;</span> <?= $error; ?></div>
+		
+		<?php endforeach; ?>
+		<?php foreach($Page->getNotices() as $notice): ?>
+
+			<div class="alert alert-info"><span class="label label-info">&nbsp;!&nbsp;</span> <?= $notice; ?></div>
+		
+		<?php endforeach; ?>
+		<?php foreach($Page->getConfirmations() as $confirmation): ?>
+
+			<div class="alert alert-success"><span class="label label-success">&nbsp;!&nbsp;</span> <?= $confirmation; ?></div>
+		
+		<?php endforeach; ?>
+		
 		<?= $Page->getPageBody(); ?>
 		
 	</div> <!-- /container -->

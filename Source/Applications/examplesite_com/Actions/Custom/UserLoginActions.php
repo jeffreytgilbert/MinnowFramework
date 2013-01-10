@@ -102,6 +102,40 @@ final class UserLoginActions extends Actions{
 		return $UserLoginCollection;
 	}
 	
+	public static function selectUnvalidatedLoginsListByUserId($user_id){
+		if(empty($user_id)) { return new UserLoginCollection(); }
+		
+		// Return an object collection
+		$UserLoginCollection = new UserLoginCollection(parent::MySQLReadReturnArrayOfObjectsAction('
+			SELECT 
+				user_login_id,
+				user_id,
+				created_datetime,
+				modified_datetime,
+				unique_identifier,
+				user_login_provider_id,
+				serialized_credentials,
+				current_failed_attempts,
+				total_failed_attempts,
+				last_failed_attempt,
+				is_verified
+			FROM user_login 
+			WHERE user_id = :user_id AND is_verified <> 1
+			',
+			// bind data to sql variables
+			array(
+				':user_id'=>$user_id
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
+				':user_id'
+			),
+			'UserLogin'
+		));
+		
+		return $UserLoginCollection;
+	}
+	
 	public static function selectByUniqueIdentifierAndProviderTypeId($unique_identifier, $provider_type_id){
 		
 		// Return an object collection

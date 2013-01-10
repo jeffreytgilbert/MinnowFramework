@@ -26,6 +26,23 @@ abstract class ComponentController extends Controller{
 		$this->loadIncludedFiles();
 	}
 	
+	public function getSession(){
+		return RuntimeInfo::instance()->getHelpers()->Session();
+	} 
+	
+	// shorthand methods for saving messages to sessions for page redirects after form submissions
+	public function flashError($error_name, $message){
+		$this->getSession()->setError($message, $error_name);
+	}
+	
+	public function flashNotice($notice_name, $message){
+		$this->getSession()->setNotice($message, $notice_name);
+	}
+	
+	public function flashConfirmation($confirmation_name, $message){
+		$this->getSession()->setConfirmation($message, $confirmation_name);
+	}
+	
 	abstract public function getParentComponent();
 	
 	public function renderHTML(){

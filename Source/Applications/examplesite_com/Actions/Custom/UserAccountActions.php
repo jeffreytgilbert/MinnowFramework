@@ -237,6 +237,40 @@ final class UserAccountActions extends Actions{
 		return $DataCollection;
 	}
 	
+	public static function setUserLoginValidationAsFalse($user_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_account 
+			SET is_login_collection_validated = NULL
+			WHERE user_id=:user_id
+			',
+			// bind data to sql variables
+			array(
+				':user_id' => $user_id
+			),
+			// which fields are integers
+			array(
+				':user_id'
+			)
+		);
+	}
+	
+	public static function setUserLoginValidationAsTrue($user_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_account 
+			SET is_login_collection_validated = NULL
+			WHERE user_id=:user_id
+			',
+			// bind data to sql variables
+			array(
+				':user_id' => $user_id
+			),
+			// which fields are integers
+			array(
+				':user_id'
+			)
+		);
+	}
+	
 	public static function setUserAsOnline($user_id){
 		return parent::MySQLUpdateAction('
 			UPDATE user_account 

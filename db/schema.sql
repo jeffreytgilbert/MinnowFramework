@@ -117,6 +117,15 @@ CREATE TABLE `conversation_participant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (conversation_id,participant_id) */;
 
+CREATE TABLE IF NOT EXISTS `email_validation` (
+  `user_id` mediumint(7) unsigned NOT NULL DEFAULT '0',
+  `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_datetime` datetime DEFAULT NULL,
+  `code` char(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 CREATE TABLE `follow` (
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
