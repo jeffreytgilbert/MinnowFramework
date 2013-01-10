@@ -5,8 +5,6 @@ A tiny PHP framework for catching big fish. ;)
 
 ===============
 
-What's in Minnow Framework 1.0
-
 Demo site: http://minnow.badpxl.com/
 
 Short list of features:
