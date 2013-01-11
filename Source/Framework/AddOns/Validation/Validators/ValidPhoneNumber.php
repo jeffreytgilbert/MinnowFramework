@@ -14,7 +14,7 @@ class ValidPhoneNumber extends ValidString{
 	
 	public function validate7DigitNumber(){
 		$numbersOnly = ereg_replace("[^0-9]", '', $this->getData());
-		$numberOfDigits = strlen($numbersOnly);
+		$numberOfDigits = mb_strlen($numbersOnly);
 		if( !($numberOfDigits == 7) ) {
 			$this->throwException(self::INVALID_US_PHONE_NUMBER);
 		}
@@ -23,7 +23,7 @@ class ValidPhoneNumber extends ValidString{
 	
 	public function validateUKNumber(){
 		$phone = $this->getData();
-		if (strlen($phone) > 0) {
+		if (mb_strlen($phone) > 0) {
 			$phone = str_replace (' ', '', $phone);
 			$phone = str_replace ('-', '', $phone);
 			$phone = str_replace ('(', '', $phone);

@@ -9,7 +9,7 @@ class ValidNumber extends ValidationRule{
 	public function __construct($data){
 		parent::__construct($data);
 		
-		if( !(strlen($this->getData()) === 0 || ctype_digit((string) $this->getData())) ){
+		if( !(mb_strlen($this->getData()) === 0 || ctype_digit((string) $this->getData())) ){
 			$this->throwException(self::INVALID_NUMBER_FORMAT);
 		}
 	}

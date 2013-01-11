@@ -119,4 +119,9 @@ class Validator{
 		return $Check;
 	}
 	
+	function checkWords($field_name){
+		$this->_field_validators[$field_name] = $Check = new ValidWords($this->getFieldData($field_name));
+		return $Check;
+	}
+	
 }

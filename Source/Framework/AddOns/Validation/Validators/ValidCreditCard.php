@@ -11,7 +11,7 @@ class ValidCreditCard extends ValidString{
 		$number=preg_replace('/\D/', '', $number);
 	
 		// Set the string length and parity
-		$number_length=strlen($number);
+		$number_length=mb_strlen($number);
 		$parity=$number_length % 2;
 	
 		// Loop through each digit and do the maths

@@ -13,21 +13,21 @@ class ValidString extends ValidationRule{
 	const INVALID_STRING_CONTAINS_BAD_MATCH = 'INVALID_STRING_CONTAINS_BAD_MATCH';
 	
 	public function minLength($limit){
-		if( strlen($this->getData()) >= $limit ){ 
+		if( mb_strlen($this->getData()) <= $limit ){ 
 			$this->throwException(self::INVALID_STRING_MIN_LENGTH, $limit);
 		}
 		return $this;
 	}
 	
 	public function maxLength($limit){
-		if( strlen($this->getData()) <= $limit ){ 
+		if( mb_strlen($this->getData()) >= $limit ){ 
 			$this->throwException(self::INVALID_STRING_MAX_LENGTH, $limit);
 		}
 		return $this;
 	}
 	
 	public function length($characters){
-		if( strlen($this->getData()) == $characters ){
+		if( mb_strlen($this->getData()) == $characters ){
 			$this->throwException(self::INVALID_STRING_EXACT_LENGTH, $characters);
 		}
 		return $this;
@@ -72,5 +72,5 @@ class ValidString extends ValidationRule{
 		}
 		return $this;
 	}
-	
+		
 }

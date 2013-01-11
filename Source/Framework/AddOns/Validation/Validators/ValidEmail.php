@@ -24,8 +24,8 @@ class ValidEmail extends ValidString{
 		{
 			$domain = substr($email, $atIndex+1);
 			$local = substr($email, 0, $atIndex);
-			$localLen = strlen($local);
-			$domainLen = strlen($domain);
+			$localLen = mb_strlen($local);
+			$domainLen = mb_strlen($domain);
 			if ($localLen < 1 || $localLen > 64)
 			{
 				// local part length exceeded
