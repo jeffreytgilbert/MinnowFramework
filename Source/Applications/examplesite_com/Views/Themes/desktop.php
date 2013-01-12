@@ -4,7 +4,7 @@
 // shorthand 
 //
 $Page = PageController::cast($this);
-$this_path=dirname(__FILE__).'/../../../../..';
+$this_path=dirname(__FILE__).'/../../../../../www';
 //
 /////////////////////
 ?><!DOCTYPE html>
@@ -40,7 +40,7 @@ foreach($Page->getRemoteCss() as $css_file) {
 }
 foreach($Page->getCss() as $css_file) {
 	if(File::exists($this_path.'/css/'.$css_file.'.css')){
-		$css .= "\n".'<link rel="stylesheet" type="text/css" href="/css/'.$css_file.'.css?'.date('dmhis',filemtime(File::osPath($this_path.'/css/'.$css_file.'.css'))).'">'."\n"; 
+		$css .= "\n".'<link rel="stylesheet" type="text/css" href="/css/'.$css_file.'.css">'."\n"; 
 	} else {
 		$css .= pr('Error loading css file: '.File::osPath($this_path.'/css/'.$css_file.'.css'),1);
 	}
@@ -164,7 +164,7 @@ foreach($Page->getRemoteJs() as $js_file) {
 
 foreach($Page->getJs() as $js_file) {
 	if(File::exists($this_path.'/js/'.$js_file.'.js')){
-		$js .= "\n".'<script src="/js/'.$js_file.'.js?'.date('dmhis',filemtime(File::osPath($this_path.'/js/'.$js_file.'.js'))).'"></script>'."\n";
+		$js .= "\n".'<script src="/js/'.$js_file.'.js"></script>'."\n";
 	} else {
 		$js .= pr('Error loading js file: '.File::osPath($this_path.'/js/'.$js_file.'.js'),1);
 	}
