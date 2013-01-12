@@ -11,6 +11,10 @@ class LogoutComponentController extends ComponentController implements HTMLCapab
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }
 	
 	public function handleRequest(){
+		
+		$ID = $this->getParentComponent()->identifyUser();
+		if($ID instanceof OnlineGuest){ $this->redirect('/'); }
+		
 		// Set for form object
 		$Form = $this->_Input->getObject('Logout');
 		

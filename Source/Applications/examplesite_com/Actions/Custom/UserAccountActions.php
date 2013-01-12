@@ -11,6 +11,8 @@ final class UserAccountActions extends Actions{
 		return parent::MySQLCreateAction('
 			INSERT INTO user_account (
 				created_datetime,
+				first_name,
+				last_name,
 				last_online,
 				latitude,
 				longitude,
@@ -19,6 +21,8 @@ final class UserAccountActions extends Actions{
 				is_online
 			) VALUES (
 				:created_datetime,
+				:first_name,
+				:last_name,
 				:last_online,
 				:latitude,
 				:longitude,
@@ -29,6 +33,8 @@ final class UserAccountActions extends Actions{
 			// bind data to sql variables
 			array(
 				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':first_name' => $UserAccount->getString('first_name'),
+				':last_name' => $UserAccount->getString('last_name'),
 				':last_online' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':latitude' => $UserAccount->getNumber('latitude'),
 				':longitude' => $UserAccount->getNumber('longitude'),
@@ -52,9 +58,7 @@ final class UserAccountActions extends Actions{
 			INSERT INTO user_account (
 				created_datetime,
 				first_name,
-				middle_name,
 				last_name,
-				alternative_name,
 				last_online,
 				latitude,
 				longitude,
@@ -65,9 +69,7 @@ final class UserAccountActions extends Actions{
 			) VALUES (
 				:created_datetime,
 				:first_name,
-				:middle_name,
 				:last_name,
-				:alternative_name,
 				:last_online,
 				:latitude,
 				:longitude,
@@ -80,9 +82,7 @@ final class UserAccountActions extends Actions{
 			array(
 				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat(),
 				':first_name' => $UserAccount->getString('first_name'),
-				':middle_name' => $UserAccount->getString('middle_name'),
 				':last_name' => $UserAccount->getString('last_name'),
-				':alternative_name' => $UserAccount->getString('alternative_name'),
 				':last_online' => RuntimeInfo::instance()->now()->getMySQLFormat(),
 				':latitude' => $UserAccount->getNumber('latitude'),
 				':longitude' => $UserAccount->getNumber('longitude'),

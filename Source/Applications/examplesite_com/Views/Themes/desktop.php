@@ -59,7 +59,7 @@ echo $css;
 	<![endif]-->
 
 	<!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
-
+	
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
@@ -68,10 +68,10 @@ echo $css;
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="/">Minnow Framework</a>
+				<a class="brand" href="/"><img src="/img/Minnow-Framework-logo-slim.png" style="height:40px;margin-top:-28px" alt="Minnow Framework"></a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="active"><a href="/">About</a></li>
+						<li<?= ($_SERVER['REQUEST_URI'] == '/')?' class="active"':''?>><a href="/">About</a></li>
 						<li><a href="https://github.com/jeffreytgilbert">Contact</a></li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Project <b class="caret"></b></a>
@@ -97,7 +97,7 @@ echo $css;
 						
 						<?php } else { ?>
 						
-							<li><a href="<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('login_page_url') ?>">Sign in</a></li>
+							<li<?= ($_SERVER['REQUEST_URI'] == '/Account/-/Login')?' class="active"':''?>><a href="<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('login_page_url') ?>">Sign in</a></li>
 						
 						<?php } ?>
 						</ul>
