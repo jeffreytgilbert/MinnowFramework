@@ -13,6 +13,28 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 			<h2 class="form-signin-heading">Sign up</h2>
 			<input 
 				type="text" 
+				id="Registration_first_name"
+				name="Registration[first_name]"
+				class="input-block-level required" 
+				required="required" 
+				rel="popover" 
+				data-content="Please enter a valid name." 
+				placeholder="First name"
+				value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('first_name') ?>"
+			>
+			<input 
+				type="text" 
+				id="Registration_last_name"
+				name="Registration[last_name]"
+				class="input-block-level required" 
+				required="required" 
+				rel="popover" 
+				data-content="Please enter a valid name." 
+				placeholder="Last name"
+				value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('last_name') ?>"
+			>
+			<input 
+				type="text" 
 				id="Registration_unique_identifier"
 				name="Registration[unique_identifier]"
 				class="input-block-level required email" 
@@ -31,7 +53,9 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 				rel="popover" 
 				data-content="Please enter a password of at least 6 characters in length." 
 				placeholder="Password" 
-				minlength="6">
+				minlength="6"
+			>
+			
 			<button class="btn btn-large btn-primary" type="submit">Sign up</button>
 		</div>
 		</form>

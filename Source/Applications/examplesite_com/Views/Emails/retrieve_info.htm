@@ -1,0 +1,28 @@
+<div>
+	<p>Dear Member,</p>
+	
+	<p>
+		You are receiving this message because you requested that a copy of your<br>
+		login information, on {% site_url %}, be emailed to you.
+	</p>
+	
+	<p>
+		Your Alias is:<br>
+		<a href="http://www.{% site_url %}/Users/View/?id={% user_id %}">{% login_name %}</a><br>
+		<br>
+		Password Reset Code:<br>
+		<a href="http://www.{% site_url %}/Account/ForgotInfo/?pass_code={% pass_code %}&email={% email %}">{% pass_code %}</a><br>
+		<br>
+		If you still don't remember your password, enter this code and your email address on<br>
+		the <a href="http://www.{% site_url %}/Account/ForgotInfo/?pass_code={% pass_code %}&email={% email %}">password reset page</a>.<br>
+		<br>
+		Your password will not be changed unless you enter the code. Once used, this code will expire.<br>
+	</p>
+	
+	<p>Hope to see you on again soon!</p>
+	
+	<p>
+		Sincerely,<br>
+		{% site_name %}
+	</p>
+</div>

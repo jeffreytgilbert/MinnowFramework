@@ -1,0 +1,27 @@
+<div>
+	<h1>Hello again, {% first_name %}!</h1>
+	
+	<p>
+		<strong>
+			We need to verify that email is arriving at the correct place so we can contact you 
+			if you lose your password, for critical site updates, news, or opt in notifications. 
+			In addition, if your account isn't validated you will not be able to enjoy 
+			all the features {% site_name %} has to offer.
+		</strong>
+	</p>
+	
+	<p>
+		Please verify that we're sending email to the right address by clicking the link below:<br>
+		<a href="http://{% site_url %}/Account/-/Verify/?code={% email_code %}">http://{% site_url %}/Account/-/Verify/?code={% email_code %}</a>
+	</p>
+	
+	<p>
+		Thanks for verifying your email address and have fun on the site!<br>
+		<strong>- {% site_name %}</strong><br>
+		<a href="http://www.{% site_url %}/">http://www.{% site_url %}/</a>
+	</p>
+	
+	<p>
+		If you are not {% first_name %} {% last_name %}, please disregard this email and do not click the verification link.
+	</p>
+</div>

@@ -32,14 +32,14 @@ abstract class Component{
 		$this->_instance = $this; // by default, assume this connection references it's own class, but allow for driver makers to assign their own classes here.
 		
 		$this->_component_class_name = get_called_class();
-		$this->_component_name = substr($this->_component_class_name, 0, strlen('Component')*-1);
+		$this->_component_name = substr($this->_component_class_name, 0, mb_strlen('Component')*-1);
 	}
 	
 	public function mapRequest(){
 			
 		$component_controller_name = RuntimeInfo::instance()->getComponentControllerName();
 		$component_controller_path = RuntimeInfo::instance()->getComponentControllerPath();
-		if(strlen($component_controller_path) > 0){ $component_controller_path .= '/'; }
+		if(mb_strlen($component_controller_path) > 0){ $component_controller_path .= '/'; }
 		
 		$component_controller_class = $component_controller_name.'ComponentController';
 		if(isset($this->_component_controllers[$component_controller_path.$component_controller_class])){

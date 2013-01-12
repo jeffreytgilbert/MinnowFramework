@@ -13,13 +13,8 @@ class WelcomeComponentController extends ComponentController{
 	public function handleRequest(){
 	}
 	
-	public function renderJSON(){ return parent::renderJSON(); }
-	public function renderXML(){ return parent::renderXML(); }
-	public function renderHTML(){
-		
-		$ID = $this->getParentComponent()->identifyUser();
-		
-		return pr($ID,1);
-	}
+// 	public function renderJSON(){ return parent::renderJSON(); }
+// 	public function renderXML(){ return parent::renderXML(); }
+// 	public function renderHTML(){ return parent::renderXML(); }
 	
 }

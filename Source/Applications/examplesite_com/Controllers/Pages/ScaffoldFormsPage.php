@@ -19,7 +19,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 		if(isset($_POST['o'])){ // handle form submission from xhr request
 			
 			$page = isset($_POST['page_name'])?$_POST['page_name']:'';
-			$full_page_path = Is::set($_POST['folder_name'])?$_POST['folder_name'].'/'.$page:$page;
+			$full_page_path = isset($_POST['folder_name'])?$_POST['folder_name'].'/'.$page:$page;
 			
 			$controller = file_get_contents(File::osPath(dirname(__FILE__).'/../../../Framework/Scaffold/Controller.txt'));
 			$view = '';
@@ -117,7 +117,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 						case 'password':
 							
 							$business_logic .= '
-			if(!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'Is::set\') ||
+			if(!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'isset\') ||
 				!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'Is::length\',1,'.$config_option['size'].')){
 				$this->Errors->get(\''.$config_option['form_name'].'\')->set(\''.$config_option['input_name'].'\', \'This is a required field.\');
 			}
@@ -143,7 +143,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 						case 'text':
 							
 							$business_logic .= '
-			if(!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'Is::set\') ||
+			if(!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'isset\') ||
 				!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'Is::length\',1,'.$config_option['size'].')){
 				$this->Errors->get(\''.$config_option['form_name'].'\')->set(\''.$config_option['input_name'].'\', \'This is a required field.\');
 			}
@@ -153,7 +153,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 						case 'textarea':
 							
 							$business_logic .= '
-			if(!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'Is::set\') ||
+			if(!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'isset\') ||
 				!$this->Input->get(\''.$config_option['form_name'].'\')->getData(\''.$config_option['input_name'].'\',\'Is::length\',1,65000)){
 				$this->Errors->get(\''.$config_option['form_name'].'\')->set(\''.$config_option['input_name'].'\', \'There was an error with this field.\');
 			}
@@ -245,7 +245,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 			\'BR\'=>BR';
 			
 			// print out options
-			if(!Is::set($_POST['folder_name'])){
+			if(!isset($_POST['folder_name'])){
 				$controller = str_replace('/../../../../../source/Applications/\'.$RuntimeInfo->getApplicationName()','/..',$controller);
 			} else {
 				$controller = str_replace('/../../../../../source/Applications/\'.$RuntimeInfo->getApplicationName()','/../..',$controller);
@@ -274,7 +274,7 @@ class ScaffoldFormsPage extends PageController implements HTMLCapable{
 				$option = str_replace('{% input_value %}','{% '.$config_option['input_name'].'_value %}',$option_template);
 				$option = str_replace('{% hint %}','{% '.$config_option['input_name'].'_hint %}',$option);
 				$option = str_replace('{% size %}',isset($config_option['size'])?$config_option['size']:'',$option);
-				$option = str_replace('{% required %}',Is::set($config_option['required'])?'required="required"':'',$option);
+				$option = str_replace('{% required %}',isset($config_option['required'])?'required="required"':'',$option);
 				$option = str_replace('{% tab_index %}',($key+1),$option);
 				$option = str_replace('{% span_width %}','full',$option);
 				$li = str_replace('{% inputs %}',$option,$li);

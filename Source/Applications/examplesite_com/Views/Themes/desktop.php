@@ -71,33 +71,36 @@ echo $css;
 				<a class="brand" href="/">Minnow Framework</a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="active"><a href="/">Home</a></li>
-						<li><a href="/About">About</a></li>
-						<li><a href="/Contact">Contact</a></li>
+						<li class="active"><a href="/">About</a></li>
+						<li><a href="https://github.com/jeffreytgilbert">Contact</a></li>
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Project <b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="#">Action</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
+								<li><a href="https://github.com/jeffreytgilbert/MinnowFramework">Visit us on GitHub!</a></li>
+								<li><a href="https://github.com/jeffreytgilbert/MinnowFramework/archive/master.zip">Download</a></li>
 								<li class="divider"></li>
-								<li class="nav-header">Nav header</li>
-								<li><a href="#">Separated link</a></li>
-								<li><a href="#">One more separated link</a></li>
+								<li class="nav-header">Project activity</li>
+								<li><a href="https://github.com/jeffreytgilbert/MinnowFramework/commits/master">Commit Log</a></li>
+								<li><a href="https://github.com/jeffreytgilbert/MinnowFramework/graphs/contributors">Contributors</a></li>
+								<li><a href="https://github.com/jeffreytgilbert/MinnowFramework/wiki/Overview">Structural Overview</a></li>
 							</ul>
 						</li>
 					</ul>
 					<div class="navbar-form pull-right">
 					
+						<ul class="nav">
 						<?php if($Page->getID()->isOnline()){ ?>
 						
-						<button type="submit" class="btn" onclick="location.href='<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('logout_page_url') ?>'">Sign out</button>
+							<li><a href="/Account/-/Welcome"><?= $Page->getID()->getObject('UserAccount')->getString('first_name') ?>
+								<?= $Page->getID()->getObject('UserAccount')->getString('last_name') ?></a></li>
+							<li><a href="<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('logout_page_url') ?>">Sign out</a></li>
 						
 						<?php } else { ?>
 						
-						<button type="submit" class="btn" onclick="location.href='<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('login_page_url') ?>'">Sign in</button>
+							<li><a href="<?php echo $Page->getComponents()->Authentication($this)->getConfig()->get('login_page_url') ?>">Sign in</a></li>
 						
 						<?php } ?>
+						</ul>
 						
 					</div>
 				</div><!--/.nav-collapse -->
@@ -131,7 +134,7 @@ echo $css;
 
 	<footer class="footer navbar navbar-fixed-bottom">
 		<div class="container">
-			<p>Credits: <a href="http://www.initializr.com/">Initializr</a> (H5BP 4.0.1, Modernizr 2.6.2, jQuery 1.8.3), <a href="http://hybridauth.sourceforge.net/">HybridAuth</a>, and many more.</p>
+			<p>This work is licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
 		</div>
 	</footer>
 	

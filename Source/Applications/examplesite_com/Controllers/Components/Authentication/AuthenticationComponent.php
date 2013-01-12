@@ -182,7 +182,7 @@ class AuthenticationComponent extends Component{
 			$Cookie = AuthenticationCookie::cast($Cookie);
 			
 			// see if the cookie has a user id in it
-			if($Cookie->getInteger('user_id') > 0 && strlen($Cookie->getInteger('access_token')) > 0){
+			if($Cookie->getInteger('user_id') > 0 && mb_strlen($Cookie->getInteger('access_token')) > 0){
 				// if it does, check it against the settings registered to be checked in the configuration script
 				if(
 					($this->getConfig()->get('validate_cookie_against_ip') && $Cookie->get('ip') == $users_ip) ||
@@ -277,7 +277,24 @@ class AuthenticationComponent extends Component{
 				
 			} else { // there are no accounts associated with this/these logins, but there should be, so register one.
 				
+				if(!empty($HybridAuthAdapter->getUserProfile()->firstName) && !empty($HybridAuthAdapter->getUserProfile()->lastName)){
+					$first_name = $HybridAuthAdapter->getUserProfile()->firstName;
+					$last_name = $HybridAuthAdapter->getUserProfile()->lastName;
+				} else if(!empty($HybridAuthAdapter->getUserProfile()->displayName)){
+					$display_name = $HybridAuthAdapter->getUserProfile()->displayName;
+					$name_pieces = explode(' ', $display_name, 2);
+					if(count($name_pieces) > 1){
+						$first_name = $name_pieces[0];
+						$last_name = $name_pieces[1];
+					} else {
+						$first_name = $display_name;
+						$last_name = '';
+					}
+				}
+				
 				$user_id = UserAccountActions::insertUserAccountFromHybridAuthRegistration(new UserAccount(array(
+					'first_name'=>$first_name,
+					'last_name'=>$last_name,
 					'latitude'=>$LocationFromIp->get('latitude'),
 					'longitude'=>$LocationFromIp->get('longitude'),
 					'gmt_offset'=>$LocationFromIp->get('gmt_offset')

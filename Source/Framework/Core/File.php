@@ -16,8 +16,8 @@ class File
 		$file_array = array();
 
 		// if there's a trailing slash, lose it
-		$trailing_slash = substr($path,strlen($path)-1);
-		if($trailing_slash == SLASH){ $path = substr($path, 0, strlen($path)-1);; }
+		$trailing_slash = substr($path, mb_strlen($path)-1);
+		if($trailing_slash == SLASH){ $path = substr($path, 0, mb_strlen($path)-1);; }
 		unset($trailing_slash);
 
 		if(is_dir($path) && $handle = opendir($path)) {
@@ -41,8 +41,8 @@ class File
 		$file_array = array();
 
 		// if there's a trailing slash, lose it
-		$trailing_slash = substr($path,strlen($path)-1);
-		if($trailing_slash == SLASH){ $path = substr($path, 0, strlen($path)-1);; }
+		$trailing_slash = substr($path, mb_strlen($path)-1);
+		if($trailing_slash == SLASH){ $path = substr($path, 0, mb_strlen($path)-1);; }
 		unset($trailing_slash);
 
 		if(is_dir($path) && $handle = opendir($path)) {
@@ -66,8 +66,8 @@ class File
 		$file_array = array();
 
 		// if there's a trailing slash, lose it
-		$trailing_slash = substr($path,strlen($path)-1);
-		if($trailing_slash == SLASH){ $path = substr($path, 0, strlen($path)-1);; }
+		$trailing_slash = substr($path, mb_strlen($path)-1);
+		if($trailing_slash == SLASH){ $path = substr($path, 0, mb_strlen($path)-1);; }
 		unset($trailing_slash);
 
 		if(is_dir($path) && $handle = opendir($path)) {
@@ -91,8 +91,8 @@ class File
 		$file_array = array();
 
 		// if there's a trailing slash, lose it
-		$trailing_slash = substr($path,strlen($path)-1);
-		if($trailing_slash == SLASH){ $path = substr($path, 0, strlen($path)-1);; }
+		$trailing_slash = substr($path, mb_strlen($path)-1);
+		if($trailing_slash == SLASH){ $path = substr($path, 0, mb_strlen($path)-1);; }
 		unset($trailing_slash);
 
 		if(is_dir($path) && $handle = opendir($path)) {

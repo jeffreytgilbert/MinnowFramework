@@ -22,7 +22,7 @@ final class SessionHelper extends Helper{
 			$this->_instance = $Sessions = new SessionAbstraction(new SessionConfig(
 				$this->getConfig()->get('storage_method'),
 				$this->getConfig()->get('hosts'),
-				Is::set($timeout)?$timeout:null
+				isset($timeout)?$timeout:null
 			));
 			
 			if($this->_instance->getSessionConfig()->isUsingMySQL()){

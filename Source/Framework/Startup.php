@@ -234,6 +234,7 @@ final class Startup{
 		Run::fromFramework('AddOns/Validation/Validators/ValidSocialSecurityNumber.php');
 		Run::fromFramework('AddOns/Validation/Validators/ValidTime.php');
 		Run::fromFramework('AddOns/Validation/Validators/ValidURL.php');
+		Run::fromFramework('AddOns/Validation/Validators/ValidWords.php');
 		
 		// Load Validator class and the extended class 
 		Run::fromFramework('AddOns/Validation/Validator.php');
@@ -283,7 +284,7 @@ final class Startup{
 					
 					$f['controller_name'] = 'Index';
 					
-					$requested_component_url = substr($f['requested_url'],2,strlen($f['requested_url']));
+					$requested_component_url = substr($f['requested_url'],2,mb_strlen($f['requested_url']));
 					$last_slash_position = strripos($requested_component_url,'/');
 					if($last_slash_position === false){
 						$f['component_controller_name'] = $requested_component_url;

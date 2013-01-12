@@ -15,7 +15,7 @@ abstract class ComponentController extends Controller{
 		parent::__construct($ParentObject);
 		
 		$this->_component_controller_class_name = get_called_class();
-		$this->_component_controller_name = substr($this->_component_controller_class_name, 0, strlen('ComponentController')*-1);
+		$this->_component_controller_name = substr($this->_component_controller_class_name, 0, mb_strlen('ComponentController')*-1);
 		
 		$this->_ParentObject = $Component = Component::cast($this->_ParentObject);
 		

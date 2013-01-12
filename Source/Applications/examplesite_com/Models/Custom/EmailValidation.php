@@ -11,7 +11,8 @@ class EmailValidation extends DataObject{
 			'User'=>DataType::OBJECT,
 			'created_datetime'=>DataType::DATETIME,
 			'modified_datetime'=>DataType::DATETIME,
-			'code'=>DataType::TEXT
+			'code'=>DataType::TEXT,
+			'email_address'=>DataType::TEXT
 		),true);
 		parent::__construct($data);
 	}

@@ -41,6 +41,16 @@ class Helpers{
 		return $BrowserDetectionHelper->getInstance();
 	}
 	
+	public function Email(){
+		if(isset($this->_helpers['Email'])
+				&& $this->_helpers['Email'] instanceof EmailHelper){
+			return $this->_helpers['Email']->getInstance();
+		}
+		Run::fromHelpers('Email/EmailHelper.php');
+		$this->_helpers['Email'] = $EmailHelper = new EmailHelper($this->config('Helpers/Email/'));
+		return $EmailHelper->getInstance();
+	}
+	
 	public function HybridAuth(){
 		if(isset($this->_helpers['HybridAuth'])
 				&& $this->_helpers['HybridAuth'] instanceof HybridAuthHelper){

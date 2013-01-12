@@ -14,7 +14,7 @@ final class Path{
 					substr(
 							dirname(__FILE__),
 							0,
-							-strlen('Source/Framework/Core')
+							- mb_strlen('Source/Framework/Core')
 					)
 			);
 			

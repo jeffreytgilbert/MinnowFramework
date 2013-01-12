@@ -40,19 +40,23 @@ final class EmailValidationActions extends Actions{
 		return parent::MySQLCreateAction('
 			INSERT INTO email_validation (
 				created_datetime,
-				code
+				code,
+				email_address
 			) VALUES (
 				:created_datetime,
-				:code
+				:code,
+				:email_address
 			)',
 			// bind data to sql variables
 			array(
 				':created_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':code' => $EmailValidation->getString('code'),
+				':email_address' => $EmailValidation->getString('email_address'),
 				':user_id' => $EmailValidation->getInteger('user_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
+				
 				':user_id'
 			)
 		);
@@ -65,7 +69,8 @@ final class EmailValidationActions extends Actions{
 				user_id,
 				created_datetime,
 				modified_datetime,
-				code
+				code,
+				email_address
 			FROM email_validation 
 			WHERE user_id=:user_id',
 			// bind data to sql variables
@@ -86,7 +91,8 @@ final class EmailValidationActions extends Actions{
 				user_id,
 				created_datetime,
 				modified_datetime,
-				code
+				code,
+				email_address
 			FROM email_validation 
 			',
 			// bind data to sql variables
@@ -126,7 +132,8 @@ final class EmailValidationActions extends Actions{
 				user_id,
 				created_datetime,
 				modified_datetime,
-				code
+				code,
+				email_address
 			FROM email_validation 
 			',
 			// bind data to sql variables
@@ -152,13 +159,15 @@ final class EmailValidationActions extends Actions{
 		return parent::MySQLUpdateAction('
 			UPDATE email_validation 
 			SET modified_datetime=:modified_datetime,
-				code=:code
+				code=:code,
+				email_address=:email_address
 			WHERE user_id=:user_id
 			',
 			// bind data to sql variables
 			array(
 				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
 				':code' => $EmailValidation->getString('code'),
+				':email_address' => $EmailValidation->getString('email_address'),
 				':user_id' => $EmailValidation->getInteger('user_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
