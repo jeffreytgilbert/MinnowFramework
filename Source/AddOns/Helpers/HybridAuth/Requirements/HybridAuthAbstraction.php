@@ -15,15 +15,32 @@ class HybridAuthAbstraction{
 		$_hybridAuth,
 		$_safe_redirect_url,
 		$_logout_url,
-		$_login_url;
+		$_login_url,
+		$_errors = array(); // If there was an exception, it would be stored here
 	
 	public function __construct($config, $login_url='/HybridAuth/Login/', $logout_url='/HybridAuth/Logout/', $safe_redirect_url='/'){
-		$this->_config = $config;
+	 	ob_start();
+		
+	 	$this->_config = $config;
 		$this->_login_url = $login_url;
 		$this->_logout_url = $logout_url;
 		$this->_safe_redirect_url = $safe_redirect_url;
-		$this->_hybridAuth = new Hybrid_Auth( $config );
+		try{
+			$this->_hybridAuth = new Hybrid_Auth( $config );
+			ob_flush();
+		} catch(ErrorException $e){
+			ob_flush();
+			self::handleException($e);
+		} catch(Exception $e){
+			ob_flush();
+			self::handleException($e);
+		}
 	}
+	
+	public function getErrors(){ return $this->_errors; }
+	
+	public static function castAsHAUser(Hybrid_User $User){ return $User; }
+	public static function castAsHAProfile(Hybrid_User_Profile $Profile){ return $Profile; }
 	
 	public function getHybridAuthInstance(){
 		return $this->_hybridAuth;
@@ -94,9 +111,21 @@ class HybridAuthAbstraction{
 	}
 	
 	public function endpoint(){
-		require_once( "Hybrid/Endpoint.php" );
+	 	ob_start();
 		
-		Hybrid_Endpoint::process();
+	 	require_once( 'Hybrid/Endpoint.php' );
+		
+		try{
+ 			Hybrid_Endpoint::process();
+			ob_flush();
+		} catch(ErrorException $e){
+			ob_flush();
+			self::handleException($e);
+		} catch( Exception $e ){
+			ob_flush();
+			self::handleException($e);
+		}
+		
 	}
 	
 	public function logoutAllProviders(){
@@ -187,32 +216,50 @@ class HybridAuthAbstraction{
 		return $connected_activity;
 	}
 	
-	private function handleException($e, $adapter=null){
+	private function handleException(Exception $e, $adapter=null){
 		switch( $e->getCode() ){
-			case 0 : 
-				throw new HybridAuthException("Unspecified error.", HybridAuthException::UNSPECIFIED_ERROR, $e);
-			case 1 : 
-				throw new HybridAuthException("Hybriauth configuration error.", HybridAuthException::CONFIGURATION_ERROR, $e);
-			case 2 : 
-				throw new HybridAuthException("Provider not properly configured.", HybridAuthException::BAD_PROVIDER_CONFIG, $e);
-			case 3 : 
-				throw new HybridAuthException("Unknown or disabled provider.", HybridAuthException::PROVIDER_DISABLED, $e);
-			case 4 : 
-				throw new HybridAuthException("Missing provider application credentials.", HybridAuthException::PROVIDER_CREDENTIALS_MISSING, $e);
-			case 5 : 
-				throw new HybridAuthException("Authentification failed. '
-					.'The user has canceled the authentication or the provider refused the connection.", HybridAuthException::AUTHENTICATION_FAILED, $e);
-			case 6 : 
+			case 0: 
+				$this->_errors[] = new HybridAuthException('Unspecified error.', HybridAuthException::UNSPECIFIED_ERROR, $e);
+			break;
+			case 1: 
+				$this->_errors[] = new HybridAuthException('Hybriauth configuration error.', HybridAuthException::CONFIGURATION_ERROR, $e);
+			break;
+			case 2: 
+				$this->_errors[] = new HybridAuthException('Provider not properly configured.', HybridAuthException::BAD_PROVIDER_CONFIG, $e);
+			break;
+			case 3: 
+				$this->_errors[] = new HybridAuthException('Unknown or disabled provider.', HybridAuthException::PROVIDER_DISABLED, $e);
+			break;
+			case 4: 
+				$this->_errors[] = new HybridAuthException('Missing provider application credentials.', HybridAuthException::PROVIDER_CREDENTIALS_MISSING, $e);
+			break;
+			case 5: 
 				if($adapter){ $adapter->logout(); }
-				throw new HybridAuthException("User profile request failed. '
-					.'Most likely the user is not connected to the provider and he should to authenticate again.", HybridAuthException::PROFILE_REQUEST_FAILED, $e);
-			case 7 : 
+				$this->_errors[] = new HybridAuthException('Authentification failed. '
+					.'The user has canceled the authentication or the provider refused the connection.', HybridAuthException::AUTHENTICATION_FAILED, $e);
+			break;
+			case 6: 
 				if($adapter){ $adapter->logout(); }
-				throw new HybridAuthException("User not connected to the provider.", HybridAuthException::USER_NOT_CONNECTED, $e);
-		}		
+				$this->_errors[] = new HybridAuthException('User profile request failed. '
+					.'Most likely the user is not connected to the provider and he should to authenticate again.', HybridAuthException::PROFILE_REQUEST_FAILED, $e);
+			break;
+			case 7: 
+				if($adapter){ $adapter->logout(); }
+				$this->_errors[] = new HybridAuthException('User not connected to the provider.', HybridAuthException::USER_NOT_CONNECTED, $e);
+			break;
+			case 8: 
+				$this->_errors[] = new HybridAuthException('Provider does not support this feature.', HybridAuthException::FEATURE_NOT_SUPPORTED, $e);
+			break;
+			default:
+				$this->_errors[] = new HybridAuthException('Unknown error.', HybridAuthException::UNKNOWN_ERROR, $e);
+			break;
+		}
+		return $this->_errors;
 	}
 	
 	public function getConnectedProfileByProvider($provider){
+	 	ob_start();
+		
 		try{
 			// check if the user is currently connected to the selected provider
 			if( !$this->_hybridAuth->isConnectedWith( $provider ) ){ 
@@ -225,8 +272,12 @@ class HybridAuthAbstraction{
 	
 			// grab the user profile
 			$user_data = $Adapter->getUserProfile();
-			return $user_data;
-	    } catch( Exception $e ){
+	 		ob_flush();
+			return self::castAsHAProfile($user_data);
+	    } catch(ErrorException $e){
+			ob_flush();
+			self::handleException($e);			
+		} catch( Exception $e ){
 			ob_flush();
 			self::handleException($e);
 		}
@@ -247,7 +298,10 @@ class HybridAuthAbstraction{
 	 		ob_flush();
 			return $contents;
 			
-	    } catch( Exception $e ){
+		} catch(ErrorException $e){
+			ob_flush();
+			self::handleException($e,$adapter);
+		} catch( Exception $e ){
 			ob_flush();
 			self::handleException($e,$adapter);
 		}
