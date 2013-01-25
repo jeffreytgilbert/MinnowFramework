@@ -39,14 +39,24 @@ class LocationServices
 	
 	public static function getLocationFromServices($ip){
 		
-		// this could likely use a try catch or throw block in here for failed requests 
-
+		// Check local cache for result
+		$IpToLocationFromYahoo = IpToLocationFromYahooActions::selectByIp($ip);
+		
+		if($IpToLocationFromYahoo->length() > 0){
+			return new LocationFromIp($IpToLocationFromYahoo->toArray());
+		}
+		
 		$Xml = new SimpleXMLElement(
 			"http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20pidgets.geoip%20where%20ip%3D'{$ip}'&diagnostics=true&env=http%3A%2F%2Fdatatables.org%2Falltables.env", 
 			null, true);
 		
 		$LocationFromIp = new LocationFromIp();
 		$LocationFromIp->set('ip',$ip);
+		
+		if(count(libxml_get_errors()) > 0){
+			libxml_clear_errors();
+			return $LocationFromIp;
+		}
 		
 		if(
 			$Xml instanceof SimpleXMLElement &&
@@ -74,11 +84,16 @@ class LocationServices
 		if($Xml instanceof SimpleXMLElement){
 			$Location = $Xml;
 			$LocationFromIp->set('gmt_offset',$Location->offset->__toString());
-			$LocationFromIp->set('localtime',new DateTimeObject($Location->localtime->__toString()));
-			$LocationFromIp->set('isotime',new DateTimeObject($Location->isotime->__toString()));
-			$LocationFromIp->set('utctime',new DateTimeObject($Location->utctime->__toString()));
+			$LocationFromIp->set('local_time',$Location->localtime->__toString());
+			$LocationFromIp->set('iso_time',$Location->isotime->__toString());
+			$LocationFromIp->set('utc_time',$Location->utctime->__toString());
 			$LocationFromIp->set('dst_offset',$Location->dst->__toString());
 		}
+		
+		$IpToLocationFromYahoo = new IpToLocationFromYahoo($LocationFromIp->toArray());
+		
+		// Cache result
+		IpToLocationFromYahooActions::insertIpToLocationFromYahoo($IpToLocationFromYahoo);
 		
 		return $LocationFromIp;
 	}

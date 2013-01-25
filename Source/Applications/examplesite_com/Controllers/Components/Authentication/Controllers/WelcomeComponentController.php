@@ -10,11 +10,30 @@ class WelcomeComponentController extends ComponentController{
 	
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }
 	
+	protected $_Authentication;
+	
 	public function handleRequest(){
+		
+		$this->_Authentication = $this->getParentComponent();
+		
+		$ID = $this->_Authentication->identifyUser();
+		
+		// check to see if the person is logged in or identified
+		if(!$ID->isOnline()){ $this->redirect('/'); }
+	
 	}
 	
 // 	public function renderJSON(){ return parent::renderJSON(); }
 // 	public function renderXML(){ return parent::renderXML(); }
-// 	public function renderHTML(){ return parent::renderXML(); }
+	public function renderHTML(){
+		
+		$PageController = PageController::cast($this->getParentComponent()->getParentController());
+		$PageController->addCss('Libraries/Zocial/zocial');
+		$PageController->addCss('Components/Authentication/Pages/Welcome');
+		$PageController->addJs('Libraries/jQuery.Validate/jquery.validate');
+		$PageController->addJs('Components/Authentication/Pages/Welcome');
+		
+		return parent::renderHTML();
+	}
 	
 }

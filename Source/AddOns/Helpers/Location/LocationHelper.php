@@ -8,6 +8,8 @@ class LocationHelper extends Helper{
 
 		Run::fromModels('Custom/LocationFromIp.php');
 		Run::fromModels('Custom/NetworkAddress.php');
+		Run::fromModels('Custom/IpToLocationFromYahoo.php');
+		Run::fromActions('Custom/IpToLocationFromYahooActions.php');
 		Run::fromHelpers('Location/Requirements/LocationServices.php');
 		
 		$this->_instance = new LocationServices(

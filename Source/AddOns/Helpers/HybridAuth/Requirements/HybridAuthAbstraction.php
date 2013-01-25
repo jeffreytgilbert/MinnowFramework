@@ -27,12 +27,12 @@ class HybridAuthAbstraction{
 		$this->_safe_redirect_url = $safe_redirect_url;
 		try{
 			$this->_hybridAuth = new Hybrid_Auth( $config );
-			ob_flush();
+			ob_end_clean();
 		} catch(ErrorException $e){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e);
 		} catch(Exception $e){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e);
 		}
 	}
@@ -43,20 +43,29 @@ class HybridAuthAbstraction{
 	public static function castAsHAProfile(Hybrid_User_Profile $Profile){ return $Profile; }
 	
 	public function getHybridAuthInstance(){
-		return $this->_hybridAuth;
+		if($this->_hybridAuth instanceof Hybrid_Auth){
+			return $this->_hybridAuth;
+		} else {
+			$this->_errors[] = new HybridAuthException('Unknown error.', HybridAuthException::UNKNOWN_ERROR);
+		}
 	}
 	
 	public function getAdapter($provider){
-		return $this->_hybridAuth->getAdapter($provider);
+		return $this->getHybridAuthInstance()->getAdapter($provider);
+	}
+	
+	public function getSerializedCredentials(){
+		return (isset($_SESSION['HA::STORE']) && is_array($_SESSION['HA::STORE']))?serialize($_SESSION['HA::STORE']):serialize(array());
 	}
 	
 	public function getSerializedCredentialsByProvider($requested_provider){
 				
 		$session_data = $this->getHybridAuthInstance()->getSessionData();
-		
-// 		pr($_SESSION['HA::STORE']);
+// 		pr('$session_data');
+// 		pr($session_data);
+//  		pr($_SESSION['HA::STORE']);
 		$session_array = unserialize($session_data);
-// 		pr($session_array);
+//  		pr($session_array);
 		
 		$keys_by_provider = array();
 		$full_keys_by_provider = array();
@@ -72,7 +81,8 @@ class HybridAuthAbstraction{
 			}
 //  		pr('Keys by provider');
 // 		pr($keys_by_provider);
-//  		pr($full_keys_by_provider);
+//   		pr('$full_keys_by_provider');
+// 		pr($full_keys_by_provider);
 // 		pr('Segmented credentials');
 // 		foreach($keys_by_provider as $provider => $credentials){
 // 			pr($provider);
@@ -82,6 +92,7 @@ class HybridAuthAbstraction{
 //  		pr('All credentials');
 			
 			//$credentials = serialize($keys_by_provider);
+//			pr(serialize($full_keys_by_provider[lower($requested_provider)]));
 			return serialize($full_keys_by_provider[lower($requested_provider)]);
 		} else {
 			// throw error here?
@@ -91,12 +102,12 @@ class HybridAuthAbstraction{
 	}
 	
 	public function setProviderCredentials(Array $provider_credentials){
-		$this->_hybridAuth->restoreSessionData(serialize($provider_credentials));
+		$this->getHybridAuthInstance()->restoreSessionData(serialize($provider_credentials));
 	}
 	
 	public function getConnectedStates(){
 		$connected_states = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
 			$connected_states[$connected_provider] = $this->getAdapter($connected_provider)->isUserConnected();
 		}
 		return $connected_states;
@@ -104,7 +115,7 @@ class HybridAuthAbstraction{
 	
 	public function getConnectedAdapters(){
 		$connected_adapters = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
 			$connected_adapters[$connected_provider] = $this->getAdapter($connected_provider);
 		}
 		return $connected_adapters;
@@ -113,33 +124,34 @@ class HybridAuthAbstraction{
 	public function endpoint(){
 	 	ob_start();
 		
-	 	require_once( 'Hybrid/Endpoint.php' );
-		
+	 	pr($this->getErrors());
+	 	
 		try{
- 			Hybrid_Endpoint::process();
-			ob_flush();
+		 	require_once( 'Hybrid/Endpoint.php' );
+			Hybrid_Endpoint::process();
+			ob_end_clean();
 		} catch(ErrorException $e){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e);
 		} catch( Exception $e ){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e);
 		}
 		
 	}
 	
 	public function logoutAllProviders(){
-		return $this->_hybridAuth->logoutAllProviders();
+		return $this->getHybridAuthInstance()->logoutAllProviders();
 	}
 	
 	public function logoutProvider($provider){
-		return $this->_hybridAuth->getAdapter($provider)->logout();
+		return $this->getHybridAuthInstance()->getAdapter($provider)->logout();
 	}
 	
 	public function setConnectedStatuses($status){
 		$results = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
-			$Adapter = $this->_hybridAuth->getAdapter($connected_provider);
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
+			$Adapter = $this->getHybridAuthInstance()->getAdapter($connected_provider);
 			$results[$connected_provider] = $Adapter->setUserStatus($status);
 // 			if(method_exists($Adapter, 'setUserStatus')){
 // 			} else {
@@ -150,18 +162,18 @@ class HybridAuthAbstraction{
 	}
 	
 	public function getAvailableProviders(){
-		$providers = $this->_hybridAuth->getProviders();
+		$providers = $this->getHybridAuthInstance()->getProviders();
 		return count($providers)?$providers:array();
 	}
 	
 	public function getConnectedProviders(){
-		$connected_providers = $this->_hybridAuth->getConnectedProviders();
+		$connected_providers = $this->getHybridAuthInstance()->getConnectedProviders();
 		return count($connected_providers)?$connected_providers:array();
 	}
 	
 	public function getConnectedProfiles(){
 		$connected_profiles = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
 			$connected_profiles[$connected_provider] = $this->getConnectedProfileByProvider($connected_provider);
 		}
 		return $connected_profiles;
@@ -169,16 +181,16 @@ class HybridAuthAbstraction{
 	
 	public function getConnectedAPIs(){
 		$connected_apis = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
-			$connected_apis[$connected_provider] = $this->_hybridAuth->getAdapter($connected_provider)->api();
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
+			$connected_apis[$connected_provider] = $this->getHybridAuthInstance()->getAdapter($connected_provider)->api();
 		}
 		return $connected_apis;
 	}
 	
 	public function getConnectedTimelines(){
 		$connected_timelines = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
-			$Adapter = $this->_hybridAuth->getAdapter($connected_provider);
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
+			$Adapter = $this->getHybridAuthInstance()->getAdapter($connected_provider);
 			$connected_timelines[$connected_provider] = $Adapter->getUserActivity('timeline');
 // 			if(method_exists($Adapter, 'getUserActivity')){
 // 			} else {
@@ -190,8 +202,8 @@ class HybridAuthAbstraction{
 	
 	public function getConnectedContacts(){
 		$connected_contacts = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
-			$Adapter = $this->_hybridAuth->getAdapter($connected_provider);
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
+			$Adapter = $this->getHybridAuthInstance()->getAdapter($connected_provider);
 // 			pr($Adapter);
 // 			pr(get_class_methods($Adapter));
 			$connected_contacts[$connected_provider] = $Adapter->getUserContacts();
@@ -205,8 +217,8 @@ class HybridAuthAbstraction{
 	
 	public function getConnectedActivity(){
 		$connected_activity = array();
-		foreach( $this->_hybridAuth->getConnectedProviders() as $connected_provider){
-			$Adapter = $this->_hybridAuth->getAdapter($connected_provider);
+		foreach( $this->getHybridAuthInstance()->getConnectedProviders() as $connected_provider){
+			$Adapter = $this->getHybridAuthInstance()->getAdapter($connected_provider);
 			$connected_activity[$connected_provider] = $Adapter->getUserActivity('me'); // 
 // 			if(method_exists($Adapter, 'getUserActivity')){
 // 			} else {
@@ -262,23 +274,23 @@ class HybridAuthAbstraction{
 		
 		try{
 			// check if the user is currently connected to the selected provider
-			if( !$this->_hybridAuth->isConnectedWith( $provider ) ){ 
+			if( !$this->getHybridAuthInstance()->isConnectedWith( $provider ) ){ 
 				// redirect him back to login page
 				header('Location: '.$this->_login_url.'?error='.$provider);
 			}
 	
 			// call back the requested provider adapter instance (no need to use authenticate() as we already did on login page)
-			$Adapter = $this->_hybridAuth->getAdapter($provider);
+			$Adapter = $this->getHybridAuthInstance()->getAdapter($provider);
 	
 			// grab the user profile
 			$user_data = $Adapter->getUserProfile();
-	 		ob_flush();
+	 		ob_end_clean();
 			return self::castAsHAProfile($user_data);
 	    } catch(ErrorException $e){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e);			
 		} catch( Exception $e ){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e);
 		}
 	}
@@ -289,20 +301,20 @@ class HybridAuthAbstraction{
 		try{
  			
 			// try to authenticate the selected $provider
-			$adapter = $this->_hybridAuth->authenticate( $provider );
+			$adapter = $this->getHybridAuthInstance()->authenticate( $provider );
 
 			// if okay, we will redirect to user profile page
-			if(!is_null($redirect_url)){ $this->_hybridAuth->redirect( $redirect_url ); }
+			if(!is_null($redirect_url)){ $this->getHybridAuthInstance()->redirect( $redirect_url ); }
 			
 	 		$contents = ob_get_contents();
-	 		ob_flush();
+	 		ob_end_clean();
 			return $contents;
 			
 		} catch(ErrorException $e){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e,$adapter);
 		} catch( Exception $e ){
-			ob_flush();
+			ob_end_clean();
 			self::handleException($e,$adapter);
 		}
 		

@@ -133,6 +133,12 @@ final class Startup{
 			
 		$this->_config[''] = $settings;
 		
+		// Set XML errors to not be thrown by xml in scripts, but instead be readable by error handling functions like libxml_get_errors. 
+		// This happens here because if it were to happen within a script, the docs say it can reset error handlers 
+		// (for instance, if i added an error handler to this framework it would no longer work if i ran this later in the scripts)
+		// http://php.net/manual/en/function.libxml-use-internal-errors.php
+		libxml_use_internal_errors();
+		
 		// set error handling based on debug mode in settings file
 		if(isset($settings['debug']) && ($settings['debug'] != 'false' || $settings['debug'] != false)){
 			if (!ini_get('display_errors')) {

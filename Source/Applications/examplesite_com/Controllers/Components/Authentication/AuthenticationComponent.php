@@ -13,9 +13,6 @@
  * Finally, if the user is not logged in and the account does not belong to a user in the db, register an account for the user, 
  * then prompt them for account information if needed afterwards. 
  * 
- * Another thought during this process. What if the developer gets annoyed that the sessions are not encapsulated in their own namespace like HA::STORE is. 
- * Should probably fix the sessions so they are in their own space before declaring this a 1.0
- * 
  */
 
 class AuthenticationComponent extends Component{
@@ -50,25 +47,25 @@ class AuthenticationComponent extends Component{
 // 	const REQUEST_CONFIRM_CONTACT = 'ConfirmContact';
 	
 	// maybe these can get refactored to a component controller for login status, or maybe they stay here instead. 
-	const _LOGGED_OUT_BY_REQUEST = 1;
-	const _LOGGED_OUT_BAD_SESSION = 2;
+// 	const _LOGGED_OUT_BY_REQUEST = 1;
+// 	const _LOGGED_OUT_BAD_SESSION = 2;
 // 	const _LOGGED_OUT_BY_REQUEST = 'logged out by request';
-	const MSG_MANUAL_LOG_OUT = 0;
-	const MSG_PASSWORD_CHANGED = 1;
-	const MSG_SESSION_EXPIRED = 2;
-	const MSG_INVALID_ACCOUNT = 3;
-	const MSG_IP_MATCH_ERROR = 4;
-	const MSG_INVALID_PASSWORD = 5;
-	const MSG_TOKEN_MATCH_ERROR = 6;
-	const MSG_IP_BAN = 7;
-	const MSG_FORGOTTEN_PASSWORD_ERROR = 8;
-	const MSG_PASSWORD_CHANGE_REQUEST = 9;
-	const MSG_ACCOUNT_KILLED_BY_ADMIN = 10;
-	const MSG_REOPENED_ACCOUNT = 11;
-	const MSG_LOGIN_REQUIRED = 12;
-	const MSG_KNOWN_ERROR = 13;
-	const MSG_SYSTEM_ERROR = 14;
-	const MSG_UNKNOWN_ERROR = 15;
+// 	const MSG_MANUAL_LOG_OUT = 0;
+// 	const MSG_PASSWORD_CHANGED = 1;
+// 	const MSG_SESSION_EXPIRED = 2;
+// 	const MSG_INVALID_ACCOUNT = 3;
+// 	const MSG_IP_MATCH_ERROR = 4;
+// 	const MSG_INVALID_PASSWORD = 5;
+// 	const MSG_TOKEN_MATCH_ERROR = 6;
+// 	const MSG_IP_BAN = 7;
+// 	const MSG_FORGOTTEN_PASSWORD_ERROR = 8;
+// 	const MSG_PASSWORD_CHANGE_REQUEST = 9;
+// 	const MSG_ACCOUNT_KILLED_BY_ADMIN = 10;
+// 	const MSG_REOPENED_ACCOUNT = 11;
+// 	const MSG_LOGIN_REQUIRED = 12;
+// 	const MSG_KNOWN_ERROR = 13;
+// 	const MSG_SYSTEM_ERROR = 14;
+// 	const MSG_UNKNOWN_ERROR = 15;
 	
 	public static function cast(Component $AuthenticationComponent){ 
 		if($AuthenticationComponent instanceof AuthenticationComponent) { return $AuthenticationComponent; }
@@ -117,6 +114,10 @@ class AuthenticationComponent extends Component{
 	public function getProviderList(){
 		return $this->_HybridAuthHelper->getAvailableProviders();
 	}
+
+	public function getConnectedProviderList(){
+		return $this->_HybridAuthHelper->getConnectedProviders();
+	}
 	
 	public function logout(){
 		if(isset($_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'])){
@@ -159,6 +160,123 @@ class AuthenticationComponent extends Component{
 			return $ID = $this->authenticate();
 		}
 		
+	}
+	
+	const ADD_AUTHENTICATION_SUCCESS = 1;
+	const ADD_AUTHENTICATION_ERROR_DUPLICATE_ENTRY = 2;
+	const ADD_AUTHENTICATION_ERROR_NO_CONNECTED_PROVIDERS = 3;
+	
+	public function authenticateNewHybridAuthConnection(OnlineMember $ID){
+		
+//  		ob_end_flush();
+//  		pr('frush');
+		
+		// Check social sign ins
+		
+		// collect a list of supported providers for validation of supported social sign in types
+		$ValidUserLoginProviderCollection = UserLoginProviderActions::selectList();
+		foreach($ValidUserLoginProviderCollection as $UserLoginProvider){
+			$supported_providers[$UserLoginProvider->getString('user_login_provider_id')] = $UserLoginProvider->getString('provider_name');
+		}
+		
+		// get a list of connected providers so the logins can be checked against the database for matches
+		$connected_providers = $this->_HybridAuthHelper->getConnectedProviders();
+// 		pr($connected_providers); // goes right to the source to see if there are any accounts logged in
+		
+		// if there are
+		if(count($connected_providers) > 0){
+			$HybridAuthApprovedUserLoginCollection = new UserLoginCollection();
+			
+			// check connected providers
+			foreach($connected_providers as $connected_provider){
+				$HybridAuthAdapter = $this->_HybridAuthHelper->getAdapter($connected_provider);
+				if($HybridAuthAdapter->isUserConnected()){
+					
+					// Create the start of a user login in a collection for when the db is ready to insert to the db the new record
+					$HybridAuthApprovedUserLoginCollection->addObject(new UserLogin(array(
+// 						'user_id'=>$user_id,
+						'unique_identifier'=>$HybridAuthAdapter->getUserProfile()->identifier,
+						'user_login_provider_id'=>array_search($connected_provider, $supported_providers),
+						'UserLoginProvider'=>new UserLoginProvider(array(
+							'login_type'=>'HybridAuth',
+							'provider_name'=>$connected_provider,
+						)),
+						'is_verified'=>true,
+// 						'serialized_credentials'=>serialize($HybridAuthAdapter->getAccessToken())
+ 						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider)
+//						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentials()
+					)));
+					
+//					pr($this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider));
+					
+				}
+			}
+			
+// 			pr($HybridAuthApprovedUserLoginCollection);
+			
+			// All the providers currently logged in
+			$authenticated_identifiers = $HybridAuthApprovedUserLoginCollection->getUniqueArrayByField('unique_identifier');
+			
+// 			pr($authenticated_identifiers);
+			
+			// grab the ones in the collection that are connected to accounts
+			$DatabaseUserLoginCollection = UserLoginActions::selectListByUniqueIdentifiers($authenticated_identifiers);
+			
+// 			pr($DatabaseUserLoginCollection);
+			
+			$authenticated_identifiers_in_db = $DatabaseUserLoginCollection->getUniqueArrayByField('unique_identifier');
+			
+// 			pr($authenticated_identifiers_in_db);
+			
+			$authenticated_identifiers_that_need_to_be_added = array();
+			
+			// compare with current identifiers
+			foreach($authenticated_identifiers as $user_identifier){
+// 				pr('authenticate_identifiers');
+				if(!in($user_identifier, $authenticated_identifiers_in_db)){
+// 					pr('save identifier');
+					$authenticated_identifiers_that_need_to_be_added[] = $user_identifier;
+				}
+			}
+			
+// 			pr($authenticated_identifiers_that_need_to_be_added);
+			
+			if(count($authenticated_identifiers_that_need_to_be_added) > 0){
+// 				pr('insert a new record at this point');
+				foreach($authenticated_identifiers_that_need_to_be_added as $approved_identifier){
+// 					pr('record: '.$approved_identifier);
+					$UserLogin = $HybridAuthApprovedUserLoginCollection->getUserLoginByFieldValue('unique_identifier', $approved_identifier);
+					$UserLogin->set('user_id',$ID->getInteger('user_id'));
+					UserLoginActions::insertUserLogin($UserLogin);
+				}
+				// found and added a new connection to login list
+				return self::ADD_AUTHENTICATION_SUCCESS;
+			} else {
+// 				pr('failed to get unique identifier. it belonged to someone else');
+				
+				$MyUserLoginCollection = UserLoginActions::selectListByUserId($ID->getInteger('user_id'));
+				
+				// unset all current social sign ons and reauth them all from the db.
+				$this->getHybridAuth()->logoutAllProviders();
+				
+				$social_sign_ons = array();
+				foreach($MyUserLoginCollection as $MyUserLogin){
+					if(!in($MyUserLogin->getInteger('user_login_provider_id'),array(1,2))){ // @todo hard coded Minnow Auth provider ids. make dependent on hybrid auth types
+						$temporary_array = unserialize($MyUserLogin->getString('serialized_credentials'));
+						$social_sign_ons = array_merge($temporary_array,$social_sign_ons);
+					}
+				}
+				$this->_HybridAuthHelper->setProviderCredentials($social_sign_ons);
+				
+				// no new entries. all were taken or already registered
+				return self::ADD_AUTHENTICATION_ERROR_DUPLICATE_ENTRY;
+			}
+			
+		} else {
+// 			pr('Failed to get any connected providers');
+			// no connected providers at all
+			return self::ADD_AUTHENTICATION_ERROR_NO_CONNECTED_PROVIDERS;
+		}
 	}
 	
 	private function authenticate(){
@@ -247,9 +365,12 @@ class AuthenticationComponent extends Component{
 							'provider_name'=>$connected_provider,
 						)),
 						'is_verified'=>true,
-						'serialized_credentials'=>serialize($HybridAuthAdapter->getAccessToken())
+// 						'serialized_credentials'=>serialize($HybridAuthAdapter->getAccessToken())
+ 						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider)
+//						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentials()
 					)));
 					
+//					pr($this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider));
 				}
 			}
 			
@@ -366,17 +487,30 @@ class AuthenticationComponent extends Component{
 			// Make a collection of UserLogin's that are specific to HybridAuth
 			$MyHybridAuthUserLoginCollection = new UserLoginCollection($MyUserLoginCollection->getObjectArrayByFieldValue('login_type', 'HybridAuth'));
 			
-			// First, compare current logins to existing logins, and if any are not logged in yet, log them in
-			foreach($MyHybridAuthUserLoginCollection as $UserLogin){
-				
-				// is the key from the db not logged in?
-				if( !in($UserLogin->getString('unique_identifier'), $unique_identifiers_from_session) ){
-					
-					// log it in
-					$this->_HybridAuthHelper->setProviderCredentials($UserLogin->getString('serialized_credentials'));
-					
+			$social_sign_ons = array();
+			foreach($MyUserLoginCollection as $MyUserLogin){
+				if(!in($MyUserLogin->getInteger('user_login_provider_id'),array(1,2))){ // @todo hard coded Minnow Auth provider ids. make dependent on hybrid auth types
+					$temporary_array = unserialize($MyUserLogin->getString('serialized_credentials'));
+					$social_sign_ons = array_merge($temporary_array,$social_sign_ons);
 				}
 			}
+			$this->_HybridAuthHelper->setProviderCredentials($social_sign_ons);			
+			
+// 			// First, compare current logins to existing logins, and if any are not logged in yet, log them in
+// 			foreach($MyHybridAuthUserLoginCollection as $UserLogin){
+				
+// 				// is the key from the db not logged in?
+// 				if( !in($UserLogin->getString('unique_identifier'), $unique_identifiers_from_session) ){
+					
+// // 					// log it in
+// // 					if(!in($UserLogin->getInteger('user_login_provider_id'),array(1,2))){ // @todo hard coded Minnow Auth provider ids. make dependent on hybrid auth types
+// // 						$this->_HybridAuthHelper->setProviderCredentials(unserialize($UserLogin->getString('serialized_credentials')));
+// // 					}
+					
+// 					$this->_HybridAuthHelper->setProviderCredentials(unserialize($UserLogin->getString('serialized_credentials')));
+					
+// 				}
+// 			}
 			
 			// Set a cookie so this person can log back in later when their session expires. Always do this when logging in from single sign on. ( @todo or do we? Test this )
 			$this->setRememberMeCookie($ID);
@@ -444,10 +578,27 @@ class AuthenticationComponent extends Component{
 					// create the users session
 					$ID = $this->createUserSession($UserAccount, $LocationFromIp, $NetworkAddress);
 					
+					// Log in all the social sign ons
+					$MyUserLoginCollection = UserLoginActions::selectListByUserId($ID->getInteger('user_id'));
+					
+					// unset all current social sign ons and reauth them all from the db.
+					$this->getHybridAuth()->logoutAllProviders();
+					
+					$social_sign_ons = array();
+					foreach($MyUserLoginCollection as $MyUserLogin){
+						if(!in($MyUserLogin->getInteger('user_login_provider_id'),array(1,2))){ // @todo hard coded Minnow Auth provider ids. make dependent on hybrid auth types
+							$temporary_array = unserialize($MyUserLogin->getString('serialized_credentials'));
+							$social_sign_ons = array_merge($temporary_array,$social_sign_ons);
+						}
+					}
+					$this->_HybridAuthHelper->setProviderCredentials($social_sign_ons);
+					
 					// if requested, set a login cookie using this data
 					if(1){ // @todo remember me cookie
 						$this->setRememberMeCookie($ID);
 					}
+					
+// 					pr($_SESSION);
 					
 					return $ID;
 					
