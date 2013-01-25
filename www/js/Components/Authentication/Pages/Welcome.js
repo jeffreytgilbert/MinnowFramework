@@ -4,6 +4,6 @@
 
 $(document).ready(function(){
 	
-	
+	ValidateForm('#SubRegistrationForm', ['#SubRegistration_unique_identifier','#SubRegistration_password']);
 	
 });

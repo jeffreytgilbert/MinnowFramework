@@ -627,6 +627,46 @@ class AuthenticationComponent extends Component{
 		
 	}
 	
+	public function updateUserSession(OnlineMember $ID){
+		
+		$UserAccount = UserAccountActions::selectByUserAccountId($ID->getInteger('user_id'));
+		
+		$users_ip = $this->_LocationHelper->guessIP();
+		$users_proxy_ip = $this->_LocationHelper->guessProxyIP();
+		
+		// See if we can get a location from this ip
+		$LocationFromIp = $this->_LocationHelper->getLocationFromServices($users_ip);
+		$NetworkAddress = new NetworkAddress(array(
+			'ip'=>$users_ip,
+			'proxy'=>$users_proxy_ip
+		));
+		
+		// create the users session
+		$ID = $this->createUserSession($UserAccount, $LocationFromIp, $NetworkAddress);
+		
+		// Log in all the social sign ons
+		$MyUserLoginCollection = UserLoginActions::selectListByUserId($ID->getInteger('user_id'));
+		
+		// unset all current social sign ons and reauth them all from the db.
+		$this->getHybridAuth()->logoutAllProviders();
+		
+		$social_sign_ons = array();
+		foreach($MyUserLoginCollection as $MyUserLogin){
+			if(!in($MyUserLogin->getInteger('user_login_provider_id'),array(1,2))){ // @todo hard coded Minnow Auth provider ids. make dependent on hybrid auth types
+				$temporary_array = unserialize($MyUserLogin->getString('serialized_credentials'));
+				$social_sign_ons = array_merge($temporary_array,$social_sign_ons);
+			}
+		}
+		$this->_HybridAuthHelper->setProviderCredentials($social_sign_ons);
+		
+		// if requested, set a login cookie using this data
+		if(1){ // @todo remember me cookie
+			$this->setRememberMeCookie($ID);
+		}
+		
+		return $ID;
+	}
+	
 	private function createUserSession(UserAccount $UserAccount, LocationFromIp $LocationFromIp, NetworkAddress $NetworkAddress){
 		
 		// The user needs to be marked as online in the database.

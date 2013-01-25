@@ -4,6 +4,8 @@ final class EmailActions extends Actions
 {
 	public static function send($to, $from_title, $subject, $body, $template_name=null, $from_address=null)
 	{
+		$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
+		
 		// These are the addresses we've whitelisted. Don't send from anyplace else.
 		
 		if(isset($template_name))
@@ -21,8 +23,8 @@ final class EmailActions extends Actions
 		$template->load('Emails/Templates/'.$template_name.'.htm');
 		$body=$template->parse(
 			array(
-				'site_name'=>RuntimeInfo::instance()->appSettings()->get('site_name'),
-				'site_url'=>RuntimeInfo::instance()->appSettings()->get('site_domain'),
+				'site_name'=>$Emailer->getConfig()->get('site_name'),
+				'site_url'=>$Emailer->getConfig()->get('site_domain'),
 				'mailer_contents' => $body
 			)
 		);
@@ -33,8 +35,6 @@ final class EmailActions extends Actions
 			$Postmark->to($to)->subject($from_title.': '.$subject)->html_message($body)->send();
 			return true;
 		} else {
-			$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
-			
 			$Emailer->SetFrom($Emailer->getConfig()->getString('webmaster_email'),$from_title);
 			$Emailer->AddAddress($to);
 			$Emailer->Subject = $subject;
@@ -45,13 +45,15 @@ final class EmailActions extends Actions
 	}
 	
 	public static function sendRegistrationNotice($email, $user_id, $login_name){
+		$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
+		
 		// Email someone a registration notice to let them know they're now part of the family
 		$template = new TemplateParser();
 		$template->load('Emails/registration.htm');
 		$body=$template->parse(
 			array(
-				'site_name'=>RuntimeInfo::instance()->appSettings()->get('site_name'),
-				'site_url'=>RuntimeInfo::instance()->appSettings()->get('site_domain'),
+				'site_name'=>$Emailer->getConfig()->get('site_name'),
+				'site_url'=>$Emailer->getConfig()->get('site_domain'),
 				'login_name' => strip_tags($login_name),
 				'user_id' => intval($user_id)
 			)
@@ -60,13 +62,14 @@ final class EmailActions extends Actions
 		return EmailActions::send(
 			$email,
 			'Registration',
-			'Confirmation: Your account has been created for '.RuntimeInfo::instance()->appSettings()->get('site_domain').'.',
+			'Confirmation: Your account has been created for '.$Emailer->getConfig()->get('site_domain').'.',
 			$body
 		);
 	}
 	
-	public static function sendEmailValidationRequest($email, $user_id, $first_name, $last_name)
-	{
+	public static function sendEmailValidationRequest($email, $user_id, $first_name, $last_name){
+		$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
+		
 		$Result = new EmailValidation(parent::MySQLReadReturnSingleResultAsArrayAction('
 			SELECT *
 			FROM email_validation 
@@ -107,14 +110,16 @@ final class EmailActions extends Actions
 		$template->load('Emails/email_validation.htm');
 		$body=$template->parse(
 			array(
-				'site_name'=>RuntimeInfo::instance()->appSettings()->get('site_name'),
-				'site_url'=>RuntimeInfo::instance()->appSettings()->get('site_domain'),
+				'site_name'=>$Emailer->getConfig()->get('site_name'),
+				'site_url'=>$Emailer->getConfig()->get('site_domain'),
 				'first_name' => strip_tags($first_name),
 				'last_name' => strip_tags($last_name),
 				'user_id' => intval($user_id),
 				'email_code' => $registration_code
 			)
 		);
+		
+		pr($body);
 		
 		return EmailActions::send(
 			$email,
@@ -233,12 +238,14 @@ final class EmailActions extends Actions
 // 	}
 		
 	public static function sendPasswordResetRequest($email, $user_id, $login_name, $pass_code){
+		$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
+		
 		$template = new TemplateParser();
 		$template->load('Emails/retrieve_info.htm');
 		$body=$template->parse(
 			array(
-				'site_name'=>RuntimeInfo::instance()->appSettings()->get('site_name'),
-				'site_url'=>RuntimeInfo::instance()->appSettings()->get('site_domain'),
+				'site_name'=>$Emailer->getConfig()->get('site_name'),
+				'site_url'=>$Emailer->getConfig()->get('site_domain'),
 				'email' => $email,
 				'user_id' => $user_id,
 				'login_name' => strip_tags($login_name),
@@ -254,18 +261,20 @@ final class EmailActions extends Actions
 	}
 	
 	public static function sendContactUs($email, $note){
+		$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
+		
 		$template = new TemplateParser();
 		$template->load('Emails/feedback.htm');
 		$body=$template->parse(
 			array(
-				'site_name'=>RuntimeInfo::instance()->appSettings()->get('site_name'),
-				'site_url'=>RuntimeInfo::instance()->appSettings()->get('site_domain'),
+				'site_name'=>$Emailer->getConfig()->get('site_name'),
+				'site_url'=>$Emailer->getConfig()->get('site_domain'),
 				'email' => $email,
 				'note' => htmlentities(strip_tags($note))
 			)
 		);
 		EmailActions::send(
-			RuntimeInfo::instance()->appSettings()->get('webmaster_email'),
+			$Emailer->getConfig()->get('webmaster_email'),
 			'Contact', 
 			'Feedback from '.$email.'.',
 			$body
@@ -273,6 +282,8 @@ final class EmailActions extends Actions
 	}
 	
 	public static function sendUnsubscribeReqest($email){
+		$Emailer = RuntimeInfo::instance()->getHelpers()->Email();
+		
 		$template = new TemplateParser();
 		$template->load('Emails/unsubscribe_request.htm');
 		$str = base64_encode($email);
@@ -280,8 +291,8 @@ final class EmailActions extends Actions
 		$code = base64_encode($str);
 		$body=$template->parse(
 			array(
-				'site_name'=>RuntimeInfo::instance()->appSettings()->get('site_name'),
-				'site_url'=>RuntimeInfo::instance()->appSettings()->get('site_domain'),
+				'site_name'=>$Emailer->getConfig()->get('site_name'),
+				'site_url'=>$Emailer->getConfig()->get('site_domain'),
 				'email' => $email,
 				'code' => $code
 			)

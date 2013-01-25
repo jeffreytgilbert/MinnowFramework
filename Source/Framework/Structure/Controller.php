@@ -95,6 +95,8 @@ abstract class Controller {
 			return $this->_Input->getObject($form_name); 
 		}
 	}
+	public function setInput($form_name, Array $data = array()){ $this->_Input->set($form_name,new DataObject($data)); }
+	
 	public function getNotices(){ return DataObject::cast($this->_Notices); }
 	public function getConfirmations(){ return DataObject::cast($this->_Confirmations); }
 	public function getErrors(){ return DataObject::cast($this->_Errors); }

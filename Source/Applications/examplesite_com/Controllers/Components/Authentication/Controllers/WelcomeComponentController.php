@@ -21,6 +21,27 @@ class WelcomeComponentController extends ComponentController{
 		// check to see if the person is logged in or identified
 		if(!$ID->isOnline()){ $this->redirect('/'); }
 	
+		$this->setInput('SubRegistration', array(
+			'first_name'=>$ID->getUserAccount()->getString('first_name'),
+			'last_name'=>$ID->getUserAccount()->getString('last_name')
+		));
+		
+		$HybridAuth = $this->_Authentication->getHybridAuth();
+		
+		$connected_profiles = $HybridAuth->getConnectedProfiles();
+		foreach($connected_profiles as $ConnectedProfile){
+			if(!is_null($ConnectedProfile)){
+				$ConnectedProfile = $HybridAuth->castAsHAProfile($ConnectedProfile);
+				if(!empty($ConnectedProfile->emailVerified)){
+					$this->getInput('SubRegistration')->set('unique_identifier',$ConnectedProfile->emailVerified);
+					break;
+				}
+				if(!empty($ConnectedProfile->email)){
+					$this->getInput('SubRegistration')->set('unique_identifier',$ConnectedProfile->email);
+					break;
+				}
+			}
+		}
 	}
 	
 // 	public function renderJSON(){ return parent::renderJSON(); }
