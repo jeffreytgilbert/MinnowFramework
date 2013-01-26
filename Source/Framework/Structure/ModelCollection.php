@@ -102,7 +102,7 @@ class ModelCollection implements Iterator{
 		}
 	}
 	
-	public function addObject(DataObject $DataObject){
+	public function addObject(Model $DataObject){
 		if(!empty($this->_collection_of_object_type)){
 			if($DataObject instanceof $this->_collection_of_object_type){
 				array_push($this->_data_object_array, $DataObject);
@@ -114,7 +114,7 @@ class ModelCollection implements Iterator{
 		}
 	}
 	
-	public function addObjectAtIndex(DataObject $DataObject, $index){
+	public function addObjectAtIndex(Model $DataObject, $index){
 		if(!empty($this->_collection_of_object_type)){
 			if($DataObject instanceof $this->_collection_of_object_type){
 				if($index > 0){
@@ -138,7 +138,7 @@ class ModelCollection implements Iterator{
 		}
 	}
 	
-	public function contains(DataObject $DataObject){
+	public function contains(Model $DataObject){
 		return (bool)array_search($DataObject, $this->_data_object_array, true);
 	}
 	

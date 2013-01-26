@@ -289,6 +289,31 @@ final class UserLoginActions extends Actions{
 		);
 	}
 	
+	public static function validateLogin(UserLogin $UserLogin){
+		return parent::MySQLUpdateAction('
+			UPDATE user_login 
+			SET modified_datetime=:modified_datetime,
+				is_verified=1
+			WHERE 
+				user_id=:user_id AND 
+				unique_identifier=:unique_identifier AND 
+				user_login_provider_id=:user_login_provider_id
+			',
+			// bind data to sql variables
+			array(
+				':user_id' => $UserLogin->getInteger('user_id'),
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':unique_identifier' => $UserLogin->getString('unique_identifier'),
+				':user_login_provider_id' => $UserLogin->getInteger('user_login_provider_id')
+			),
+			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
+			array(
+				':user_id',
+				':user_login_provider_id'
+			)
+		);
+	}
+	
 	public static function resetFailedAttemptCounter($user_login_id){
 		return parent::MySQLUpdateAction('
 			UPDATE user_login 

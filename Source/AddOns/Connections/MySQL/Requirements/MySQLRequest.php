@@ -133,7 +133,7 @@ class MySQLRequest extends Request{
 		
 		$this->_mapped_data_collection = new $collection_type();
 		while($db->readRow()){
-			$this->_mapped_data_collection->addItem($this->mapResult($db->row_data));
+			$this->_mapped_data_collection->addObject($this->mapResult($db->row_data));
 		}
 	}
 }

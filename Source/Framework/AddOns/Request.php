@@ -14,8 +14,8 @@ abstract class Request{
 	protected $_result_data_array=array();
 	private $_size_of_map = 0;
 	
-	public function __construct($command, $return_object_type='Model', $map=array()){
-		$this->_mapped_data_collection = new ModelCollection();
+	public function __construct($command, $return_object_type='DataObject', $map=array()){
+		$this->_mapped_data_collection = new DataCollection();
 		$this->_command = $command;
 		$this->_return_object_type = $return_object_type;
 		$this->_map = $map;
@@ -65,12 +65,12 @@ abstract class Request{
 	}
 	
 	// resets the data in this request handler to null / default, so new data doesn't add to old data for the next query
-	public function reconstruct($return_object_type='Model', $map=array()){
+	public function reconstruct($return_object_type='DataObject', $map=array()){
 		$this->_return_object_type = $return_object_type;
 		$this->_map = $map;
 		$this->_size_of_map = count($map);
 		$this->_mapped_data_array = array();
 		$this->_result_data_array = array();
-		$this->_mapped_data_collection = new ModelCollection();
+		$this->_mapped_data_collection = new DataCollection();
 	}
 }

@@ -6,15 +6,18 @@
 
 final class EmailValidationActions extends Actions{
 	
-	public static function validateEmail($email_code){
+	public static function validateEmail($email_code, $user_account_id){
 		
-		$CodeResult = parent::MySQLReadAction('
+		// Collect the code from the db to make sure it matches
+		$CodeResult = new EmailValidation(parent::MySQLReadReturnSingleResultAsArrayAction('
 			SELECT user_id FROM email_validation WHERE code = :code LIMIT 1',
 			array(':code'=>$email_code),
 			array(':code')
-		)->getItemAt(0);
+		));
 		
-		if( $CodeResult instanceof Model && $CodeResult->getInteger('user_id') ){
+		if( $CodeResult->getInteger('user_id') > 1 && 
+			$CodeResult->getInteger('user_id') == $user_account_id ){
+			
 			$user_id = $CodeResult->getInteger('user_id');
 			
 			parent::MySQLUpdateAction('
@@ -23,7 +26,15 @@ final class EmailValidationActions extends Actions{
 				array(':user_id')
 			);
 			
+			UserLoginActions::validateLogin(new UserLogin(array(
+				'user_id'=>$user_id,
+				'unique_identifier'=>$CodeResult->getString('email'),
+				'user_login_provider_id'=>1 // email
+			)));
+			
 			$UserLoginCollection = UserLoginActions::selectUnvalidatedLoginsListByUserId($user_id);
+			
+			pr($UserLoginCollection);
 			
 			if($UserLoginCollection->length() > 0){
 				UserAccountActions::setUserLoginValidationAsFalse($user_id);
