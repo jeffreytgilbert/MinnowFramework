@@ -47,34 +47,29 @@ class HybridAuthAddConnectionComponentController extends ComponentController { /
 								$this->flashError('LoginFailed', 'Unknown Error.');
 								break;
 						}
+						
 						$this->redirect($this->getParentComponent()->getConfig()->get('welcome_page_url'));
 					} else {
 						$errors = $HybridAuth->getErrors();
 						$e = array_pop($errors);
 // 						pr('Login attempt failed');
-// 						pr($errors);
-// 						pr($e);
 						if($e instanceof HybridAuthException){
 							$this->flashError($e->getCode(), $e->getMessage());
-// 		exit;
 							$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
 						}
 					}
 				// if not, send back to the login page
 				} else {
 // 					pr('Invalid provider');
-// 		exit;
 					$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
 				}
 			// if no provider is set, send back to the login page to get one
 			} else {
 // 				pr('No provider set');
-// 		exit;
 				$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
 			}
 		} else {
 // 			pr('Not logged in');
-// 		exit;
 			$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
 		}
 	}

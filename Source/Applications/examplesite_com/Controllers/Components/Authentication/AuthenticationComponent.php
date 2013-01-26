@@ -167,10 +167,6 @@ class AuthenticationComponent extends Component{
 	const ADD_AUTHENTICATION_ERROR_NO_CONNECTED_PROVIDERS = 3;
 	
 	public function authenticateNewHybridAuthConnection(OnlineMember $ID){
-		
-//  		ob_end_flush();
-//  		pr('frush');
-		
 		// Check social sign ins
 		
 		// collect a list of supported providers for validation of supported social sign in types
@@ -190,43 +186,39 @@ class AuthenticationComponent extends Component{
 			// check connected providers
 			foreach($connected_providers as $connected_provider){
 				$HybridAuthAdapter = $this->_HybridAuthHelper->getAdapter($connected_provider);
+				
 				if($HybridAuthAdapter->isUserConnected()){
 					
-					// Create the start of a user login in a collection for when the db is ready to insert to the db the new record
-					$HybridAuthApprovedUserLoginCollection->addObject(new UserLogin(array(
-// 						'user_id'=>$user_id,
-						'unique_identifier'=>$HybridAuthAdapter->getUserProfile()->identifier,
-						'user_login_provider_id'=>array_search($connected_provider, $supported_providers),
-						'UserLoginProvider'=>new UserLoginProvider(array(
-							'login_type'=>'HybridAuth',
-							'provider_name'=>$connected_provider,
-						)),
-						'is_verified'=>true,
-// 						'serialized_credentials'=>serialize($HybridAuthAdapter->getAccessToken())
- 						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider)
-//						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentials()
-					)));
-					
-//					pr($this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider));
+					try{
+						$SocialProfile = $HybridAuthAdapter->getUserProfile();
+						$SocialProfile = HybridAuthAbstraction::castAsHAProfile($SocialProfile);
+						// Create the start of a user login in a collection for when the db is ready to insert to the db the new record
+						$HybridAuthApprovedUserLoginCollection->addObject(new UserLogin(array(
+	// 						'user_id'=>$user_id,
+							'unique_identifier'=>$SocialProfile->identifier,
+							'user_login_provider_id'=>array_search($connected_provider, $supported_providers),
+							'UserLoginProvider'=>new UserLoginProvider(array(
+								'login_type'=>'HybridAuth',
+								'provider_name'=>$connected_provider,
+							)),
+							'is_verified'=>true,
+	 						'serialized_credentials'=>$this->_HybridAuthHelper->getSerializedCredentialsByProvider($connected_provider)
+						)));
+						
+					} catch(Exception $e){
+						// womp wahh... couldnt get the profile for this type. Skip it entirely.
+					}
 					
 				}
 			}
 			
-// 			pr($HybridAuthApprovedUserLoginCollection);
-			
 			// All the providers currently logged in
 			$authenticated_identifiers = $HybridAuthApprovedUserLoginCollection->getUniqueArrayByField('unique_identifier');
-			
-// 			pr($authenticated_identifiers);
 			
 			// grab the ones in the collection that are connected to accounts
 			$DatabaseUserLoginCollection = UserLoginActions::selectListByUniqueIdentifiers($authenticated_identifiers);
 			
-// 			pr($DatabaseUserLoginCollection);
-			
 			$authenticated_identifiers_in_db = $DatabaseUserLoginCollection->getUniqueArrayByField('unique_identifier');
-			
-// 			pr($authenticated_identifiers_in_db);
 			
 			$authenticated_identifiers_that_need_to_be_added = array();
 			

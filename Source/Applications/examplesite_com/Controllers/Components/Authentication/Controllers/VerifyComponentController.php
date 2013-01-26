@@ -30,9 +30,5 @@ class VerifyComponentController extends ComponentController{
 			$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
 		}
 	}
-
-// 	public function renderJSON(){ return parent::renderJSON(); }
-// 	public function renderXML(){ return parent::renderXML(); }
-// 	public function renderHTML(){ return parent::renderHTML(); }
 	
 }
