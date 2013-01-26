@@ -125,8 +125,6 @@ class RegistrationComponentController extends ComponentController{
 		
 	}
 	
-	public function renderJSON(){ return parent::renderJSON(); }
-	public function renderXML(){ return parent::renderXML(); }
 	public function renderHTML(){
 		$PageController = PageController::cast($this->getParentComponent()->getParentController());
 		$PageController->addCss('Libraries/Zocial/zocial');

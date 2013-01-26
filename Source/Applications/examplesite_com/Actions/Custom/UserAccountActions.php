@@ -290,6 +290,26 @@ final class UserAccountActions extends Actions{
 		);
 	}
 	
+	public static function setUserPassword(UserAccount $UserAccount){
+		return parent::MySQLUpdateAction('
+			UPDATE user_account 
+			SET modified_datetime=:modified_datetime,
+				password_hash=:password_hash
+			WHERE user_id=:user_id
+			',
+			// bind data to sql variables
+			array(
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':password_hash' => $UserAccount->getString('password_hash'),
+				':user_id' => $UserAccount->getInteger('user_id')
+			),
+			// which fields are integers
+			array(
+				':user_id'
+			)
+		);
+	}
+	
 	public static function secureUserAccount(UserAccount $UserAccount){
 		return parent::MySQLUpdateAction('
 			UPDATE user_account 

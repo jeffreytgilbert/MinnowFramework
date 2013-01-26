@@ -7,19 +7,13 @@
 	</p>
 	
 	<p>
-		Your Alias is:<br>
-		<a href="http://www.{% site_url %}/Users/View/?id={% user_id %}">{% login_name %}</a><br>
-		<br>
 		Password Reset Code:<br>
-		<a href="http://www.{% site_url %}/Account/ForgotInfo/?pass_code={% pass_code %}&email={% email %}">{% pass_code %}</a><br>
+		<a href="http://{% site_url %}/Account/-/ForgotInfo/?reset_code={% pass_code %}">{% pass_code %}</a><br>
 		<br>
-		If you still don't remember your password, enter this code and your email address on<br>
-		the <a href="http://www.{% site_url %}/Account/ForgotInfo/?pass_code={% pass_code %}&email={% email %}">password reset page</a>.<br>
+		If you'd still like to reset your password, visit the <a href="http://{% site_url %}/Account/-/ForgotInfo/?reset_code={% pass_code %}">password reset page</a>.<br>
 		<br>
-		Your password will not be changed unless you enter the code. Once used, this code will expire.<br>
+		Your password will not be changed unless you enter the code. Once used, this code will expire. If left unused, this code will expire.<br>
 	</p>
-	
-	<p>Hope to see you on again soon!</p>
 	
 	<p>
 		Sincerely,<br>

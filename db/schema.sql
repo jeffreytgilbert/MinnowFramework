@@ -4,13 +4,7 @@ SET AUTOCOMMIT=0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
-
-CREATE TABLE IF NOT EXISTS `account_status` (
+CREATE TABLE `account_status` (
   `account_status_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `status_type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `hierarchical_order` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
@@ -18,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `account_status` (
   PRIMARY KEY (`account_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `achievement` (
+CREATE TABLE `achievement` (
   `achievement_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `modifed_datetime` datetime DEFAULT NULL,
@@ -29,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `achievement` (
   PRIMARY KEY (`achievement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `avatar_part` (
+CREATE TABLE `avatar_part` (
   `avatar_part_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `layer` tinyint(3) unsigned NOT NULL,
@@ -42,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `avatar_part` (
   PRIMARY KEY (`avatar_part_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `banned_ip` (
+CREATE TABLE `banned_ip` (
   `banned_ip` varchar(15) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0.0.0.0',
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '1',
   `user_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -52,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `banned_ip` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `block` (
+CREATE TABLE `block` (
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
   `my_user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -65,14 +59,14 @@ CREATE TABLE IF NOT EXISTS `block` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (my_user_id) */;
 
-CREATE TABLE IF NOT EXISTS `block_reason` (
+CREATE TABLE `block_reason` (
   `block_reason_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `dropdown_choice` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `view_text` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`block_reason_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `check_in` (
+CREATE TABLE `check_in` (
   `check_in_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
@@ -88,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `check_in` (
   KEY `check_in_link_id` (`check_in_link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `check_in_link` (
+CREATE TABLE `check_in_link` (
   `check_in_link_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `check_in_link_image_url` varchar(2000) COLLATE utf8_unicode_ci DEFAULT NULL,
   `url` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
@@ -97,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `check_in_link` (
   KEY `check_in_link_image_id` (`check_in_link_image_url`(255))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `conversation` (
+CREATE TABLE `conversation` (
   `conversation_id` int(9) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_datetime` datetime NOT NULL,
@@ -112,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `conversation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (conversation_id) */;
 
-CREATE TABLE IF NOT EXISTS `conversation_participant` (
+CREATE TABLE `conversation_participant` (
   `conversation_id` int(9) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_datetime` datetime DEFAULT NULL,
@@ -123,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `conversation_participant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (conversation_id,participant_id) */;
 
-CREATE TABLE IF NOT EXISTS `email_validation` (
+CREATE TABLE `email_validation` (
   `user_id` mediumint(7) unsigned NOT NULL DEFAULT '0',
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_datetime` datetime DEFAULT NULL,
@@ -133,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `email_validation` (
   KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `follow` (
+CREATE TABLE `follow` (
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
   `my_user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -143,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `follow` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (my_user_id) */;
 
-CREATE TABLE IF NOT EXISTS `friendship` (
+CREATE TABLE `friendship` (
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
   `my_user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -155,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `friendship` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (my_user_id) */;
 
-CREATE TABLE IF NOT EXISTS `friend_request` (
+CREATE TABLE `friend_request` (
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
   `my_user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -168,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `friend_request` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (my_user_id) */;
 
-CREATE TABLE IF NOT EXISTS `ip_to_location_from_yahoo` (
+CREATE TABLE `ip_to_location_from_yahoo` (
   `ip` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `country_code` varchar(4) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `country_name` varchar(42) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -187,8 +181,7 @@ CREATE TABLE IF NOT EXISTS `ip_to_location_from_yahoo` (
   PRIMARY KEY (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
-CREATE TABLE IF NOT EXISTS `location` (
+CREATE TABLE `location` (
   `location_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime NOT NULL,
@@ -205,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `location` (
   KEY `location_thumbnail_id` (`location_thumbnail_url`(255))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `message` (
+CREATE TABLE `message` (
   `message_id` int(9) unsigned NOT NULL AUTO_INCREMENT,
   `conversation_id` int(9) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -220,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (message_id) */;
 
-CREATE TABLE IF NOT EXISTS `message_state` (
+CREATE TABLE `message_state` (
   `message_id` int(9) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_datetime` datetime DEFAULT NULL,
@@ -233,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `message_state` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (message_id,participant_id) */;
 
-CREATE TABLE IF NOT EXISTS `notification` (
+CREATE TABLE `notification` (
   `notification_id` int(9) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -249,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (notification_id) */;
 
-CREATE TABLE IF NOT EXISTS `notification_type` (
+CREATE TABLE `notification_type` (
   `notification_type_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
@@ -259,19 +252,19 @@ CREATE TABLE IF NOT EXISTS `notification_type` (
   PRIMARY KEY (`notification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `online_guest` (
+CREATE TABLE `online_guest` (
   `php_session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `last_active` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`php_session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `online_member` (
+CREATE TABLE `online_member` (
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `last_active` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `page_hits` (
+CREATE TABLE `page_hits` (
   `page_date` date NOT NULL DEFAULT '0000-00-00',
   `page_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `guest_hits` int(8) NOT NULL DEFAULT '0',
@@ -279,14 +272,14 @@ CREATE TABLE IF NOT EXISTS `page_hits` (
   PRIMARY KEY (`page_date`,`page_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `php_session` (
+CREATE TABLE `php_session` (
   `id` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `access` int(10) unsigned DEFAULT NULL,
   `data` varchar(21000) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `power` (
+CREATE TABLE `power` (
   `power_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
@@ -294,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `power` (
   PRIMARY KEY (`power_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `recent_visitor` (
+CREATE TABLE `recent_visitor` (
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `visitor_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -303,7 +296,7 @@ CREATE TABLE IF NOT EXISTS `recent_visitor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `role` (
+CREATE TABLE `role` (
   `role_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `role_group_id` mediumint(8) unsigned NOT NULL,
   `is_user_selectable` tinyint(1) unsigned DEFAULT NULL,
@@ -314,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   KEY `role_group_id` (`role_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `role_group` (
+CREATE TABLE `role_group` (
   `role_group_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `group_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
@@ -322,21 +315,21 @@ CREATE TABLE IF NOT EXISTS `role_group` (
   PRIMARY KEY (`role_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `role_power` (
+CREATE TABLE `role_power` (
   `role_id` mediumint(8) unsigned NOT NULL,
   `power_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
   PRIMARY KEY (`role_id`,`power_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `role_setting` (
+CREATE TABLE `role_setting` (
   `role_id` mediumint(8) unsigned NOT NULL,
   `setting_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
   PRIMARY KEY (`role_id`,`setting_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `setting` (
+CREATE TABLE `setting` (
   `setting_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `setting_group_id` mediumint(8) unsigned NOT NULL,
   `type` enum('boolean','string','number') COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -351,14 +344,14 @@ CREATE TABLE IF NOT EXISTS `setting` (
   KEY `setting_group_id` (`setting_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `setting_group` (
+CREATE TABLE `setting_group` (
   `setting_group_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `group_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`setting_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `sitemap` (
+CREATE TABLE `sitemap` (
   `link_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parent` smallint(3) unsigned NOT NULL DEFAULT '0',
   `title` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -370,7 +363,7 @@ CREATE TABLE IF NOT EXISTS `sitemap` (
   PRIMARY KEY (`link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `theme` (
+CREATE TABLE `theme` (
   `theme_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
@@ -380,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `theme` (
   PRIMARY KEY (`theme_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `translation_message` (
+CREATE TABLE `translation_message` (
   `page_address` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `message_key` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `created_datetime` datetime NOT NULL,
@@ -572,7 +565,7 @@ CREATE TABLE IF NOT EXISTS `translation_message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (page_address) */;
 
-CREATE TABLE IF NOT EXISTS `unsubscribe_request` (
+CREATE TABLE `unsubscribe_request` (
   `unsubscribe_request_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(300) CHARACTER SET latin1 NOT NULL,
   `ip` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -581,7 +574,7 @@ CREATE TABLE IF NOT EXISTS `unsubscribe_request` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `user_account` (
+CREATE TABLE `user_account` (
   `user_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_datetime` datetime DEFAULT NULL,
@@ -608,7 +601,7 @@ CREATE TABLE IF NOT EXISTS `user_account` (
   KEY `account_status_id` (`account_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `user_achievement` (
+CREATE TABLE `user_achievement` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `achievement_id` smallint(5) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
@@ -616,7 +609,7 @@ CREATE TABLE IF NOT EXISTS `user_achievement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_avatar` (
+CREATE TABLE `user_avatar` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
@@ -627,7 +620,7 @@ CREATE TABLE IF NOT EXISTS `user_avatar` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_history` (
+CREATE TABLE `user_history` (
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `page_title` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -636,7 +629,7 @@ CREATE TABLE IF NOT EXISTS `user_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_invite` (
+CREATE TABLE `user_invite` (
   `user_invite_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` mediumint(8) unsigned NOT NULL,
   `code` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
@@ -648,7 +641,7 @@ CREATE TABLE IF NOT EXISTS `user_invite` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `user_login` (
+CREATE TABLE `user_login` (
   `user_login_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -665,7 +658,7 @@ CREATE TABLE IF NOT EXISTS `user_login` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `user_login_history` (
+CREATE TABLE `user_login_history` (
   `user_id` mediumint(8) unsigned DEFAULT NULL,
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_datetime` datetime DEFAULT NULL,
@@ -681,7 +674,7 @@ CREATE TABLE IF NOT EXISTS `user_login_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_login_provider` (
+CREATE TABLE `user_login_provider` (
   `user_login_provider_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
@@ -705,7 +698,7 @@ INSERT INTO `user_login_provider` (`user_login_provider_id`, `created_datetime`,
 (11, '2012-11-27 15:32:02', NULL, 'OpenID', 'HybridAuth', 0),
 (12, '2012-11-27 15:32:02', NULL, 'Foursquare', 'HybridAuth', 0);
 
-CREATE TABLE IF NOT EXISTS `user_login_validation` (
+CREATE TABLE `user_login_validation` (
   `user_login_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -716,7 +709,15 @@ CREATE TABLE IF NOT EXISTS `user_login_validation` (
   KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `user_power` (
+CREATE TABLE `user_password_reset_request` (
+  `user_id` mediumint(8) unsigned NOT NULL,
+  `created_datetime` datetime NOT NULL,
+  `reset_code` varchar(200) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `reset_code` (`reset_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `user_power` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `power_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
@@ -724,7 +725,7 @@ CREATE TABLE IF NOT EXISTS `user_power` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_profile` (
+CREATE TABLE `user_profile` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
   `modified_datetime` datetime DEFAULT NULL,
@@ -732,7 +733,7 @@ CREATE TABLE IF NOT EXISTS `user_profile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_role` (
+CREATE TABLE `user_role` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `role_id` mediumint(8) unsigned NOT NULL,
   `created_datetime` datetime NOT NULL,
@@ -740,7 +741,7 @@ CREATE TABLE IF NOT EXISTS `user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_session` (
+CREATE TABLE `user_session` (
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `created_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_access` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -755,7 +756,7 @@ CREATE TABLE IF NOT EXISTS `user_session` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 /*!50100 PARTITION BY KEY (user_id) */;
 
-CREATE TABLE IF NOT EXISTS `user_setting` (
+CREATE TABLE `user_setting` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `setting_id` mediumint(8) unsigned NOT NULL,
   `value` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -766,7 +767,3 @@ CREATE TABLE IF NOT EXISTS `user_setting` (
 /*!50100 PARTITION BY KEY (user_id) */;
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

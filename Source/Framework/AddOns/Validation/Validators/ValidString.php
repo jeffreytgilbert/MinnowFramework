@@ -27,7 +27,7 @@ class ValidString extends ValidationRule{
 	}
 	
 	public function length($characters){
-		if( mb_strlen($this->getData()) == $characters ){
+		if( mb_strlen($this->getData()) != $characters ){
 			$this->throwException(self::INVALID_STRING_EXACT_LENGTH, $characters);
 		}
 		return $this;

@@ -8,13 +8,14 @@ class ResendEmailComponentController extends ComponentController{
 	
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }
 	
-	protected function handleRequest(){
-		global $ID, $UserId;
-		if(!$ID->isOnline()) { $this->redirect('/Account/Login',200,true); }
+	public function handleRequest(){
+		$ID = $this->getParentComponent()->identifyUser();
+		
+		if(!$ID->isOnline()) { $this->redirect($this->getParentComponent()->getConfig()->get('login_page_url')); }
 		
 		if(isset($_POST['resend_email'])){
 			$this->_data['sent'] = true;
-			EmailActions::sendEmailValidationRequest($ID->getData('email'), $ID->get('user_id'), $ID->getData('login_name'));
+			EmailActions::sendEmailValidationRequest($ID->getString('email'), $ID->getInteger('user_id'), $ID->getString('login_name'));
 		}
 	}
 	

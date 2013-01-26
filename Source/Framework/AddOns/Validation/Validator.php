@@ -28,6 +28,10 @@ class Validator{
 		$this->_FormDataObject = new DataObject($this->_form_data_in_array);
 	}
 	
+	public function isSubmitted(){
+		return self::hasBeenSubmitted();
+	}
+	
 	public function hasBeenSubmitted(){
 		return (count($this->_form_data_in_array))?true:false;
 	}

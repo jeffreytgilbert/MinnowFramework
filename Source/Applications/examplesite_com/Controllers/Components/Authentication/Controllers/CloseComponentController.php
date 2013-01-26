@@ -10,8 +10,9 @@ class CloseComponentController extends ComponentController{
 	
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		/* business logic */
+		$ID = $this->getParentComponent()->identifyUser();
 	}
 	
 	public function renderPage(){

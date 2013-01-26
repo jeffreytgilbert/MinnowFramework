@@ -9,10 +9,10 @@ class ChangePasswordComponentController extends ComponentController{
 	
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }
 	
-	protected function handleRequest(){
+	public function handleRequest(){
 		/* business logic */
 		
-		$ID = RuntimeInfo::instance()->id();
+		$ID = $this->getParentComponent()->identifyUser();
 		
 		if($ID->isOnline()){
 			$MyID = RuntimeInfo::instance()->idAsMember();
@@ -55,8 +55,4 @@ class ChangePasswordComponentController extends ComponentController{
 		}
 	}
 	
-	public function renderJSON(){
-		/* page logic */
-		$this->_output = $this->renderStatusMessagesAsJSON();
-	}
 }
