@@ -1,6 +1,6 @@
 <?php
 
-class CloseComponentController extends ComponentController{
+class CloseAccountComponentController extends ComponentController{
 	
 	protected function loadIncludedFiles(){
 		// Ex: $this->loadModels(array('Close'));

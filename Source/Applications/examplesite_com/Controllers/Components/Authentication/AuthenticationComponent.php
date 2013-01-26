@@ -659,6 +659,10 @@ class AuthenticationComponent extends Component{
 		return $ID;
 	}
 	
+	public function updateOnlineMemberSession(OnlineMember $ID){
+		$_SESSION['MINNOW::COMPONENTS::AUTHENTICATION::ID'] = serialize($ID);
+	}
+	
 	private function createUserSession(UserAccount $UserAccount, LocationFromIp $LocationFromIp, NetworkAddress $NetworkAddress){
 		
 		// The user needs to be marked as online in the database.

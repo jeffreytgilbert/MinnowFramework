@@ -1,6 +1,6 @@
 <?php
 
-class ResendEmailComponentController extends ComponentController{
+class ResendConfirmationEmailComponentController extends ComponentController{
 	
 	protected function loadIncludedFiles(){
 		$this->loadActions(array('Email/EmailActions'));

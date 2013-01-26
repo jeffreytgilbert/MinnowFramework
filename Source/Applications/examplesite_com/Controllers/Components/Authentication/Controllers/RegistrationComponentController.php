@@ -98,7 +98,7 @@ class RegistrationComponentController extends ComponentController{
 					//	$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
 					}
 				} catch(AuthenticationException $e){
-					pr('Was there an auth error?');
+//					pr('Was there an auth error?');
 					// At whatever point, developer can decide how they'd like the login to handle these exceptions. This is convenience code.
 					switch($e->getCode()){
 						case AuthenticationException::BAD_CREDENTIALS:
@@ -107,14 +107,16 @@ class RegistrationComponentController extends ComponentController{
 						case AuthenticationException::USER_BAN:
 						default:
 //							$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
-							$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
+							$this->flashError($e->getCode(),$e->getMessage());
+//							$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
 							break;
 					}
 				}
 			} else {
 				foreach($errors as $field => $error){
 					if(key($error) != ''){
-						$PageController->getErrors()->set($field,$field.': '.key($error)); // how to set an error in the controller calling this component controller
+						$this->flashError($field,$field.': '.key($error));
+//						$PageController->getErrors()->set($field,$field.': '.key($error)); // how to set an error in the controller calling this component controller
 					}
 				}
 			}

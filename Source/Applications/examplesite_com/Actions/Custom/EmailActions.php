@@ -119,8 +119,6 @@ final class EmailActions extends Actions
 			)
 		);
 		
-		pr($body);
-		
 		return EmailActions::send(
 			$email,
 			'Validation',

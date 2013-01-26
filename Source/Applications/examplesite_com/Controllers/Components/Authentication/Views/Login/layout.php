@@ -46,7 +46,10 @@ $registration_url = $Page->getParentComponent()->getConfig()->get('registration_
 			</label>
 			
 			<div>
-				<a style="float:right; line-height:38px; height:38px;" href="<?= $registration_url ?>">Need an account?</a>
+				<div style="float:right;">
+					<a href="<?= $registration_url ?>">Need an account?</a> <br>
+					<a href="/Account/-/ForgotInfo">Forgot your password?</a> 
+				</div>
 				<button class="btn btn-large btn-primary" type="submit">Sign in</button>
 			</div>
 		</div>

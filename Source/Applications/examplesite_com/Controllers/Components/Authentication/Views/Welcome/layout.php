@@ -81,7 +81,20 @@ $ID = AuthenticationComponent::cast($Page->getParentComponent())->identifyUser()
 		</div>
 		</form>
 		
+		<?php else: ?>
+		
+		<div style="padding-top:2em">
+			<h4>Minnow's Auth component can also...</h4>
+			<ul>
+				<li><a href="/Account/-/ChangePassword">change your password</a></li>
+				<li><a href="/Account/-/ResendConfirmationEmail">resend your confirmation email</a></li>
+				<li><a href="/Account/-/CloseAccount">close your account</a></li>
+			</ul>
+		</div>
+		
 		<?php endif; ?>
+		
+		
 		
 	</div>
 	

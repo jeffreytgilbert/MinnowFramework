@@ -55,8 +55,7 @@ class LoginComponentController extends ComponentController implements HTMLCapabl
 					case AuthenticationException::USER_ACCOUNT_NOT_REGISTERED:
 					case AuthenticationException::USER_BAN:
 					default:
-						$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
-						$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
+						$this->flashError($e->getCode(),$e->getMessage());
 						break;
 				}
 			}
