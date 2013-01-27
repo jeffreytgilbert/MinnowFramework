@@ -30,25 +30,25 @@ $this_path=dirname(__FILE__).'/../../../../../www';
 	}
 	</style>
 	<link rel="stylesheet" href="/css/Libraries/Bootstrap/bootstrap-responsive.min.css">
-	
-	<!-- CSS Links <?php 
-	
-$css = '-->';
+<?php 
+$css = '';
+
 foreach($Page->getRemoteCss() as $css_file) {
 	$css .= "\n".'
-<link rel="stylesheet" type="text/css" href="'.$css_file.'">'."\n"; 
+	<link rel="stylesheet" type="text/css" href="'.$css_file.'">'."\n"; 
 }
+
 foreach($Page->getCss() as $css_file) {
 	if(File::exists($this_path.'/css/'.$css_file.'.css')){
-		$css .= "\n".'<link rel="stylesheet" type="text/css" href="/css/'.$css_file.'.css">'."\n"; 
+		$css .= "\t".'<link rel="stylesheet" type="text/css" href="/css/'.$css_file.'.css">'."\n"; 
 	} else {
 		$css .= pr('Error loading css file: '.File::osPath($this_path.'/css/'.$css_file.'.css'),1);
 	}
 }
-$css .= '<!-- End CSS Links ';
 
 echo $css;
-	?> -->
+?>
+	
 	<script src="/js/Libraries/Modernizr/modernizr-2.6.1-respond-1.1.0.min.js"></script>	
 </head>
 
@@ -138,49 +138,34 @@ echo $css;
 		</div>
 	</footer>
 	
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="js/Libraries/jQuery/jquery-1.8.2.min.js"><\/script>');</script>
-<script src="/js/Libraries/Bootstrap/bootstrap.min.js"></script>
+	<script src="/js/Libraries/Require/require-jquery-2.1.4.js"></script>
+	<script src="/js/StartUp.js"></script>
+<?php
 
-<!-- JS Templates <?php 
-
-$templates = $Page->getTemplateEngine()->getArrayOfTemplatesWithIdsAsKeys();
-$js_templates = '-->';
-if(isset($this->_extra_js)){
-	foreach($templates as $template_name => $template) {
-		$js_templates .= "\n".'<script type="text/html" id="'.$template_name.'">'."\n".$template."\n".'</script>'."\n";
-	}
-}
-$js_templates .= '<!-- End JS Templates ';
-
-?> -->
-
-<!-- JS <?php
-
-$js = '-->';
+$js = '';
 foreach($Page->getRemoteJs() as $js_file) {
-	$js .= "\n".'<script src="'.$js_file.'"></script>'."\n";
+	$js .= "\t".'<script src="'.$js_file.'"></script>'."\n";
 }
 
 foreach($Page->getJs() as $js_file) {
 	if(File::exists($this_path.'/js/'.$js_file.'.js')){
-		$js .= "\n".'<script src="/js/'.$js_file.'.js"></script>'."\n";
+		$js .= "\t".'<script src="/js/'.$js_file.'.js"></script>'."\n";
 	} else {
 		$js .= pr('Error loading js file: '.File::osPath($this_path.'/js/'.$js_file.'.js'),1);
 	}
 	
 }
-$js .= '<!-- End JS ';
 
 echo $js;
+?>
 
-?> -->
 <script>
 var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview'],['_trackPageLoadTime']];
 (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 s.parentNode.insertBefore(g,s)}(document,'script'));
 </script>
+
 </body>
 </html>
 

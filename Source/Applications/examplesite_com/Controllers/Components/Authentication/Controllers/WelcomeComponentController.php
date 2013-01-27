@@ -51,7 +51,7 @@ class WelcomeComponentController extends ComponentController{
 		$PageController = PageController::cast($this->getParentComponent()->getParentController());
 		$PageController->addCss('Libraries/Zocial/zocial');
 		$PageController->addCss('Components/Authentication/Pages/Welcome');
-		$PageController->addJs('Libraries/jQuery.Validate/jquery.validate');
+//		$PageController->addJs('Libraries/jQuery.Validate/jquery.validate');
 		$PageController->addJs('Components/Authentication/Pages/Welcome');
 		
 		return parent::renderHTML();

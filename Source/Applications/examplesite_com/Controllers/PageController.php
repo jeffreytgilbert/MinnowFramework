@@ -74,7 +74,7 @@ abstract class PageController extends Controller{
 		
 		// add all the javascript files you want loaded every html page request here
 		$this->_extra_js = array_merge($this->_extra_js,array(
-			'default'
+			// Before editing this, make sure you can't just change the StartUp.js file to load your requirements for the template
 		));
 		
 		// add all the css files you want loaded every html page request here

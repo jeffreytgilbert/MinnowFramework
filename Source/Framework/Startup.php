@@ -264,7 +264,13 @@ final class Startup{
 		
 		if(!isset($_GET['framework']) || !isset($_GET['framework']['requested_url'])){
 			Run::fromControllers('Pages/IndexPage.php');
-			$this->_pathing_info = array('controller_name'=>'Index');
+			
+			$f = array(
+				'controller_name'=>'Index',
+				'controller_format'=>'html'
+			);
+			
+			$this->_pathing_info = $f;
 			$Page = new IndexPage();
 		} else {
 			$f = $_GET['framework'];
@@ -345,6 +351,9 @@ final class Startup{
 			if(isset($f['controller_name']) && $f['controller_name'] == ''){
 // 				echo 'This is a request for the webroot';
 				
+				$f['controller_name'] = 'Index';
+				$f['controller_format'] = (isset($f['controller_format']) && !empty($f['controller_format']))?$f['controller_format']:'html';
+				
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			} else if(isset($f['controller_name'])) {
@@ -391,25 +400,36 @@ final class Startup{
 				}
 			} else {
 // 				echo 'Failsafe so something is always rendered'."\n";
+				$f['controller_name'] = 'Index';
+				$f['controller_format'] = (isset($f['controller_format']) && !empty($f['controller_format']))?$f['controller_format']:'html';
 				Run::fromControllers('Pages/IndexPage.php');
 				$Page = new IndexPage();
 			}
-		}
-		
-		$not_rendered = true;
-		if(isset($f['controller_format']) && strtolower($f['controller_format']) != 'page' && strtolower($f['controller_format']) != 'html'){ //  && $f['controller_format'] != 'html' // for optional link formatting
-			$output_method = 'render'.$f['controller_format'];
-			if($Page instanceof $output_method.'Capable'){ // check to see if the page is capable of rendering this content
-				$Page->$output_method();
-				$not_rendered = false;
-			}
 			
+			$this->_pathing_info = $f;
 		}
 		
-		if($not_rendered) {
-			if($Page instanceof HTMLCapable){ // check to see if the page can render the default content type
+		if(isset($f['controller_format'])){
+			$output_method = 'render'.$f['controller_format'];
+			
+			if(strtolower($f['controller_format']) == 'html' && is_a($Page, $f['controller_format'].'Capable')){
 				$Page->renderHTML();
 				$Page->renderThemedHTMLPage();
+			} else if(is_a($Page, $f['controller_format'].'Capable')){ // check to see if the page is capable of rendering this content
+				$Page->$output_method();
+			} else { // if not supported, error 
+				header('HTTP/1.0 404 Not Found');
+				header('Status: 404 Not Found');
+				echo 404;
+			}
+		} else {
+			if(is_a($Page, 'HTMLCapable')){
+				$Page->renderHTML();
+				$Page->renderThemedHTMLPage();
+			} else { // if not supported, error 
+				header('HTTP/1.0 404 Not Found');
+				header('Status: 404 Not Found');
+				echo 404;
 			}
 		}
 		

@@ -102,9 +102,9 @@ class ForgotInfoComponentController extends ComponentController{
 	public function renderHTML(){
 		$PageController = PageController::cast($this->getParentComponent()->getParentController());
 		$PageController->addCss('Components/Authentication/Pages/ForgotInfo');
-		$PageController->addJs('Libraries/jQuery.Validate/jquery.validate');
-		$PageController->addJs('Libraries/jQuery.Validate/additional-methods');
-		$PageController->addJs('Components/Authentication/Pages/ForgotInfo');
+// 		$PageController->addJs('Libraries/jQuery.Validate/jquery.validate');
+// 		$PageController->addJs('Libraries/jQuery.Validate/additional-methods');
+ 		$PageController->addJs('Components/Authentication/Pages/ForgotInfo');
 		
 		if($this->getInput('Reset')->getString('reset_code') != ''){
 			$this->_page_body = $this->runCodeReturnOutput(Path::toComponents().$this->_component_name.'/Views/ForgotInfo/reset_layout.php', false);
