@@ -1,5 +1,9 @@
 <?php 
 
+/*
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+*/
+
 class ValidWords extends ValidString{
 	
 	const INVALID_WORD_COUNT_OVER_LIMIT = 'INVALID_WORD_COUNT_OVER_LIMIT';

@@ -1,6 +1,11 @@
 <?php 
 
 /*
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+*/
+
+
+/*
  * @notes 
  * sign in is one thing, but registration is another. to capture social sign ins you need to also anticipate that the endpoint will
  * require you to use the same one over and over, so the end point logic needs to also account for new registrations. i'm now thinking 
@@ -16,15 +21,6 @@
  */
 
 class AuthenticationComponent extends Component{
-	// this returns an object of type "user" or "UserAccount" and then the rest of the apps call it in the normal way. 
-	// upon login, this thing has the data in it that will be cached in a system cache at the end of the page request,
-	// and it just builds and builds until you logout or it expires. so now we can have caches of any sort stuck in this object
-	// for anything related to the user and we dont have to update them until the end of the page request, but all that data is 
-	// still available if the page needs it so there should be less query logic and page logic for this system cache idea i was going to do.
-	// 
-	// Also, because this is the login component here, it will have the functions / methods to set, unset, whatever cookies and sessions
-	// and nothing will need to get cached immediately. This Authentication component should remain pretty easy to edit but
-	// at the same time it should try to keep as much of the additional functionality it can outside itself
 
 	private $ip					= '';
 	private $proxy				= '';
@@ -39,33 +35,6 @@ class AuthenticationComponent extends Component{
 	public function getSecureCookieHelper(){ return $this->_SecureCookieHelper; }
 	public function getSecureHashHelper(){ return $this->_SecureHashHelper; }
 	public function getSessionHelper(){ return $this->_SessionHelper; }
-	
-// 	const REQUEST_FULL_REGISTRATION = 'FullRegistration';
-// 	const REQUEST_FINISH_REGISTRATION = 'FinishRegistration';
-// 	const REQUEST_LOGIN = 'Login';
-// 	const REQUEST_LOGOUT = 'Logout';
-// 	const REQUEST_CONFIRM_CONTACT = 'ConfirmContact';
-	
-	// maybe these can get refactored to a component controller for login status, or maybe they stay here instead. 
-// 	const _LOGGED_OUT_BY_REQUEST = 1;
-// 	const _LOGGED_OUT_BAD_SESSION = 2;
-// 	const _LOGGED_OUT_BY_REQUEST = 'logged out by request';
-// 	const MSG_MANUAL_LOG_OUT = 0;
-// 	const MSG_PASSWORD_CHANGED = 1;
-// 	const MSG_SESSION_EXPIRED = 2;
-// 	const MSG_INVALID_ACCOUNT = 3;
-// 	const MSG_IP_MATCH_ERROR = 4;
-// 	const MSG_INVALID_PASSWORD = 5;
-// 	const MSG_TOKEN_MATCH_ERROR = 6;
-// 	const MSG_IP_BAN = 7;
-// 	const MSG_FORGOTTEN_PASSWORD_ERROR = 8;
-// 	const MSG_PASSWORD_CHANGE_REQUEST = 9;
-// 	const MSG_ACCOUNT_KILLED_BY_ADMIN = 10;
-// 	const MSG_REOPENED_ACCOUNT = 11;
-// 	const MSG_LOGIN_REQUIRED = 12;
-// 	const MSG_KNOWN_ERROR = 13;
-// 	const MSG_SYSTEM_ERROR = 14;
-// 	const MSG_UNKNOWN_ERROR = 15;
 	
 	public static function cast(Component $AuthenticationComponent){ 
 		if($AuthenticationComponent instanceof AuthenticationComponent) { return $AuthenticationComponent; }

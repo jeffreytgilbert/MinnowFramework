@@ -1,5 +1,9 @@
 <?php 
 
+/*
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+*/
+
 // Add your own method checks here so when the source gets upgraded for the framework and its addons you can keep your work intact.
 // Validators are largely a collection of column or data types which require validation before SQL entry. 
 // Because there is no way to practically plan for every specific need developers might have for their forms, 
