@@ -334,132 +334,81 @@ final class UserAccountActions extends Actions{
 		);
 	}
 	
-	/*
-	public static function closeAccount($password=' ', $reason=null)
-	{
-		global $ID;
-		$db = RuntimeInfo::instance()->connections()->MySQL();
-		$reasons[1] = 'Abuse Related - Someone was abusing me or my profile.';
-		$reasons[2] = 'Boredom - There isn\'t enough here to keep me happy.';
-		$reasons[3] = 'Competition - I found a better site.';
-		$reasons[4] = 'Reliability - Features were broken or the site was down too much.';
-		$reasons[5] = 'Other Reason';
-	
-		$query='UPDATE user_account SET '.
-			'last_online="'.		RuntimeInfo::instance()->now()->getMySQLFormat('datetime').'", '.
-			'deleted_on="'.			RuntimeInfo::instance()->now()->getMySQLFormat('datetime').'", '.
-			'is_suicide=1, '.
-			'is_killed=1, '.
-			'is_online=NULL, '.
-			'quit_reason="'.		Filter::string($reason).'" '.
-			'WHERE user_id='.		$ID->get('user_id').
-			' AND password="'.		Filter::string($password).'" '.
-			'LIMIT 1';
-	
-		$db->query($query);
-		
-		$query='DELETE FROM recurring_que WHERE user_id='.(int)$ID->get('user_id').' LIMIT 1';
-		$db->query($query);
-		
-		$query='SELECT user_id, is_suicide, is_killed FROM user_account WHERE user_id='.(int)$ID->get('user_id').' LIMIT 1';
-		$db->query($query);
-		$db->readRow();
-		
-		if(isset($db->row_data['is_killed']))	{ return true; }
-		else 									{ return false; }		// there is not a dead account with that account number
-	}
-	
-	public static function reopenAccount($name, $password)
-	{
-		$db = RuntimeInfo::instance()->connections()->MySQL();
-		$query = 'UPDATE user_account '
-				.'SET is_killed=NULL, is_suicide=NULL '
-				.'WHERE (email="'.Filter::string($name).'" OR login_name="'.Filter::string($name).'") AND '
-				.'password="'.Filter::string($password).'"';
-		$db->query($query);
-		
-		$query = 'SELECT user_id, is_suicide, is_killed '
-				.'FROM user_account '
-				.'WHERE (email="'.Filter::string($name).'" OR login_name="'.Filter::string($name).'") AND '
-				.'password="'.Filter::string($password).'"';
-		$db->query($query);
-		$db->readRow();
-		
-		if(isset($db->row_data['user_id']))		{ return true; }
-		else 									{ return false; }
-	}
-	
-	
-	public static function updateUserAccount(UserAccount $UserAccount){
+	public static function closeAccountByAdmin($user_id){
 		return parent::MySQLUpdateAction('
 			UPDATE user_account 
 			SET modified_datetime=:modified_datetime,
-				first_name=:first_name,
-				middle_name=:middle_name,
-				last_name=:last_name,
-				alternative_name=:alternative_name,
-				account_status_id=:account_status_id,
-				thumbnail_id=:thumbnail_id,
-				avatar_path=:avatar_path,
-				last_online=:last_online,
-				latitude=:latitude,
-				longitude=:longitude,
-				gmt_offset=:gmt_offset,
-				is_login_collection_validated=:is_login_collection_validated,
-				is_online=:is_online,
-				is_closed=:is_closed,
-				password_hash=:password_hash,
-				unread_messages=:unread_messages
+				is_closed=2
 			WHERE user_id=:user_id
 			',
 			// bind data to sql variables
 			array(
 				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
-				':first_name' => $UserAccount->getString('first_name'),
-				':middle_name' => $UserAccount->getString('middle_name'),
-				':last_name' => $UserAccount->getString('last_name'),
-				':alternative_name' => $UserAccount->getString('alternative_name'),
-				':account_status_id' => $UserAccount->getInteger('account_status_id'),
-				':thumbnail_id' => $UserAccount->getInteger('thumbnail_id'),
-				':avatar_path' => $UserAccount->getString('avatar_path'),
-				':last_online' => $UserAccount->getDateTimeObject('last_online')->getMySQLFormat('datetime'),
-				':latitude' => $UserAccount->getInteger('latitude'),
-				':longitude' => $UserAccount->getInteger('longitude'),
-				':gmt_offset' => $UserAccount->getInteger('gmt_offset'),
-				':is_login_collection_validated' => $UserAccount->getBoolean('is_login_collection_validated'),
-				':is_online' => $UserAccount->getBoolean('is_online'),
-				':is_closed' => $UserAccount->getBoolean('is_closed'),
-				':password_hash' => $UserAccount->getString('password_hash'),
-				':unread_messages' => $UserAccount->getInteger('unread_messages'),
-				':user_id' => $UserAccount->getInteger('user_id')
+				':user_id' => $user_id
 			),
 			// which fields are integers
 			array(
-				':account_status_id',
-				':thumbnail_id',
-				':latitude',
-				':longitude',
-				':gmt_offset',
-				':unread_messages',
 				':user_id'
 			)
 		);
 	}
 	
-// 	public static function deleteUserAccountById($user_id){
-// 		return parent::MySQLUpdateAction('
-// 			DELETE 
-// 			FROM user_account 
-// 			WHERE user_id=:user_id',
-// 			// bind data to sql variables
-// 			array(
-// 				':user_id' => (int)$user_id
-// 			),
-// 			// which fields are integers
-// 			array(
-// 				':user_id'
-// 			)
-// 		);
-// 	}
-	*/
+	public static function closeAccount($user_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_account 
+			SET modified_datetime=:modified_datetime,
+				is_closed=1
+			WHERE user_id=:user_id
+			',
+			// bind data to sql variables
+			array(
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':user_id' => $user_id
+			),
+			// which fields are integers
+			array(
+				':user_id'
+			)
+		);
+	}
+	
+	public static function reopenAccount($user_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_account 
+			SET modified_datetime=:modified_datetime,
+				is_closed=NULL
+			WHERE user_id=:user_id AND is_closed <> 2
+			',
+			// bind data to sql variables
+			array(
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':user_id' => $user_id
+			),
+			// which fields are integers
+			array(
+				':user_id'
+			)
+		);
+	}
+	
+	public static function reopenAccountByAdmin($user_id){
+		return parent::MySQLUpdateAction('
+			UPDATE user_account 
+			SET modified_datetime=:modified_datetime,
+				is_closed=NULL
+			WHERE user_id=:user_id
+			',
+			// bind data to sql variables
+			array(
+				':modified_datetime' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime'),
+				':user_id' => $user_id
+			),
+			// which fields are integers
+			array(
+				':user_id'
+			)
+		);
+	}
+	
+	
 }

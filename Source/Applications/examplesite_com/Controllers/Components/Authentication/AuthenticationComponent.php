@@ -468,6 +468,22 @@ class AuthenticationComponent extends Component{
 			// Grab the users account from the db
 			$MyUserAccount = UserAccountActions::selectByUserAccountId($user_id);
 			
+			
+			
+			// Check to see if account is closed, and if it is, reopen it before logging in
+			if($MyUserAccount->getInteger('is_closed') == 2){
+				$this->logout();
+				throw new AuthenticationException(
+					'Sorry, but this account has been closed by an administrator and cannot be reopened.', 
+					AuthenticationException::ACCOUNT_CLOSED_BY_ADMIN
+				);
+			} else if($MyUserAccount->getInteger('is_closed') == 1) {
+				UserAccountActions::reopenAccount($UserLogin->getInteger('user_id'));
+				$MyUserAccount->set('is_closed',null);
+				$this->getSessionHelper()->setNotice('This account has now been reopened.');
+			}
+			
+			
 			// Create the users session and give back an ID that can be returned 
 			$ID = $this->createUserSession($MyUserAccount, $LocationFromIp, $NetworkAddress);
 			
@@ -487,22 +503,6 @@ class AuthenticationComponent extends Component{
 				}
 			}
 			$this->_HybridAuthHelper->setProviderCredentials($social_sign_ons);			
-			
-// 			// First, compare current logins to existing logins, and if any are not logged in yet, log them in
-// 			foreach($MyHybridAuthUserLoginCollection as $UserLogin){
-				
-// 				// is the key from the db not logged in?
-// 				if( !in($UserLogin->getString('unique_identifier'), $unique_identifiers_from_session) ){
-					
-// // 					// log it in
-// // 					if(!in($UserLogin->getInteger('user_login_provider_id'),array(1,2))){ // @todo hard coded Minnow Auth provider ids. make dependent on hybrid auth types
-// // 						$this->_HybridAuthHelper->setProviderCredentials(unserialize($UserLogin->getString('serialized_credentials')));
-// // 					}
-					
-// 					$this->_HybridAuthHelper->setProviderCredentials(unserialize($UserLogin->getString('serialized_credentials')));
-					
-// 				}
-// 			}
 			
 			// Set a cookie so this person can log back in later when their session expires. Always do this when logging in from single sign on. ( @todo or do we? Test this )
 			$this->setRememberMeCookie($ID);
@@ -555,7 +555,22 @@ class AuthenticationComponent extends Component{
 					$UserAccount->getString('password_hash') != '' &&
 					$this->getSecureHashHelper()->validatePassword($Form->getString('password'),$UserAccount->getString('password_hash'))
 				){
-					// @todo check to see if account is closed, and if it is, reopen it before logging in
+					
+					
+					// Check to see if account is closed, and if it is, reopen it before logging in
+					if($UserAccount->getInteger('is_closed') == 2){
+						$this->logout();
+						throw new AuthenticationException(
+							'Sorry, but this account has been closed by an administrator and cannot be reopened.', 
+							AuthenticationException::ACCOUNT_CLOSED_BY_ADMIN
+						);
+					} else if($UserAccount->getInteger('is_closed') == 1) {
+						UserAccountActions::reopenAccount($UserLogin->getInteger('user_id'));
+						$UserAccount->set('is_closed',null);
+						$this->getSessionHelper()->setNotice('This account has now been reopened.');
+					}
+					
+					
 					
 					$users_ip = $this->_LocationHelper->guessIP();
 					$users_proxy_ip = $this->_LocationHelper->guessProxyIP();

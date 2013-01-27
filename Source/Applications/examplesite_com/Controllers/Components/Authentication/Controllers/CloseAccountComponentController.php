@@ -11,7 +11,7 @@ class CloseAccountComponentController extends ComponentController{
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }
 	
 	public function handleRequest(){
-			$ID = $this->getParentComponent()->identifyUser();
+		$ID = $this->getParentComponent()->identifyUser();
 		
 		if(!$ID->isOnline()) {
 			$this->flashError('403','You do not have permission to perform this task.');
@@ -25,23 +25,34 @@ class CloseAccountComponentController extends ComponentController{
 			try{
 				$Form->checkPassword('password')->required()->strong()->validate();
 				
-				if( !$this->getHelpers()->SecureHash()->validatePassword($Form->getFieldData('current_password'), $ID->getUserAccount()->getString('password_hash'))){
+				if( !$this->getHelpers()->SecureHash()->validatePassword($Form->getFieldData('password'), $ID->getUserAccount()->getString('password_hash'))){
 					$this->flashError('BadPassword','The password you entered does not match the one we currently have on record.');
 					return;
 				}
 				
-				// Update the database with the new hash
-				$new_password_hash = $this->getHelpers()->SecureHash()->generateSecureHash($Form->getFieldData('new_password'));
-				UserAccountActions::setUserPassword(new UserAccount(array(
-					'user_id'=>$ID->getInteger('user_id'),
-					'password_hash'=>$new_password_hash
-				)));
+				$this->flashConfirmation('Confirmation','Your account has been closed and any associated records placed offline. To reopen your account, simply log back in.');
 				
-				// Update the session with the new hash
-				$ID->getUserAccount()->set('password_hash', $new_password_hash);
-				$this->getParentComponent()->updateOnlineMemberSession($ID);
+				UserAccountActions::closeAccount($ID->getInteger('user_id'));
 				
-				$this->flashConfirmation('Success','Your password has been updated.');
+				// Log out through auth component
+				$this->getParentComponent()->logout();
+				
+				// Send em back to the login screen
+				$this->redirect($this->getParentComponent()->getConfig()->get('login_page_url'));
+				
+				// If one were so inclined, one could surely author a condolences letter to the late account
+				// like so:
+// 				$UserLoginCollection = UserLoginActions::selectListByUserId($ID->getInteger('user_id'));
+// 				$UserLogin = $UserLoginCollection->getUserLoginByFieldValue('user_login_provider_id', 1);
+// 				if($UserLogin->getString('unique_identifier') != ''){
+// 					EmailActions::sendCloseAccountNotification(
+// 						$UserLogin->getString('unique_identifier'), 
+// 						$ID->getInteger('user_id'), 
+// 						$ID->getUserAccount()->getString('first_name'),
+// 						$ID->getUserAccount()->getString('last_name')
+// 					);
+// 					return;
+// 				}
 				
 			}catch(Exception $e){
 				$errors = $Form->getCurrentErrors();
