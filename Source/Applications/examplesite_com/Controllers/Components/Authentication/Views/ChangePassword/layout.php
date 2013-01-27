@@ -1,7 +1,5 @@
 <?php 
 $Page = ComponentController::cast($this);
-$jump = $Page->getParentComponent()->getConfig()->get('hybrid_auth_ChangePassword_page_url');
-$provider_collection = array_keys(AuthenticationComponent::cast($Page->getParentComponent())->getProviderList());
 ?>
 		
 <div class="row show-grid">
@@ -21,7 +19,7 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 				rel="popover" 
 				data-content="Please enter your current password." 
 				placeholder="Current Password"
-				value="<?= $Page->getInput('ChangePassword')->getStringAsHTMLEntities('current_password') ?>"
+				minlength="6"
 			>
 			<input 
 				type="password" 
@@ -32,7 +30,7 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 				rel="popover" 
 				data-content="Please enter a valid password." 
 				placeholder="New Password"
-				value="<?= $Page->getInput('ChangePassword')->getStringAsHTMLEntities('new_password') ?>"
+				minlength="6"
 			>
 						
 			<button class="btn btn-large btn-primary" type="submit">Change Password</button>

@@ -61,7 +61,7 @@ class RegistrationComponentController extends ComponentController{
 				$UserLogin = UserLoginActions::selectByUniqueIdentifierAndProviderTypeId($Form->getFieldData('unique_identifier'), 1);
 				
 				if($UserLogin->getInteger('user_id') > 0){
-					$PageController->getErrors()->set('unique_identifier','Sorry, but an account is already registered with this email address.');
+					$this->flashError('unique_identifier','Sorry, but an account is already registered with this email address.');
 					$HybridAuth = $this->getHelpers()->HybridAuth();
 					$this->getDataObject()->set('providers', array_keys($HybridAuth->getAvailableProviders()));
 					return;
@@ -87,7 +87,12 @@ class RegistrationComponentController extends ComponentController{
 					'user_login_provider_id'=>1 // provider type id for emails
 				)));
 				
-				EmailActions::sendEmailValidationRequest($Form->getFieldData('unique_identifier'), $user_id, $Form->getFieldData('first_name'), $Form->getFieldData('last_name'));
+				EmailActions::sendEmailValidationRequest(
+					$Form->getFieldData('unique_identifier'), 
+					$user_id, 
+					$Form->getFieldData('first_name'), 
+					$Form->getFieldData('last_name')
+				);
 				
 				try{
 					$ID = $this->_Authentication->authenticateForm($Form->getFormDataAsDataObject());
@@ -106,9 +111,7 @@ class RegistrationComponentController extends ComponentController{
 						case AuthenticationException::USER_ACCOUNT_NOT_REGISTERED:
 						case AuthenticationException::USER_BAN:
 						default:
-//							$this->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the component controller
 							$this->flashError($e->getCode(),$e->getMessage());
-//							$PageController->getErrors()->set($e->getCode(),$e->getMessage()); // how to set an error in the controller calling this component controller
 							break;
 					}
 				}
@@ -116,7 +119,6 @@ class RegistrationComponentController extends ComponentController{
 				foreach($errors as $field => $error){
 					if(key($error) != ''){
 						$this->flashError($field,$field.': '.key($error));
-//						$PageController->getErrors()->set($field,$field.': '.key($error)); // how to set an error in the controller calling this component controller
 					}
 				}
 			}

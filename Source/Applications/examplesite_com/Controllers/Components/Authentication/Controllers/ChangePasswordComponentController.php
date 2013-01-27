@@ -2,8 +2,6 @@
 
 class ChangePasswordComponentController extends ComponentController{
 	protected function loadIncludedFiles(){
-		//$this->loadModels(array('ChangePassword'));
- 	//	$this->loadActions(array('UserAccountActions'));
 	}
 	
 	public function getParentComponent(){ return AuthenticationComponent::cast($this->_ParentObject); }

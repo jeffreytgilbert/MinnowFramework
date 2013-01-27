@@ -1,7 +1,5 @@
 <?php 
 $Page = ComponentController::cast($this);
-$jump = $Page->getParentComponent()->getConfig()->get('hybrid_auth_request_page_url');
-$provider_collection = array_keys(AuthenticationComponent::cast($Page->getParentComponent())->getProviderList());
 ?>
 		
 <div class="row show-grid">

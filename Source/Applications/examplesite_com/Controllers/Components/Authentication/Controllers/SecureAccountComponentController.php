@@ -89,7 +89,12 @@ class SecureAccountComponentController extends ComponentController{
 				// If the account was validated, it's not now that there's an email attached to it that's not confirmed
 				UserAccountActions::setUserLoginValidationAsFalse($user_id);
 				
-				EmailActions::sendEmailValidationRequest($Form->getFieldData('unique_identifier'), $user_id, $Form->getFieldData('first_name'), $Form->getFieldData('last_name'));
+				EmailActions::sendEmailValidationRequest(
+					$Form->getFieldData('unique_identifier'), 
+					$user_id, 
+					$Form->getFieldData('first_name'), 
+					$Form->getFieldData('last_name')
+				);
 				
 				$ID = $this->getParentComponent()->updateUserSession($ID);
 				

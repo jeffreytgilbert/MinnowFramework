@@ -10,12 +10,12 @@ final class EmailValidationActions extends Actions{
 		
 		// Collect the code from the db to make sure it matches
 		$CodeResult = new EmailValidation(parent::MySQLReadReturnSingleResultAsArrayAction('
-			SELECT user_id FROM email_validation WHERE code = :code LIMIT 1',
+			SELECT * FROM email_validation WHERE code = :code LIMIT 1',
 			array(':code'=>$email_code),
 			array(':code')
 		));
 		
-		if( $CodeResult->getInteger('user_id') > 1 && 
+		if( $CodeResult->getInteger('user_id') > 0 && 
 			$CodeResult->getInteger('user_id') == $user_account_id ){
 			
 			$user_id = $CodeResult->getInteger('user_id');
@@ -33,8 +33,6 @@ final class EmailValidationActions extends Actions{
 			)));
 			
 			$UserLoginCollection = UserLoginActions::selectUnvalidatedLoginsListByUserId($user_id);
-			
-			pr($UserLoginCollection);
 			
 			if($UserLoginCollection->length() > 0){
 				UserAccountActions::setUserLoginValidationAsFalse($user_id);
