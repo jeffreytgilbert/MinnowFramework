@@ -1,4 +1,5 @@
-# ![MinnowFramwork](http://minnow.badpxl.com/img/Minnow-Framework-logo.png)
+![MinnowFramwork](http://minnow.badpxl.com/img/Minnow-Framework-logo.png)
+
 ===============
 
 Thanks for checking out Minnow; a tiny PHP framework for catching big fish. ;)
@@ -27,4 +28,5 @@ Short list of features:
 * Scalable foundation code with bundled support for Memcached.
 
 Fork it and see!
-# ![MinnowFramwork](http://minnow.badpxl.com/img/Minnow-Framework-logo-64x64.png)
+
+<a href='http://www.pledgie.com/campaigns/19118'><img alt='Click here to lend your support to: MinnowFramework development and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/19118.png?skin_name=chrome' border='0' /></a> ![MinnowFramwork](http://minnow.badpxl.com/img/Minnow-Framework-logo-icon.png) 
