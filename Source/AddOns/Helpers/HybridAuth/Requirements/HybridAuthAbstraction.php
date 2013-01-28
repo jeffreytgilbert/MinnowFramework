@@ -124,8 +124,6 @@ class HybridAuthAbstraction{
 	public function endpoint(){
 	 	ob_start();
 		
-	 	pr($this->getErrors());
-	 	
 		try{
 		 	require_once( 'Hybrid/Endpoint.php' );
 			Hybrid_Endpoint::process();
