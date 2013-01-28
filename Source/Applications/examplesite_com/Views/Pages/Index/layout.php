@@ -3,7 +3,7 @@
 			<h1>Hello, World!</h1>
 			<p>Thanks for checking out the Minnow Framework.</p>
 		</div>
-
+		
 		<!-- Example row of columns -->
 		<div class="row">
 			<div class="span4">
@@ -27,6 +27,9 @@
 					<li>PHP 5.4</li>
 					<li>Curl</li>
 					<li>Multibyte php extension</li>
+					<li>Memcache for caching</li>
+					<li>FFMPEG for video editing</li>
+					<li>GD, ImageMagik, or GMagik for image editing</li>
 				</ul>
 		   </div>
 			<div class="span4">
@@ -36,6 +39,8 @@
 					<li>Zocial</li>
 					<li>jQuery</li>
 					<li>jQuery Form Validator</li>
+					<li>RequireJS / AMD pattern</li>
+					<li>CanJS</li>
 					<li>Twitter Boilerplate</li>
 					<li>Modernizr</li>
 					<li>Google Analytics</li>
