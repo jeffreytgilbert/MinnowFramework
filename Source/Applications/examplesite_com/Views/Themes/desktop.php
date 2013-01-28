@@ -138,7 +138,7 @@ echo $css;
 		</div>
 	</footer>
 	
-	<script src="/js/Libraries/Require/require-jquery-2.1.4.js"></script>
+	<script src="/js/Libraries/Require/require-jquery-2.1.2.js"></script>
 	<script src="/js/StartUp.js"></script>
 <?php
 

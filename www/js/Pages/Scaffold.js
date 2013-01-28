@@ -1,6 +1,6 @@
 
 require(
-	['jquery', 'Modules/ValidateForm'],
+	['jquery', 'Modules/Minnow/ValidateForm'],
 	function($, ValidateForm){
 
 		var tpl_li = $('#tpl_li').html();

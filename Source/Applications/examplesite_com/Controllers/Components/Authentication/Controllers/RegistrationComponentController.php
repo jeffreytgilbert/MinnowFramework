@@ -133,10 +133,7 @@ class RegistrationComponentController extends ComponentController{
 		$PageController = PageController::cast($this->getParentComponent()->getParentController());
 		$PageController->addCss('Libraries/Zocial/zocial');
 		$PageController->addCss('Components/Authentication/Pages/Registration');
-//		$PageController->addJs('Libraries/jQuery.Validate/jquery.validate');
-//		$PageController->addJs('Libraries/jQuery.Validate/additional-methods');
 		$PageController->addJs('Components/Authentication/Pages/Registration');
-//		$PageController->addJs('Libraries/jQuery.Validate/additional-methods');
 		return parent::renderHTML();
 	}
 	

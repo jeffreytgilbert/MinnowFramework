@@ -29,8 +29,4 @@ class LogoutComponentController extends ComponentController{
 		}
 	}
 	
-// 	public function renderJSON(){ return parent::renderJSON(); }
-// 	public function renderXML(){ return parent::renderXML(); }
-// 	public function renderHTML(){ return parent::renderHTML(); }
-	
 }

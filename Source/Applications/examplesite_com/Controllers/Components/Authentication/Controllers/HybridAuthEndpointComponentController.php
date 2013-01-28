@@ -58,6 +58,5 @@ class HybridAuthEndpointComponentController extends ComponentController{
 		
 	}
 
-//	public function renderHTML(){ parent::renderHTML(); }
 	
 }
