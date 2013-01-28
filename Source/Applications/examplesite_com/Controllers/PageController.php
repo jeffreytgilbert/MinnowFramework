@@ -10,7 +10,7 @@
 
 abstract class PageController extends Controller{
 	
-	use HTMLFormat, JSONFormat, XMLFormat;
+	use HTMLFormat, JSONFormat, XMLFormat, HTMLBodyFormat;
 	
 	// add some constants for commonly used pages
 	const _LOGIN_PAGE = '/Account/Login/';

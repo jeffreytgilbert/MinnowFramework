@@ -3,7 +3,7 @@
 
 abstract class ComponentController extends Controller{
 	
-	use HTMLFormat, JSONFormat, XMLFormat;
+	use HTMLFormat, JSONFormat, XMLFormat, HTMLBodyFormat;
 	
 	protected 
 		$_component_controller_class_name, // the name of this class

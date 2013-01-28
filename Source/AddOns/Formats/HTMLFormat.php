@@ -29,13 +29,6 @@ trait HTMLFormat{
 		$this->_page_author = $Page->getAppSettings()->getString('default_page_author');
 	}
 	
-	/*
-	 * @depricated
-	 */
-	public function renderPage(){
-		self::renderHTML();
-	}
-	
 	public function renderHTML(){
 		$Page = PageController::cast($this);
 		$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().'/'.$Page->getControllerName();
