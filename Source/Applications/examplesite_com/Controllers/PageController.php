@@ -48,6 +48,10 @@ abstract class PageController extends Controller{
 		$this->getSession()->setConfirmation($message, $confirmation_name);
 	}
 	
+	public function log($log_name='default'){
+		return RuntimeInfo::instance()->getConnections()->Logger($log_name);
+	}
+	
 	public function __construct($ParentObject=null){
 		parent::__construct($ParentObject);
 		

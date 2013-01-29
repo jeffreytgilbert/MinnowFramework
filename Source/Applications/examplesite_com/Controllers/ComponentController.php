@@ -28,7 +28,7 @@ abstract class ComponentController extends Controller{
 	
 	public function getSession(){
 		return RuntimeInfo::instance()->getHelpers()->Session();
-	} 
+	}
 	
 	// shorthand methods for saving messages to sessions for page redirects after form submissions
 	public function flashError($error_name, $message){
@@ -41,6 +41,10 @@ abstract class ComponentController extends Controller{
 	
 	public function flashConfirmation($confirmation_name, $message){
 		$this->getSession()->setConfirmation($message, $confirmation_name);
+	}
+	
+	public function log($log_name='default'){
+		return RuntimeInfo::instance()->getConnections()->Logger($log_name);
 	}
 	
 	abstract public function getParentComponent();

@@ -45,6 +45,16 @@ class Connections{
 		return $InstagramConnection->getInstance();
 	}
 	
+	public function Logger($connection_name='default'){
+		if(isset($this->_connections['Logger'][$connection_name])
+				&& $this->_connections['Logger'][$connection_name] instanceof LoggerConnection){
+			return $this->_connections['Logger'][$connection_name]->getInstance();
+		}
+		Run::fromConnections('Logger/LoggerConnection.php');
+		$this->_connections['Logger'][$connection_name] = $LoggerConnection = new LoggerConnection($this->config('Connections/Logger/', $connection_name));
+		return $LoggerConnection->getInstance();
+	}
+	
 	public function Memcached($connection_name='default'){
 		if(isset($this->_connections['Memcached'][$connection_name])
 				&& $this->_connections['Memcached'][$connection_name] instanceof MemcachedConnection){

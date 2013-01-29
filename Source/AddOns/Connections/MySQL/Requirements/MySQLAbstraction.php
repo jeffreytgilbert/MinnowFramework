@@ -11,6 +11,7 @@
 final class MySQLAbstraction extends SQLConnection{
 
 	private $_host, $_user, $_pass, $_db, $_port, $_autocommit, $_debug=true;
+	public $db_handle;
 	
 	/**
 	 * Open a connection to your MySQL 4.1+ database
@@ -35,7 +36,7 @@ final class MySQLAbstraction extends SQLConnection{
 		//if($this->host=='127.0.0.1' /* meant to check to see if it's the session host, but this is a temp fix */ ) { session_write_close(); }
 		self::close();
 	}
-
+	
 	private function cleanTraceOutputOfCredentials(PDOException $e){
 		if($this->_debug){
 			$trace = $e->getTrace();

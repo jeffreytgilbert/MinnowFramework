@@ -3,7 +3,15 @@
 final class Path{
 
 	public static function toTemporaryFolder(){
-		return self::toRoot().File::osPath('tmp/');
+		$folder = RuntimeInfo::instance()->config('',null,'temporary_files_folder');
+		if($folder != ''){
+			if(!in(substr($folder,0,1), array('/','\\'))){
+				$folder = self::toRoot().File::osPath($folder);
+			}
+		} else {
+			$folder = self::toRoot().File::osPath('Temp/');
+		}
+		return $folder;
 	}
 
 	public static function toRoot(){

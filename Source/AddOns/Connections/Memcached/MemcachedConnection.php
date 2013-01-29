@@ -4,8 +4,6 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 
-// @todo rip out all of the line/file location stuff and put in proper error logging with stack trace 
-
 final class MemcachedConnection extends Connection{
 
 	public function __construct(Model $Config, $connection_name='default'){

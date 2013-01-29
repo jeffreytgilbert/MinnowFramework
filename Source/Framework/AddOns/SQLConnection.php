@@ -13,21 +13,23 @@
  */
 abstract class SQLConnection
 {
-	protected $host				= '';
-	protected $db_handle		= null;
-	protected $statement		= null;
-	protected $query_result		= null;
-	protected $autocommit		= true;
-	protected $next_row_number	= 0;
-	protected $affected_rows	= 0;
-	protected $last_type		= '';
-	protected $prepared_format	= array();
-	protected $bad_queries		= array();
-	protected $slow_queries		= array();
-	protected $queries			= array();
+	protected 
+		$host				= '',
+		$statement			= null,
+		$query_result		= null,
+		$autocommit			= true,
+		$next_row_number	= 0,
+		$affected_rows		= 0,
+		$last_type			= '',
+		$prepared_format	= array(),
+		$bad_queries		= array(),
+		$slow_queries		= array(),
+		$queries			= array();
 	
-	public $all_data			= array();
-	public $row_data			= array();
+	public 
+		$all_data			= array(),
+		$row_data			= array(),
+		$db_handle			= null;
 	
 	const LIKE_WC_LAST = 'last';
 	const LIKE_WC_FIRST = 'first';

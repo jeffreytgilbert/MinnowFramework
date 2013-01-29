@@ -52,9 +52,11 @@ class SettingsRegistry{
 		if(File::exists($example_ini_path)){
 			$example_settings = file_get_contents($example_ini_path);
 			if($example_settings != ''){
+				
 				return '<h1>Settings file missing.</h1>'."\n"
-						.'<strong>The file should be located at this location:</strong> '.$ini_path."\n<br>"
-						.'An example of this configuration file looks like the following: '."\n<br>\n<br>"
+						.'<strong>The file should be located at this location:</strong><br> '.dirname($ini_path)."\n<br>\n<br>"
+						.'The file must be named either <strong>settings.ini</strong> or <strong>'.RuntimeInfo::instance()->getApplicationName().'.ini</strong> '."\n<br>\n<br>"
+						.'<strong>An example of this configuration file looks like the following:</strong> '."\n<br>\n<br>"
 						.'<pre style="border:1px solid; padding:10px; margin:10px;">'.nl2br($example_settings).'</pre>';
 			} else {
 				return 'Unable to open configuration file: '.$ini_path."\n<br>"
