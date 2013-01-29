@@ -36,6 +36,7 @@
 				<h2>Bundled libraries</h2>
 				<ul>
 					<li>HybridAuth</li>
+					<li>Monolog (ChromePHP/FirePHP)</li>
 					<li>Zocial</li>
 					<li>jQuery</li>
 					<li>jQuery Form Validator</li>

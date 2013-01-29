@@ -6,15 +6,10 @@
 
 class AccountPage extends PageController implements HTMLCapable, JSONCapable, XMLCapable, HTMLBodyCapable{
 	protected function loadIncludedFiles(){
-		$this->loadModels('AccountStatus');
 	}
 	
 	public function handleRequest(){
 		// business logic here
-		
-		$DataObject = new AccountStatus(array('account_status_id'=>1,
-			'status_type'=>'This is the status type'));
-		$this->log()->error('This is a new message',$DataObject);
 		
 		// tell authentication component to handle account related requests. 
 		$this->_AuthenticationComponentController = $this->getComponents()->Authentication($this)->mapRequest();
