@@ -8,7 +8,7 @@ final class IpToLocationFromYahooActions extends Actions{
 	
 	public static function insertIpToLocationFromYahoo(IpToLocationFromYahoo $IpToLocationFromYahoo){
 		return parent::MySQLCreateAction('
-			INSERT INTO ip_to_location_from_yahoo (
+			REPLACE INTO ip_to_location_from_yahoo (
 				`ip`,
 				`country_code`,
 				`country_name`,
