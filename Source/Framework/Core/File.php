@@ -4,7 +4,7 @@ class File
 {
 	// os agnostic file exists method
 	public static function exists($file_path){
-		return (bool)file_exists(self::osPath($file_path));
+		return (bool)is_readable(self::osPath($file_path));
 	}
 	
 	public static function osPath($file_path){

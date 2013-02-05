@@ -107,7 +107,7 @@ abstract class Controller {
 	public function getHelpers(){ return RuntimeInfo::instance()->helpers(); }
 	public function getConnections(){ return RuntimeInfo::instance()->connections(); }
 	
-	abstract protected function loadIncludedFiles();
+	protected function loadIncludedFiles() { } // optional pre-execution stage for loading includes
 	abstract public function handleRequest();
 	
 	private $_models = array();

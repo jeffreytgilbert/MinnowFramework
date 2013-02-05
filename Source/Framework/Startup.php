@@ -186,6 +186,20 @@ final class Startup{
 		// 
 	}
 	
+	public static function autoloadModel($class_name) {
+		$filename = 'Custom/'.$class_name.'.php';
+	    if (File::exists(Path::toModels().$filename)) {
+	    	Run::fromModels('Custom/'.$class_name.'.php');
+	    }
+	}
+	
+	public static function autoloadAction($class_name) {
+		$filename = 'Custom/'.$class_name.'.php';
+	    if (File::exists(Path::toActions().$filename)) {
+	    	Run::fromActions('Custom/'.$class_name.'.php');
+	    }
+	}
+
 	private function includeRequirements(){
 		
 		// Include requirements for running MVC
@@ -218,6 +232,9 @@ final class Startup{
 		// Load the Models customization layer
 		Run::fromModels('DataObject.php');
 		Run::fromModels('DataCollection.php');
+		
+		spl_autoload_register('StartUp::autoloadModel');
+		spl_autoload_register('StartUp::autoloadAction');
 		
 		// Load the sugar methods in actions so the actions accessors can better format the output to DataObjects and DataCollections
 		Run::fromActions('Actions.php');

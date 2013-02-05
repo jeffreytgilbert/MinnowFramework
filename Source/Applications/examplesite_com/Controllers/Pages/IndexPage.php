@@ -6,7 +6,7 @@
 
 class IndexPage extends PageController implements HTMLCapable, JSONCapable, XMLCapable{
 	protected function loadIncludedFiles(){
-		$this->loadModels('AccountStatus');
+// 		$this->loadModels('AccountStatus');
 	}
 	
 	public function handleRequest(){
