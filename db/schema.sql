@@ -181,6 +181,9 @@ CREATE TABLE `ip_to_location_from_yahoo` (
   PRIMARY KEY (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+INSERT INTO `ip_to_location_from_yahoo` (`ip`, `country_code`, `country_name`, `region_name`, `city_name`, `latitude`, `longitude`, `postal_code`, `gmt_offset`, `dst_offset`, `area_code`, `dma_code`, `local_time`, `iso_time`, `utc_time`) VALUES
+('127.0.0.1', '', '', '', '', 0, 0, '', 0, 0, '', '', '2013-', '2013-', '2013-');
+
 CREATE TABLE `location` (
   `location_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `created_datetime` datetime NOT NULL,
@@ -265,6 +268,9 @@ CREATE TABLE `online_guest` (
   PRIMARY KEY (`php_session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+INSERT INTO `online_guest` (`php_session_id`, `last_active`) VALUES
+('af0a80984657fcc829114c71ec2906c7', '2013-02-07 09:53:37');
+
 CREATE TABLE `online_member` (
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `last_active` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -285,6 +291,9 @@ CREATE TABLE `php_session` (
   `data` varchar(21000) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `php_session` (`id`, `access`, `data`) VALUES
+('af0a80984657fcc829114c71ec2906c7', 1360230876, 'HA::CONFIG|a:2:{s:14:"php_session_id";s:40:"s:32:"af0a80984657fcc829114c71ec2906c7";";s:7:"version";s:16:"s:9:"2.1.1-dev";";}MINNOW::COMPONENTS::AUTHENTICATION::ID|s:968:"C:11:"OnlineGuest":943:{a:7:{s:14:"php_session_id";s:32:"af0a80984657fcc829114c71ec2906c7";s:11:"last_active";s:18:"2013-02-07 9:53:37";s:14:"LocationFromIp";C:14:"LocationFromIp":442:{a:15:{s:2:"ip";s:9:"127.0.0.1";s:9:"city_name";s:0:"";s:11:"region_name";s:0:"";s:12:"country_code";s:0:"";s:12:"country_name";s:0:"";s:11:"postal_code";s:0:"";s:8:"latitude";s:0:"";s:9:"longitude";s:0:"";s:8:"dma_code";s:0:"";s:9:"area_code";s:0:"";s:10:"gmt_offset";s:1:"0";s:10:"local_time";s:19:"7 Feb 2013 09:53:38";s:8:"iso_time";s:25:"2013-02-07 09:53:38 +0000";s:8:"utc_time";s:19:"2013-02-07 09:53:38";s:10:"dst_offset";s:5:"False";}}s:14:"NetworkAddress";C:14:"NetworkAddress":47:{a:2:{s:2:"ip";s:9:"127.0.0.1";s:5:"proxy";b:0;}}s:10:"user_agent";s:119:"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.58 Safari/537.22";s:16:"created_datetime";s:18:"2013-02-07 9:53:37";s:10:"PhpSession";C:10:"DataObject":6:{a:0:{}}}}";');
 
 CREATE TABLE `power` (
   `power_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
@@ -373,7 +382,7 @@ CREATE TABLE `sitemap` (
 INSERT INTO `sitemap` (`link_id`, `parent`, `title`, `url`, `ignore_in_sitemap`, `description`, `order_id`) VALUES
 (1, 0, '', 'Account', 0, '', 0),
 (2, 0, '', 'DeveloperTools/FormBuilder', 0, '', 0),
-(3, 0, 'Sitemap Builder - Builder placeholder pages for your application', 'DeveloperTools/SitemapBuilder', 0, 'This page is designed to create pages and the files associated with them when building your site.', 0),
+(3, 0, 'Sitemap Builder - Build placeholder pages for your application', 'DeveloperTools/SitemapBuilder', 0, 'This page is designed to create pages and the files associated with them when building your site.', 0),
 (4, 0, '', 'DeveloperTools', 0, '', 0),
 (5, 0, '', 'Err404', 0, '', 0),
 (6, 0, '', 'Index', 0, '', 0),

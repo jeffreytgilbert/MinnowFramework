@@ -23,12 +23,12 @@
 						<?php $SitemapPage = Sitemap::cast($SitemapPage); ?>
 						
 						<tr>
-							<td class="span3">
+							<td class="span9">
 								<a href="<?= $SitemapPage->getString('url') ?>" 
 									title="<?= $SitemapPage->getStringAsHTMLEntities('description') ?>"
 								><?= ($SitemapPage->getString('title') == '')?$SitemapPage->getStringAsHTMLEntities('url'):$SitemapPage->getStringAsHTMLEntities('title') ?></a>
 							</td>
-							<td class="span5">...</td>
+							<td class="span1">...</td>
 						</tr>
 						
 						<?php endforeach; ?>
