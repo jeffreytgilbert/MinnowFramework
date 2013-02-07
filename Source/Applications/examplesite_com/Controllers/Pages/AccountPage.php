@@ -5,9 +5,7 @@
 */
 
 class AccountPage extends PageController implements HTMLCapable, JSONCapable, XMLCapable, HTMLBodyCapable{
-	protected function loadIncludedFiles(){
-	}
-	
+
 	public function handleRequest(){
 		// business logic here
 		

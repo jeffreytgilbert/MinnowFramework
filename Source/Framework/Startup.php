@@ -187,6 +187,9 @@ final class Startup{
 	}
 	
 	public static function autoloadModel($class_name) {
+		$collection_check = mb_substr($class_name, -mb_strlen('Collection'));
+		if($collection_check == 'Collection'){ $class_name = mb_substr($class_name, 0, -mb_strlen('Collection')); }
+		
 		$filename = 'Custom/'.$class_name.'.php';
 	    if (File::exists(Path::toModels().$filename)) {
 	    	Run::fromModels('Custom/'.$class_name.'.php');
@@ -279,175 +282,47 @@ final class Startup{
 		$app_path = Path::toApplication();
 		$controller_path = Path::toControllers();
 		
-		if(!isset($_GET['framework']) || !isset($_GET['framework']['requested_url'])){
-			Run::fromControllers('Pages/IndexPage.php');
-			
-			$f = array(
-				'controller_name'=>'Index',
-				'controller_format'=>'html'
-			);
-			
-			$this->_pathing_info = $f;
-			$Page = new IndexPage();
+		if(isset($_GET['framework']) && isset($_GET['framework']['requested_url'])){
+			$MinnowRequest = new MinnowRequest($_GET['framework']['requested_url']);
 		} else {
-			$f = $_GET['framework'];
-			
-			// condition the url to the expected format
-			// ... remove trailing slashes and extraneous characters
-			$f['requested_url'] = rtrim($f['requested_url'],'\/');
-			
-// 			// ... remove duplicate slashes <-- seems this is already done by mod-rewrite
-// 			$requested_url = preg_replace('#//+#', '/', $requested_url);
-			
-			$path_segments = explode('/-/',$f['requested_url'], 3);
-			$total_segments = count($path_segments);
-
-			if($total_segments == 0){ // index page request by default
-				$this->_pathing_info = array('controller_name'=>'Index');
-				Run::fromControllers('Pages/IndexPage.php');
-				$Page = new IndexPage();
-			}else { // page request
+			$MinnowRequest = new MinnowRequest();
+		}
+		
+		$this->_pathing_info = $MinnowRequest->getPathInfoAsArray();
+		
+		if($MinnowRequest->hasControllerFile()) {
+			// Do controller logic
+			Run::fromControllers($MinnowRequest->getPathToControllerFile(false));
+			if(class_exists($MinnowRequest->getControllerName().'Page')){
+				$class_name = $MinnowRequest->getControllerName().'Page'; 
+				$Page = new $class_name;
 				
-				// if at the webroot, and loading a component, the total segments will be 1, but the logic below wont work. so handle this exception seperately 
-				if(substr($f['requested_url'],0,2) == '-/'){
-					
-					$f['controller_name'] = 'Index';
-					
-					$requested_component_url = substr($f['requested_url'],2,mb_strlen($f['requested_url']));
-					$last_slash_position = strripos($requested_component_url,'/');
-					if($last_slash_position === false){
-						$f['component_controller_name'] = $requested_component_url;
-					} else {
-						$f['component_controller_path'] = substr($requested_component_url, 0, $last_slash_position);
-						$f['component_controller_name'] = substr($requested_component_url, $last_slash_position+1);
-						
-					}
-					
-					$this->_pathing_info = $f;
-					
-					Run::fromControllers('Pages/IndexPage.php');
-					$Page = new IndexPage();
-					
-				// handle all other occasions 
-				} else {
-				
-					$last_slash_position = strripos($path_segments[0],'/');
-					if($last_slash_position === false){
-						$f['controller_name'] = $path_segments[0];
-					} else {
-						$f['controller_path'] = substr($path_segments[0], 0, $last_slash_position);
-						$f['controller_name'] = substr($path_segments[0], $last_slash_position+1);
-					}
-					
-					if(strripos($f['controller_name'],'.') === false){
-	//					$f['controller_name'] = $path_segments[0];
-					} else {
-						$controller_parts = explode('.',$f['controller_name']);
-						$f['controller_name'] = $controller_parts[0];
-						$f['controller_format'] = array_pop($controller_parts);
-					}
-
-				
-					if($total_segments > 1){ // page has components
-						unset($last_slash_position);
-						$last_slash_position = strripos($path_segments[1],'/');
-						if($last_slash_position === false){
-							$f['component_controller_name'] = $path_segments[1];
-						} else {
-							$f['component_controller_path'] = substr($path_segments[1], 0, $last_slash_position);
-							$f['component_controller_name'] = substr($path_segments[1], $last_slash_position+1);
-							
-						}
-					}
-				}
-			}
-			
-			$this->_pathing_info = $f;
-			
-			// if this is a request for the webroot
-			if(isset($f['controller_name']) && $f['controller_name'] == ''){
-// 				echo 'This is a request for the webroot';
-				
-				$f['controller_name'] = 'Index';
-				$f['controller_format'] = (isset($f['controller_format']) && !empty($f['controller_format']))?$f['controller_format']:'html';
-				
-				Run::fromControllers('Pages/IndexPage.php');
-				$Page = new IndexPage();
-			} else if(isset($f['controller_name'])) {
-// 				echo 'This is a request for the '.$f['controller_name']." Controller\n";
-				
-				$controller_name = preg_replace('/([^a-zA-Z0-9])/s','',$f['controller_name']);
-				if(isset($f['controller_path'])){
-// 					echo 'This is a request for the '.$f['controller_name']." Controller in the folder ".$f['controller_path']."\n";
-					
-					$folder_path = preg_replace('/([^a-zA-Z0-9])/s','',$f['controller_path']);
-					if(file_exists(File::osPath($controller_path.'Pages/'.$folder_path.'/'.$controller_name.'Page.php'))){
-// 						echo 'This file was found'."\n";
-						Run::fromControllers('Pages/'.$folder_path.'/'.$controller_name.'Page.php');
-						if(class_exists($controller_name.'Page')){
-// 							echo 'This class exists'."\n";
-							$class_name = $controller_name.'Page';
-							$Page = new $class_name();
-						} else {
-// 							echo 'This class does not exist'."\n";
-							Run::fromControllers('Pages/Err404Page.php');
-							$Page = new Err404Page();
-						}
-					} else {
-// 						echo 'The file is missing'."\n";
-						Run::fromControllers('Pages/Err404Page.php');
-						$Page = new Err404Page();
-					}
-				} else if(file_exists(File::osPath($controller_path.'Pages/'.$controller_name.'Page.php'))){
-// 					echo 'There is no folder in the request name, but the file exists'."\n";
-					Run::fromControllers('Pages/'.$controller_name.'Page.php');
-					if(class_exists($controller_name.'Page')){
-// 						echo 'The class exists too.'."\n";
-						$class_name = $controller_name.'Page';
-						$Page = new $class_name();
-					} else {
-// 						echo 'There is no class.'."\n";
-						Run::fromControllers('Pages/Err404Page.php');
-						$Page = new Err404Page();
-					}
-				} else {
-// 					echo 'There is no file.'."\n";
+				if(!is_a($Page, 'PageController')){
+					// Class isn't a page controller
 					Run::fromControllers('Pages/Err404Page.php');
 					$Page = new Err404Page();
 				}
 			} else {
-// 				echo 'Failsafe so something is always rendered'."\n";
-				$f['controller_name'] = 'Index';
-				$f['controller_format'] = (isset($f['controller_format']) && !empty($f['controller_format']))?$f['controller_format']:'html';
-				Run::fromControllers('Pages/IndexPage.php');
-				$Page = new IndexPage();
-			}
-			
-			$this->_pathing_info = $f;
-		}
-		
-		if(isset($f['controller_format'])){
-			$output_method = 'render'.$f['controller_format'];
-			
-			if(strtolower($f['controller_format']) == 'html' && is_a($Page, $f['controller_format'].'Capable')){
-				$Page->renderHTML();
-				$Page->renderThemedHTMLPage();
-			} else if(is_a($Page, $f['controller_format'].'Capable')){ // check to see if the page is capable of rendering this content
-				$Page->$output_method();
-			} else { // if not supported, error 
-				header('HTTP/1.0 404 Not Found');
-				header('Status: 404 Not Found');
-				echo 404;
+				// Missing class object
+				Run::fromControllers('Pages/Err404Page.php');
+				$Page = new Err404Page();
 			}
 		} else {
-			if(is_a($Page, 'HTMLCapable')){
-				$Page->renderHTML();
-				$Page->renderThemedHTMLPage();
-			} else { // if not supported, error 
-				header('HTTP/1.0 404 Not Found');
-				header('Status: 404 Not Found');
-				echo 404;
-			}
+			// Do 404 logic
+			Run::fromControllers('Pages/Err404Page.php');
+			$Page = new Err404Page();
+		}
+		
+		if(strtolower($MinnowRequest->getControllerFormat()) == 'html' && is_a($Page, $MinnowRequest->getControllerFormat().'Capable')){
+			$Page->renderHTML();
+			$Page->renderThemedHTMLPage();
+		} else if(is_a($Page, $MinnowRequest->getControllerFormat().'Capable')){ // check to see if the page is capable of rendering this content
+			$output_method = 'render'.$MinnowRequest->getControllerFormat();
+			$Page->$output_method();
+		} else { // if not supported, error 
+			header('HTTP/1.0 404 Not Found');
+			header('Status: 404 Not Found');
+			echo 404;
 		}
 		
 		echo $Page->getOutput(); // output whats in the page buffer

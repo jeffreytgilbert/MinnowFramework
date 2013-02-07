@@ -18,17 +18,22 @@ $registration_url = $Page->getParentComponent()->getConfig()->get('registration_
 		
 		<div>
 			<h2 class="form-signin-heading">Please sign in</h2>
-			<input 
-				type="text" 
-				id="Login_unique_identifier"
-				name="Login[unique_identifier]"
-				class="input-block-level required email" 
-				required="required" 
-				rel="popover" 
-				data-content="Please enter a valid email address." 
-				placeholder="Email address"
-				value="<?= $Page->getInput('Login')->getStringAsHTMLEntities('unique_identifier') ?>"
-			>
+			<div class="input-prepend">
+				<span class="add-on"><i class="icon-envelope"></i></span>
+				<input 
+					style="width:83%"
+					type="text" 
+					id="Registration_unique_identifier"
+					name="Registration[unique_identifier]"
+					class="required email" 
+					required="required" 
+					rel="popover" 
+					data-content="Please enter a valid email address." 
+					placeholder="Email address"
+					value="<?= $Page->getInput('Login')->getStringAsHTMLEntities('unique_identifier') ?>"
+				>
+			</div>
+			
 			<input 
 				type="password" 
 				id="Login_password"
@@ -45,7 +50,7 @@ $registration_url = $Page->getParentComponent()->getConfig()->get('registration_
 				?>> Remember me
 			</label>
 			
-			<div>
+			<div class="form-actions" style="margin-bottom:0">
 				<div style="float:right;">
 					<a href="<?= $registration_url ?>">Need an account?</a> <br>
 					<a href="/Account/-/ForgotInfo">Forgot your password?</a> 

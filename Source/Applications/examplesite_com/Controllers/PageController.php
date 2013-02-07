@@ -53,8 +53,6 @@ abstract class PageController extends Controller{
 	}
 	
 	public function __construct($ParentObject=null){
-		parent::__construct($ParentObject);
-		
 		// now that everything has been initialized, set the time to the mysql servers time since that's the connection we're using.
 		$MasterConnection = $this->getConnections()->MySQL();
 		$MasterConnection->query('SELECT NOW() AS right_now_gmt');
@@ -65,6 +63,8 @@ abstract class PageController extends Controller{
 		$this->getHelpers()->Session()->start(); // especially sessions, since it needs to run before anything else starts a session
 		
 		$this->_Session = $this->getHelpers()->Session();
+		
+		parent::__construct($ParentObject);
 		
 		// load required files for this controller automatically and do so before components so components can use included files
 		$this->loadIncludedFiles();

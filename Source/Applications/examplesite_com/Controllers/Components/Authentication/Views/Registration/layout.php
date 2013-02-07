@@ -11,50 +11,57 @@ $provider_collection = array_keys(AuthenticationComponent::cast($Page->getParent
 		
 		<div>
 			<h2 class="form-signin-heading">Sign up</h2>
-			<input 
-				type="text" 
-				id="Registration_first_name"
-				name="Registration[first_name]"
-				class="input-block-level required" 
-				required="required" 
-				rel="popover" 
-				data-content="Please enter a valid name." 
-				placeholder="First name"
-				value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('first_name') ?>"
-			>
-			<input 
-				type="text" 
-				id="Registration_last_name"
-				name="Registration[last_name]"
-				class="input-block-level required" 
-				required="required" 
-				rel="popover" 
-				data-content="Please enter a valid name." 
-				placeholder="Last name"
-				value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('last_name') ?>"
-			>
-			<input 
-				type="text" 
-				id="Registration_unique_identifier"
-				name="Registration[unique_identifier]"
-				class="input-block-level required email" 
-				required="required" 
-				rel="popover" 
-				data-content="Please enter a valid email address." 
-				placeholder="Email address"
-				value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('unique_identifier') ?>"
-			>
+			<div class="controls controls-row">
+				<input 
+					type="text" 
+					id="Registration_first_name"
+					name="Registration[first_name]"
+					class="span2 required" 
+					required="required" 
+					rel="popover" 
+					data-content="Please enter a valid name." 
+					placeholder="First name"
+					value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('first_name') ?>"
+				>
+				<input 
+					type="text" 
+					id="Registration_last_name"
+					name="Registration[last_name]"
+					class="span2 required" 
+					required="required" 
+					rel="popover" 
+					data-content="Please enter a valid name." 
+					placeholder="Last name"
+					value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('last_name') ?>"
+				>
+			</div>
+			<div class="input-prepend">
+				<span class="add-on"><i class="icon-envelope"></i></span>
+				<input 
+					type="text" 
+					id="Registration_unique_identifier"
+					name="Registration[unique_identifier]"
+					class="input-xlarge required email" 
+					required="required" 
+					rel="popover" 
+					data-content="Please enter a valid email address." 
+					placeholder="Email address"
+					value="<?= $Page->getInput('Registration')->getStringAsHTMLEntities('unique_identifier') ?>"
+				>
+			</div>
+			<div>
 			<input 
 				type="password" 
 				id="Registration_password"
 				name="Registration[password]"
-				class="input-block-level required" 
+				class="input-xlarge required" 
 				required="required" 
 				rel="popover" 
 				data-content="Please enter a password of at least 6 characters in length." 
 				placeholder="Password" 
 				minlength="6"
 			>
+			</div>
 			
 			<button class="btn btn-large btn-primary" type="submit">Sign up</button>
 		</div>

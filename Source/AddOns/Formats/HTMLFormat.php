@@ -23,15 +23,19 @@ trait HTMLFormat{
 			$Page = ComponentController::cast($this);
 		}
 		
-		$this->_page_title = $Page->getAppSettings()->getString('default_page_title');
-		$this->_page_keywords = $Page->getAppSettings()->getString('default_page_keywords');
-		$this->_page_description = $Page->getAppSettings()->getString('default_page_description');
-		$this->_page_author = $Page->getAppSettings()->getString('default_page_author');
+		$PageDetails = SitemapActions::selectByURL($this->getControllerPath().$this->getControllerName());
+			
+		$this->_page_title = $PageDetails->getString('title') == ''
+			?$Page->getAppSettings()->getString('default_page_title')
+			:$PageDetails->getStringAsHTMLEntities('title');
+		$this->_page_description = $PageDetails->getString('description') == ''
+			?$Page->getAppSettings()->getString('default_page_description')
+			:$PageDetails->getStringAsHTMLEntities('description');
 	}
 	
 	public function renderHTML(){
 		$Page = PageController::cast($this);
-		$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().'/'.$Page->getControllerName();
+		$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().$Page->getControllerName();
 		$this->addCss('Pages/'.$path);
 		$this->addJs('Pages/'.$path);
 		
@@ -42,14 +46,8 @@ trait HTMLFormat{
 	public function setPageTitle($page_title){ $this->_page_title = $page_title; }
 	public function getPageTitle(){ return $this->_page_title; }
 	
-	public function setPageKeywords($page_keywords){ $this->_page_keywords[] = $page_keywords; }
-	public function getPageKeywords(){ return $this->_page_keywords; }
-	
 	public function setPageDescription($page_description){ $this->_page_description[] = $page_description; }
 	public function getPageDescription(){ return $this->_page_description; }
-	
-	public function setPageAuthor($page_author){ $this->_page_author[] = $page_author; }
-	public function getPageAuthor(){ return $this->_page_author; }
 	
 	public function addCss($css, $override_previous_include=false){
 		if($override_previous_include || !in_array($css,$this->_extra_css)){

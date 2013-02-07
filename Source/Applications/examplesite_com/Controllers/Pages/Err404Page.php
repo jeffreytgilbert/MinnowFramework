@@ -5,8 +5,6 @@
 */
 
 class Err404Page extends PageController implements HTMLCapable, JSONCapable, XMLCapable{
-	protected function loadIncludedFiles(){
-	}
 	
 	public function handleRequest(){
 		$this->getErrors()->set('Error404','Page could not be found as requested.');

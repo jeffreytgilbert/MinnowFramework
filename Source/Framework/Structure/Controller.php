@@ -276,7 +276,7 @@ abstract class Controller {
 		
 		ob_start();
 		
-		extract($this->getDataObject()->toArrayRecursive());
+		extract($this->getDataObject()->toArray());
 		
 		if($start_path_in_view_folder){
 			$base_path = dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/';

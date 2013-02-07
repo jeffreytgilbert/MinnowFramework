@@ -1,18 +1,19 @@
 <?php
 
 class SitemapXMLPage extends PageController implements HTMLCapable{
-	protected function loadIncludedFiles(){
-		// Ex: $this->loadModels(array(''));
-		// Ex: $this->loadActions(array(''));
-		/* page dependencies */
-	}
 	
 	public function handleRequest(){
-		/* business logic */
+		
+		// Requery the database for the ones that exist
+		$SitemapCollection = SitemapActions::selectList();
+		
+		// Put them in a data field so they can be used on the view
+		$this->getDataObject()->set('SitemapCollection',$SitemapCollection);
 	}
 	
 	public function renderHTML(){
-		require(dirname(__FILE__).'/../Views/pages/SitemapXML/layout.php');
+		
+		require(Path::toViews().'/Pages/SitemapXML/layout.php');
 		exit;
 	}
 }

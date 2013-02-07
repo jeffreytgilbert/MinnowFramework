@@ -198,6 +198,13 @@ CREATE TABLE `location` (
   KEY `location_thumbnail_id` (`location_thumbnail_url`(255))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+CREATE TABLE `log_debug_info` (
+  `channel` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `level` int(11) DEFAULT NULL,
+  `message` longtext COLLATE utf8_unicode_ci,
+  `time` int(10) unsigned DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 CREATE TABLE `message` (
   `message_id` int(9) unsigned NOT NULL AUTO_INCREMENT,
   `conversation_id` int(9) unsigned NOT NULL,
@@ -354,14 +361,23 @@ CREATE TABLE `setting_group` (
 CREATE TABLE `sitemap` (
   `link_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parent` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `title` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `title` varchar(2000) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `url` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `ignore_in_sitemap` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `keywords` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(160) COLLATE utf8_unicode_ci DEFAULT NULL,
   `order_id` tinyint(2) unsigned NOT NULL DEFAULT '100',
-  PRIMARY KEY (`link_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`link_id`),
+  UNIQUE KEY `url` (`url`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `sitemap` (`link_id`, `parent`, `title`, `url`, `ignore_in_sitemap`, `description`, `order_id`) VALUES
+(1, 0, '', 'Account', 0, '', 0),
+(2, 0, '', 'DeveloperTools/FormBuilder', 0, '', 0),
+(3, 0, 'Sitemap Builder - Builder placeholder pages for your application', 'DeveloperTools/SitemapBuilder', 0, 'This page is designed to create pages and the files associated with them when building your site.', 0),
+(4, 0, '', 'DeveloperTools', 0, '', 0),
+(5, 0, '', 'Err404', 0, '', 0),
+(6, 0, '', 'Index', 0, '', 0),
+(7, 0, '', 'SitemapXML', 0, '', 0);
 
 CREATE TABLE `theme` (
   `theme_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,

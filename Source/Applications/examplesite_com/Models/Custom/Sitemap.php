@@ -12,7 +12,6 @@ class Sitemap extends DataObject{
 			'title'=>DataType::TEXT,
 			'url'=>DataType::TEXT,
 			'ignore_in_sitemap'=>DataType::NUMBER,
-			'keywords'=>DataType::TEXT,
 			'description'=>DataType::TEXT,
 			'order_id'=>DataType::NUMBER
 		),true);

@@ -8,12 +8,11 @@ final class SitemapActions extends Actions{
 	
 	public static function insertSitemap(Sitemap $Sitemap){
 		return parent::MySQLCreateAction('
-			INSERT INTO sitemap (
+			INSERT IGNORE sitemap (
 				parent,
 				title,
 				url,
 				ignore_in_sitemap,
-				keywords,
 				description,
 				order_id
 			) VALUES (
@@ -21,7 +20,6 @@ final class SitemapActions extends Actions{
 				:title,
 				:url,
 				:ignore_in_sitemap,
-				:keywords,
 				:description,
 				:order_id
 			)',
@@ -31,17 +29,14 @@ final class SitemapActions extends Actions{
 				':title' => $Sitemap->getString('title'),
 				':url' => $Sitemap->getString('url'),
 				':ignore_in_sitemap' => $Sitemap->getInteger('ignore_in_sitemap'),
-				':keywords' => $Sitemap->getString('keywords'),
 				':description' => $Sitemap->getString('description'),
-				':order_id' => $Sitemap->getInteger('order_id'),
-				':link_id' => $Sitemap->getInteger('link_id')
+				':order_id' => $Sitemap->getInteger('order_id')
 			),
 			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
 			array(
 				':parent',
 				':ignore_in_sitemap',
-				':order_id',
-				':link_id'
+				':order_id'
 			)
 		);
 	}
@@ -55,7 +50,6 @@ final class SitemapActions extends Actions{
 				title,
 				url,
 				ignore_in_sitemap,
-				keywords,
 				description,
 				order_id
 			FROM sitemap 
@@ -71,7 +65,36 @@ final class SitemapActions extends Actions{
 		));
 	}
 	
+	public static function selectByURL($url){
+		// Return one object by primary key selection
+		return new Sitemap(parent::MySQLReadReturnSingleResultAsArrayAction('
+			SELECT 
+				link_id,
+				parent,
+				title,
+				url,
+				ignore_in_sitemap,
+				description,
+				order_id
+			FROM sitemap 
+			WHERE url=:url',
+			// bind data to sql variables
+			array(
+				':url' => $url
+			)
+		));
+	}
+	
+	public static function deleteAll(){
+		
+		return parent::MySQLUpdateAction('
+			TRUNCATE TABLE sitemap'
+		);
+		
+	}
+	
 	public static function selectList(PagingConfig $PagingConfig=null){
+		
 		// Return an object collection
 		$SitemapCollection = new SitemapCollection(parent::MySQLReadReturnArrayOfObjectsAction('
 			SELECT 
@@ -80,7 +103,6 @@ final class SitemapActions extends Actions{
 				title,
 				url,
 				ignore_in_sitemap,
-				keywords,
 				description,
 				order_id
 			FROM sitemap 
@@ -124,7 +146,6 @@ final class SitemapActions extends Actions{
 				title,
 				url,
 				ignore_in_sitemap,
-				keywords,
 				description,
 				order_id
 			FROM sitemap 
@@ -155,7 +176,6 @@ final class SitemapActions extends Actions{
 				title=:title,
 				url=:url,
 				ignore_in_sitemap=:ignore_in_sitemap,
-				keywords=:keywords,
 				description=:description,
 				order_id=:order_id
 			WHERE link_id=:link_id
@@ -166,7 +186,6 @@ final class SitemapActions extends Actions{
 				':title' => $Sitemap->getString('title'),
 				':url' => $Sitemap->getString('url'),
 				':ignore_in_sitemap' => $Sitemap->getInteger('ignore_in_sitemap'),
-				':keywords' => $Sitemap->getString('keywords'),
 				':description' => $Sitemap->getString('description'),
 				':order_id' => $Sitemap->getInteger('order_id'),
 				':link_id' => $Sitemap->getInteger('link_id')

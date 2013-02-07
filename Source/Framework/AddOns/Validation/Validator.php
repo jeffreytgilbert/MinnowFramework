@@ -48,8 +48,19 @@ class Validator{
 	public function getCurrentErrors(){
 		$errors = array();
 		foreach($this->_field_validators as $field_name => $Validator){
-			$Validator = ValidationRule::cast($Validator);
-			$errors[$field_name] = $Validator->getErrors();
+			if(is_array($Validator)){
+				foreach($Validator as $sub_field_name => $ArrayValidator){
+					$ArrayValidator = ValidationRule::cast($ArrayValidator);
+					if(count($ArrayValidator->getErrors()) > 0){
+						$errors[$field_name][$sub_field_name] = $ArrayValidator->getErrors();
+					}
+				}
+			} else {
+				$Validator = ValidationRule::cast($Validator);
+				if(count($Validator->getErrors())){
+					$errors[$field_name] = $Validator->getErrors();
+				}
+			}
 		}
 		return $errors;
 	}
@@ -60,6 +71,20 @@ class Validator{
 	
 	public function getFieldData($field_name){
 		return isset($this->_form_data_in_array[$field_name])?$this->_form_data_in_array[$field_name]:null;
+	}
+	
+	public function checkArray($field_name, $validator_type, callable $validation_checker){
+// 		pr($field_name);
+// 		pr($validator_type);
+		
+		$data = $this->getFieldData($field_name);
+		if(is_array($data)){
+			foreach($data as $sub_field_name => $field_value){
+				$this->_field_validators[$field_name][$sub_field_name] = $check = new $validator_type($field_value);
+// 				pr($this->_field_validators);
+				$validation_checker($check);
+			}
+		}
 	}
 	
 	function checkInteger($field_name){

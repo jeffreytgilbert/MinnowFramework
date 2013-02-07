@@ -17,7 +17,7 @@ trait HTMLBodyFormat{
 	public function renderHTMLBody(){
 		if($this instanceof PageController){
 			$Page = PageController::cast($this);
-			$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().'/'.$Page->getControllerName();
+			$path = ($Page->getControllerPath() == '')?$Page->getControllerName():$Page->getControllerPath().$Page->getControllerName();
 			$path = 'Pages/'.$path.'/layout.php';
 			$this->_output = $this->_page_body = $this->runCodeReturnOutput($path);
 		} else {

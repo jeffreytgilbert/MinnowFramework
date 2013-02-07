@@ -79,4 +79,12 @@ final class Path{
 		return self::toApplication($app_name).File::osPath('Actions/');
 	}
 
+	public static function toJS($app_name=null){
+		return self::toRoot().File::osPath('www/js/');
+	}
+	
+	public static function toCSS($app_name=null){
+		return self::toRoot().File::osPath('www/css/');
+	}
+	
 }

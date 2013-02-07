@@ -46,7 +46,7 @@ abstract class ValidationRule{
 	
 	public function required(){
 		$data = $this->getData();
-		if( is_null($data) || $data == '' ){
+		if( is_null($data) || $data == '' || empty($data) ){
 			$this->throwException(self::INVALID_VALUE_IS_REQUIRED);
 		}
 		return $this;

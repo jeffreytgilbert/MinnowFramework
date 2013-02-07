@@ -15,12 +15,8 @@ $this_path=dirname(__FILE__).'/../../../../../www';
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	
 	<title><?= $Page->getPageTitle() ?></title>
-	<meta name="keywords" content="<?= $Page->getPageKeywords() ?>">
 	<meta name="description" content="<?= $Page->getPageDescription() ?>">
-	<meta name="author" content="<?= $Page->getPageAuthor() ?>">
-	
 	<meta name="viewport" content="width=device-width">
 	<link href="/css/Libraries/Bootstrap/bootstrap.min.css" rel="stylesheet">
 	<style>
