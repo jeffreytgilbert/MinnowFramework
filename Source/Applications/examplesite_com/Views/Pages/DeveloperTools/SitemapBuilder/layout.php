@@ -9,7 +9,7 @@
 						<tr>
 							<th>Page</th>
 							<th>Title / Description</th>
-							<th>Hide&nbsp;from&nbsp;sitemap</th>
+							<th style="text-align:center">Hide&nbsp;from&nbsp;sitemap</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -35,7 +35,7 @@
 									value="<?= $SitemapPage->getStringAsHTMLEntities('description') ?>"
 								>
 							</td>
-							<td class="span1">
+							<td class="span1" style="text-align:center">
 								<input 
 									name="Sitemap[ignore_in_sitemap][<?= $SitemapPage->getInteger('link_id') ?>]" 
 									type="checkbox"

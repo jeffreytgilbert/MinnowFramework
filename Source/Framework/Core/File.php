@@ -11,6 +11,13 @@ class File
 		return str_replace('/',SLASH,$file_path);
 	}
 	
+	public static function read($path){
+		if(self::exists($path)){
+			return file_get_contents(File::osPath($path));
+		} else {
+			return '';
+		}
+	}
 	
 	public static function foldersInFolderToArray($path, $include_hidden_files=false){ // also works for .svn folders and such on linux/mac
 		$file_array = array();

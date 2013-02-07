@@ -81,6 +81,16 @@ class Helpers{
 		return $LocationHelper->getInstance();
 	}
 	
+	public function Mustache(){
+		if(isset($this->_helpers['Mustache'])
+				&& $this->_helpers['Mustache'] instanceof MustacheHelper){
+			return $this->_helpers['Mustache']->getInstance();
+		}
+		Run::fromHelpers('Mustache/MustacheHelper.php');
+		$this->_helpers['Mustache'] = $MustacheHelper = new MustacheHelper($this->config('Helpers/Mustache/'));
+		return $MustacheHelper->getInstance();
+	}
+	
 	public function Session(){
 		if(isset($this->_helpers['Session'])
 				&& $this->_helpers['Session'] instanceof SessionHelper){

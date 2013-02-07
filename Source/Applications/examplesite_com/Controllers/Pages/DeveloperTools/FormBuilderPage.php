@@ -32,17 +32,17 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 		
 		// Check for form login from local page request
 		// If data exists in expected form, check it as a login against the db
-		if($PageBuilderForm->hasBeenSubmitted()){
+		if($FormBuilderForm->hasBeenSubmitted()){
 			
 			// Handle errors one at a time (if you want to handle them all at the same time, throw each one in a try catch block of its own
 			$errors = array();
 			
 			try{
-				$PageBuilderForm->checkString('path')->required()->validate();
-				$PageBuilderForm->checkWords('description')->required()->allowUTF8WordsAndNumbersAndPunctuation(false)->maxLength(160);
+				$FormBuilderForm->checkString('path')->required()->validate();
+				$FormBuilderForm->checkWords('description')->required()->allowUTF8WordsAndNumbersAndPunctuation(false)->maxLength(160);
 				
 			} catch(Exception $e){
-				$errors = $PageBuilderForm->getCurrentErrors();
+				$errors = $FormBuilderForm->getCurrentErrors();
 			}
 			
 			if(count($errors) == 0){
@@ -61,7 +61,10 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 	}
 	
 	public function renderJSON(){ return $this->output = parent::renderJSON(); }
-	public function renderHTML(){ return $this->_page_body = parent::renderHTML(); }
+	public function renderHTML(){
+		$template = File::read(Path::toJS().'Pages/DeveloperTools/FormBuilder/layout.mustache');
+		return $this->_page_body = $this->getHelpers()->Mustache()->render($template, array('data goes here'));
+	}
 	
 	private function buildModel(){
 		$RuntimeInfo = RuntimeInfo::instance();

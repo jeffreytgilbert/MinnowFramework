@@ -9,33 +9,33 @@
 	</div>
 	<div class="span8">
 		<fieldset>
-				<legend>Modify existing pages</legend>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Page</th>
-							<th>Stats</th>
-						</tr>
-					</thead>
-					<tbody>
+			<legend>Modify existing pages</legend>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Page</th>
+						<th style="text-align:center">Edit</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					<?php foreach($SitemapCollection as $SitemapPage): ?>
+					<?php $SitemapPage = Sitemap::cast($SitemapPage); ?>
 					
-						<?php foreach($SitemapCollection as $SitemapPage): ?>
-						<?php $SitemapPage = Sitemap::cast($SitemapPage); ?>
-						
-						<tr>
-							<td class="span9">
-								<a href="<?= $SitemapPage->getString('url') ?>" 
-									title="<?= $SitemapPage->getStringAsHTMLEntities('description') ?>"
-								><?= ($SitemapPage->getString('title') == '')?$SitemapPage->getStringAsHTMLEntities('url'):$SitemapPage->getStringAsHTMLEntities('title') ?></a>
-							</td>
-							<td class="span1">...</td>
-						</tr>
-						
-						<?php endforeach; ?>
-						
-					</tbody>
-				</table>
-			</fieldset>		
+					<tr>
+						<td class="span9">
+							<a href="<?= $SitemapPage->getString('url') ?>" 
+								title="<?= $SitemapPage->getStringAsHTMLEntities('description') ?>"
+							><?= ($SitemapPage->getString('title') == '')?$SitemapPage->getStringAsHTMLEntities('url'):$SitemapPage->getStringAsHTMLEntities('title') ?></a>
+						</td>
+						<td class="span1" style="text-align:center"><a href="/DeveloperTools/ViewEditor/?id=<?= $SitemapPage->getInteger('link_id') ?>"><i class="icon-pencil"></i></a></td>
+					</tr>
+					
+					<?php endforeach; ?>
+					
+				</tbody>
+			</table>
+		</fieldset>		
 	</div>
 </div>
 
