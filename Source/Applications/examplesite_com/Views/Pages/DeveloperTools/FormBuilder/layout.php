@@ -7,19 +7,23 @@ var ValidatorList = {'validators':<?= json_encode($validators) ?>};
 
 <div id="FormBuilder" class="row-fluid">
 	<div class="span6 bs-docs-example">
-		<div id="TablePickerArea" class="clearfix">
-			<form style="text-align:center">
-				<label>
-					Generate form based on a table:
-					<select id="TablePicker">
-						<option></option>
+		<div id="TablePickerArea">
+			<form style="margin:0">
+				<label style="margin:0">
+					<select id="TablePicker" class="input-block-level" style="margin:0">
+						<option value="">Generate form based on a table:</option>
 						<?php foreach($object_names as $table_name => $object_name): ?>
 						<option value="<?= $table_name ?>"><?= $object_name ?></option>
 						<?php endforeach; ?>
 					</select>
+					<div class="clearfix"></div>
 				</label>
+				<div class="clearfix"></div>
 			</form>
+			<div class="clearfix"></div>
 		</div>
+		<div class="clearfix"></div>
+		<hr>
 		<div id="ExampleForm" style="min-height:500px">
 			
 		</div>
@@ -68,6 +72,8 @@ var ValidatorList = {'validators':<?= json_encode($validators) ?>};
 						class="input-block-level" 
 						placeholder="Default Value" 
 						value="">
+					
+					<h5>Form validation methods:</h5>
 					
 					<div id="FieldBuilderValidators"></div>
 					

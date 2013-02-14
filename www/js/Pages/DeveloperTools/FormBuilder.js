@@ -128,7 +128,15 @@ require(
 					'/js/Pages/DeveloperTools/FormBuilder/BuilderValidatorInput.mustache',
 					ValidatorList
 				));
-
+				
+				$('.methods').change(function(evt){
+					if($(this).filter(':checked').val()){
+						$(this).parent().next().show();
+					} else {
+						$(this).parent().next().hide();
+					}
+				});
+				$('.parameters').hide();
 //				console.log(ValidatorList);
 				
 			},

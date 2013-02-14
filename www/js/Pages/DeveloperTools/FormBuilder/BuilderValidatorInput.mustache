@@ -9,12 +9,14 @@
 	{{#validators}}
 		<div class="tab-pane" id="b{{validator_type}}">
 		{{#methods}}
-			<label class="checkbox inline">
-				<input type="checkbox" value="{{method_name}}"> {{method_name}}
+			<label class="checkbox input-block-level">
+				<input type="checkbox" class="methods" name="bv_{{validator_type}}_{{method_name}}" value="{{method_name}}"> {{method_name}}
 			</label>
+			<div class="parameters">
 			{{#parameters}}
-				<input class="input-block-level" type="text" placeholder="{{.}}">
+				<input class="input-block-level" name="bp_{{validator_type}}_{{method_name}}_{{.}}" type="text" placeholder="{{.}}">
 			{{/parameters}}
+			</div>
 		{{/methods}}
 		</div>
 	{{/validators}}
