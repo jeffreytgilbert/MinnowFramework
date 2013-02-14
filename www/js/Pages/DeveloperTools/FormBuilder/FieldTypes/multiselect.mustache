@@ -1,0 +1,14 @@
+
+<span class="{{ span_width }}">
+	<select 
+		id="{{ form_name }}_{{ input_name }}[]" 
+		class="field {{ input_width }}" 
+		multiple="multiple" 
+		name="{{ form_name }}[{{ input_name }}]" 
+		size="{{ size }}" 
+		{{ required }}
+	>
+		{{ options }}
+	</select>
+	<label>{{ hint }}</label>
+</span>

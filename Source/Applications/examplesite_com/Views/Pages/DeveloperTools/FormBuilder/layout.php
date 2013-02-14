@@ -1,109 +1,89 @@
 
-<div class="row-fluid">
-	<div class="span8">
-		<form name="Sitemap" id="SitemapForm">
-			<fieldset>
-				<legend>Sitemap</legend>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Page</th>
-							<th>Keywords</th>
-							<th>Description</th>
-							<th>In&nbsp;Sitemap&nbsp;XML</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>DeveloperTools</td>
-							<td>
-								<input 
-									name="Sitemap[keywords][path]" 
-									type="text" 
-									class="input-block-level" 
-									placeholder="Minnow, Framework, Minnow Framework..."
-									value=""
-								>
-							</td>
-							<td>
-								<input 
-									name="Sitemap[description][path]" 
-									type="text" 
-									class="input-block-level" 
-									placeholder="This is a modern web framework wrapped around PHP 5.4"
-								>
-							</td>
-							<td>
-								<input 
-									name="Sitemap[show_in_xml][path]" 
-									type="checkbox"
-								>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Save info</button>
-				</div>
-			</fieldset>
+<script type="text/javascript">
+//var form_vars = '.json_encode($this->field_vars).';
+//var li_vars = '.json_encode($li_vars).';
+var ValidatorList = {'validators':<?= json_encode($validators) ?>};
+</script>
+
+<div id="FormBuilder" class="row-fluid">
+	<div class="span6 bs-docs-example">
+		<div id="TablePickerArea" class="clearfix">
+			<form style="text-align:center">
+				<label>
+					Generate form based on a table:
+					<select id="TablePicker">
+						<option></option>
+						<?php foreach($object_names as $table_name => $object_name): ?>
+						<option value="<?= $table_name ?>"><?= $object_name ?></option>
+						<?php endforeach; ?>
+					</select>
+				</label>
+			</form>
+		</div>
+		<div id="ExampleForm" style="min-height:500px">
+			
+		</div>
+		<form method="post" id="FormBuilderSaveForm" style="margin:0;">
+			<div style="display:none" id="hidden_form_fields"></div>
+			<div class="form-actions" style="margin-left:-18px; margin-right:-18px; margin-bottom:-14px; text-align:center">
+				<select>
+					<option value="">Save to:</option>
+					<?php foreach($SitemapCollection as $SitemapPage): ?>
+					<?php $SitemapPage = Sitemap::cast($SitemapPage); ?>
+					<option value="<?= $SitemapPage->getInteger('link_id') ?>"><?= $SitemapPage->getStringAndConvertHTMLToEntities('url') ?>
+					<?php endforeach; ?>
+				</select>
+				&nbsp;
+				<button type="submit" class="btn btn-primary" style="margin-top:-8px">Save form</button>
+			</div>
 		</form>
 	</div>
-	<div class="span4">
+	<div class="span6" id="FieldBuilderControls">
 	
-		<form name="PageBuilder" id="PageBuilderForm">
+		<form name="FieldBuilder" id="FieldBuilderForm">
 			<fieldset>
-				<legend>Page Builder</legend>
-				<input name="PageBuilder[path]" type="text" class="input-block-level" placeholder="Path... ex: Folder/Path/ControllerName">
-				<input name="PageBuilder[keywords]" type="text" class="input-block-level" placeholder="Keywords... ex: Minnow, Framework, Minnow Framework">
-				<input name="PageBuilder[description]" type="text" class="input-block-level" placeholder="Description... ex: This is a great Minnow Framework page">
-				<label class="checkbox">
-					<input name="PageBuilder[show_in_xml]" type="checkbox" value="1" checked="checked"> Show in XML
-				</label>
+				<legend>Form Editor</legend>
 				
-				<h5>Supported output formats:</h5>
-				<label class="checkbox inline">
-					<input type="checkbox" name="PageBuilder[HTML]" value="1" checked="checked"> HTML
-				</label>
-				<label class="checkbox inline">
-					<input type="checkbox" name="PageBuilder[JSON]" value="1" checked="checked"> JSON
-				</label>
-				<label class="checkbox inline">
-					<input type="checkbox" name="PageBuilder[XML]" value="1" checked="checked"> XML
-				</label>
-				<label class="checkbox inline">
-					<input type="checkbox" name="PageBuilder[HTMLBody]" value="1" checked="checked"> HTML&nbsp;(body&nbsp;only)
-				</label>
-				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Build new page</button>
+				<div id="AddField">
+				
+					<select 
+						name="FieldBuilder[field_type]" 
+						id="FieldBuilder_field_type" 
+						class="input-block-level">
+						<option>Field Type:</option>
+					</select>
+					
+					<input 
+						name="FieldBuilder[input_label]" 
+						id="FieldBuilder_field_type" 
+						type="text" 
+						class="input-block-level" 
+						placeholder="Label" 
+						value="">
+					
+					<input 
+						name="FieldBuilder[default_value]" 
+						id="FieldBuilder_field_type" 
+						type="text" 
+						class="input-block-level" 
+						placeholder="Default Value" 
+						value="">
+					
+					<div id="FieldBuilderValidators"></div>
+					
+					<div class="form-actions">
+						<button type="button" class="btn" id="AddFieldButton"><i class="icon-chevron-left"></i> Add field</button>
+					</div>
+					
 				</div>
-			</fieldset>
-		</form>
-		
-		<form>
-			<fieldset>
-				<legend>Data Models &amp; Actions</legend>
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Table</th>
-							<th>Model</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>table_name</td>
-							<td class="span1"><input type="checkbox" name="DataModel[tablename]" value="1"></td>
-							<td class="span1"><input type="checkbox" name="DataAction[tablename]" value="1"></td>
-						</tr>
-					</tbody>
-				</table>
-				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Create new objects</button>
-				</div>
+				<div id="EditField"></div>
+				
 			</fieldset>
 		</form>
 	
 	</div>
 </div>
+
+
+
 

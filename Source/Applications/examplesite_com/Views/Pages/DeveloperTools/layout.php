@@ -1,13 +1,14 @@
 
 <div class="row-fluid">
-	<div class="span2">
+	<div class="span3">
 		<ul class="nav nav-list">
 			<li class="active"><a href="/DeveloperTools"><i class="icon-home icon-white"></i> Home</a></li>
 			<li><a href="/DeveloperTools/SitemapBuilder"><i class="icon-globe"></i> Create Pages</a></li>
 			<li><a href="/DeveloperTools/FormBuilder"><i class="icon-check"></i> Create Forms</a></li>
+			<li><a href="/DeveloperTools/ObjectBuilder"><i class="icon-list-alt"></i> Create Objects</a></li>
 		</ul>
 	</div>
-	<div class="span8">
+	<div class="span7">
 		<fieldset>
 			<legend>Modify existing pages</legend>
 			<table class="table table-striped">

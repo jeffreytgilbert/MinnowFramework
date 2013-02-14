@@ -1,8 +1,8 @@
 
 require(
-	['jquery', 'Modules/Minnow/ValidateForm'],
-	function($, ValidateForm){
-
+	['jquery','can'],
+	function($, can){
+		
 		var tpl_li = $('#tpl_li').html();
 		
 		// bindings for submitting data to the server

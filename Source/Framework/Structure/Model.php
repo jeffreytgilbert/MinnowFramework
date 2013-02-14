@@ -274,6 +274,62 @@ class Model implements Iterator, Serializable{
 		return (strstr($this->_data[$field_name], $needle))?$this->_data[$field_name]:false;
 	}
 	
+	/*
+	public static function toMustacheArray($limit=10, $value=null){
+		if(is_null($data)){
+			
+		} else if(is_array($data)) {
+			$array_to_return[$key] = $value->toMustacheArray($limit-1, isset($blacklist[$key])?$blacklist[$key]:array());
+		} else if(is_a($data,'Model')){
+			
+		} else if(is_a($data,'ModelCollection')){
+			
+		} else if(is_object($data)){
+			
+		} else {
+			$data;
+		}
+		
+		if(is_null($value)){
+			
+		} else if($value instanceof Model){
+			$array_to_return[$key] = $value->toMustacheArray($limit-1, isset($blacklist[$key])?$blacklist[$key]:array());
+		} else if($value instanceof ModelCollection) {
+			$array_to_return[$key] = $value->toMustacheArray($limit-1, isset($blacklist[$key])?$blacklist[$key]:array());
+		} else if(is_array($value)) {
+			$array_to_return[$key] = $value;
+		} else if(is_object($value)){
+			$array_to_return[$key] = get_class_vars($value);
+// 		} else { // done in initial blacklisted dump. 
+// 			$array_to_return[$key] = $value;
+		}		
+		
+	}
+	*/
+	
+	/*
+	public function toStandardClass($blacklist=array()){
+		// First, get blacklisted data array
+		$array = $this->toArray($blacklist);
+		// Then, convert it to Standard Classes 
+		return self::convertArraysToStandardClasses($array);
+	}
+	
+	public static function convertArraysToStandardClasses($data){
+		if(is_array($data)) {
+			
+// 			Return array converted to object
+// 			Using __FUNCTION__ (Magic constant)
+// 			for recursive call
+			
+			return (object) array_map('Model::convertArraysToStandardClasses', $data);
+		} else {
+			// Return object
+			return $data;
+		}
+	}
+	*/
+	
 	/**
 	 * Returns original data entered into filtered object in an unfiltered array
 	 * @return array

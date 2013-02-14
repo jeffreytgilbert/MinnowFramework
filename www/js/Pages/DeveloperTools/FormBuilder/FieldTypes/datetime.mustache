@@ -1,0 +1,19 @@
+
+<div 
+	class="field input-append date bs_datepicker" 
+	id="dp_{{ form_name }}_{{ input_name }}" 
+	data-date="{{ value }}" 
+	data-date-format="yyyy-mm-dd h:ii a"
+	>
+	<label>{{ input_label }}</label>
+    <input 
+    	class="field" 
+    	size="16" 
+    	type="text" 
+    	value="{{ input_value }}" 
+    	readonly 
+    	data-field-order="{{ field_order }}"
+    	{{ required }}
+    >
+    <span class="add-on"><i class="icon-calendar"></i><i class="icon-time"></i></span>
+</div>

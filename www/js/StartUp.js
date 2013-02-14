@@ -6,6 +6,7 @@ requirejs.config({
 	paths: {
 		'jquery':':empty',
 		'bootstrap': '/js/Libraries/Bootstrap/bootstrap.min', // Bootstrap minified
+		'bs': '/js/Libraries/Bootstrap', // Bootstrap minified
 		'can': '/js/Libraries/CanJS/can'
 	}
 });

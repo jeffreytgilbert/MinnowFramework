@@ -1,0 +1,12 @@
+<form name="{{form_name}}" id="{{form_name}}Form" method="{{ form_method }}" action="{{form_path}}">
+	<fieldset>
+		<legend>{{form_title}}</legend>
+		{{ form_caption }}
+		<div id="{{form_name}}_fields">
+			{{{form_fields}}}
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary">{{submit_name}}</button>
+		</div>
+	</fieldset>
+</form>

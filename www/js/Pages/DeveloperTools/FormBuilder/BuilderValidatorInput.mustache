@@ -1,0 +1,23 @@
+<div class="tabbable tabs-left">
+	<ul class="nav nav-tabs">
+	{{#validators}}
+		<li><a data-toggle="tab" href="#b{{validator_type}}">{{validator_type}}</a></li>
+	{{/validators}}
+	</ul>
+
+	<div class="tab-content">
+	{{#validators}}
+		<div class="tab-pane" id="b{{validator_type}}">
+		{{#methods}}
+			<label class="checkbox inline">
+				<input type="checkbox" value="{{method_name}}"> {{method_name}}
+			</label>
+			{{#parameters}}
+				<input class="input-block-level" type="text" placeholder="{{.}}">
+			{{/parameters}}
+		{{/methods}}
+		</div>
+	{{/validators}}
+	</div>
+
+</div>

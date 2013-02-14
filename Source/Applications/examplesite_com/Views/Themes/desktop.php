@@ -110,24 +110,35 @@ echo $css;
 
 		<?php foreach($Page->getErrors() as $error): ?>
 
-			<div class="alert alert-error"><span class="label label-important">&nbsp;!&nbsp;</span> <?= $error; ?></div>
+			<div class="alert alert-error">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<span class="label label-important">&nbsp;!&nbsp;</span> <?= $error; ?>
+			</div>
 		
 		<?php endforeach; ?>
 		<?php foreach($Page->getNotices() as $notice): ?>
 
-			<div class="alert alert-info"><span class="label label-info">&nbsp;!&nbsp;</span> <?= $notice; ?></div>
+			<div class="alert alert-info">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<span class="label label-info">&nbsp;!&nbsp;</span> <?= $notice; ?>
+			</div>
 		
 		<?php endforeach; ?>
 		<?php foreach($Page->getConfirmations() as $confirmation): ?>
 
-			<div class="alert alert-success"><span class="label label-success">&nbsp;!&nbsp;</span> <?= $confirmation; ?></div>
+			<div class="alert alert-success">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<span class="label label-success">&nbsp;!&nbsp;</span> <?= $confirmation; ?>
+			</div>
 		
 		<?php endforeach; ?>
 		
 		<?= $Page->getPageBody(); ?>
 		
 	</div> <!-- /container -->
-
+	
+	<div style="height:7em;" class="clearfix">&nbsp;</div>
+	
 	<footer class="footer navbar navbar-fixed-bottom">
 		<div class="container">
 			<p>This work is licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>

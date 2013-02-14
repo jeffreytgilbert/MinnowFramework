@@ -1,0 +1,18 @@
+
+<span class="input-prepend">
+	<span class="add-on"><i class="icon-envelope"></i></span>
+	<input
+		id="{{ form_name }}_{{ input_name }}" 
+		name="{{ form_name }}[{{ input_name }}]" 
+		class="field email {{ required }}" 
+		type="text" 
+		rel="popover"
+		data-content="Please enter a valid email address."
+		placeholder="Email address"
+		style="width:83%"
+		maxlength="320" 
+		value="{{ input_value }}" 
+		data-field-order="{{ field_order }}"
+		{{ required }}
+	>
+</span>

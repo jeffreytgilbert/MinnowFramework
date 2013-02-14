@@ -1,0 +1,33 @@
+
+<select 
+	name="FieldEditor[field_type]" 
+	id="FieldEditor_field_type" 
+	class="input-block-level">
+	<option>Field Type:</option>
+</select>
+
+<input 
+	name="FieldEditor[input_label]" 
+	id="FieldEditor_field_type" 
+	type="text" 
+	class="input-block-level" 
+	placeholder="Label" 
+	value="{{ input_label }}">
+
+<input 
+	name="FieldEditor[default_value]" 
+	id="FieldEditor_field_type" 
+	type="text" 
+	class="input-block-level" 
+	placeholder="Default Value" 
+	value="{{ default_value }}">
+
+<div id="FieldEditorValidators"></div>
+
+<div class="form-actions">
+	<button type="button" class="btn btn-success" id="SaveChangesButton">Save</button>
+	<button type="button" class="btn" id="CancelChangesButton" 
+		title="Cancel edits"><i class="icon-share-alt"></i></button>
+	<button type="button" class="btn" id="DeleteFieldButton" 
+		title="Remove field"><i class="icon-minus"></i> </button>
+</div>

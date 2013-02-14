@@ -1,0 +1,13 @@
+
+<span class="{{ span_width }}">
+	<select 
+		id="{{ form_name }}_{{ input_name }}" 
+		class="field {{ input_width }}" 
+		name="{{ form_name }}[{{ input_name }}]" 
+		{{ required }}
+		data-field-order="{{ field_order }}"
+	>
+		{{ options }}
+	</select>
+	<label>{{ hint }}</label>
+</span>

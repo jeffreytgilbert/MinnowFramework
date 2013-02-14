@@ -51,6 +51,28 @@ class ValidString extends ValidationRule{
 		return $this;
 	}
 	
+	public function allowSimpleAlphabetCharactersOnly($allow_dashes=false, $allow_underscores=false){
+		$allowances = '';
+		if($allow_dashes){ $allowances = '-'; }
+		if($allow_underscores){ $allowances = '_'; }
+		
+		if(preg_match('/[^A-z\s'.$allowances.']+/s',  $this->getData())){
+			$this->throwException(self::INVALID_WORD_FORMAT);
+		}
+		return $this;
+	}
+
+	public function allowUTF8AlphabetCharactersOnly($allow_dashes=false, $allow_underscores=false){
+		$allowances = '';
+		if($allow_dashes){ $allowances = '-'; }
+		if($allow_underscores){ $allowances = '_'; }
+		
+		if(preg_match('/[^\p{L}\p{M}\p{Zs}'.$allowances.']+/us',  $this->getData())){
+			$this->throwException(self::INVALID_WORD_FORMAT);
+		}
+		return $this;
+	}
+	
 	public function mustContain($string, $case_sensitive=false){
 		if(!$case_sensitive){
 			if( !stristr($this->getData(), $string) ){

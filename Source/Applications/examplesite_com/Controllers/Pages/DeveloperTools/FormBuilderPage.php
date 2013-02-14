@@ -8,26 +8,276 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 
 	public 
 		$forms,
-		$dummy_forms;
+		$dummy_forms,
+		$data;
+	
+	public function getTableDefinition($table_name){
+		try{
+			$Validator = new ValidString($table_name);
+			$Validator->allowSimpleAlphabetCharactersOnly(false,true);
+		} catch(Exception $e) {
+			$this->flashError($e->getCode(), 'Invalid table format requested.');
+		}
+		
+		$db = $this->getConnections()->MySQL();
+		$db->query('DESCRIBE `'.$table_name.'`');
+// 		$x=0;
+		$table_definition = array();
+		while($db->readRow()){
+			//$table_definition[] = $db->row_data;
+			
+			$d = $db->row_data; // d for details
+			$f = $d['Field'];
+			$table_definition[$f] = array();
+			
+			if(mb_strstr($d['Type'],'(') != ''){ // something with a size attached. Get the size from it and trip the type down
+				$type_chunks = explode('(', $d['Type'], 2);
+				
+				// define the data type
+				$table_definition[$f]['type'] = $type_chunks[0];
+				
+				$type_chunks2 = explode(')', $type_chunks[1]);
+				if(count($type_chunks2)>1 && trim($type_chunks2[1]) != ''){ // secondary detail, like unsigned
+					$table_definition[$f]['size'] = $type_chunks2[0];
+					$table_definition[$f]['type_detail'] = trim($type_chunks2[1]);
+				} else {
+					$table_definition[$f]['size'] = $type_chunks2[0];
+				}
+			} else {
+				$table_definition[$f]['type'] = $d['Type'];
+			}
+			
+			if(isset($table_definition[$f]['size'])){
+				if(mb_substr($table_definition[$f]['type'],-3) == 'int'){
+					if(isset($table_definition[$f]['type_detail']) && $table_definition[$f]['type_detail'] == 'unsigned'){
+						$table_definition[$f]['min'] = 0;
+						switch($table_definition[$f]['type']){
+							case 'tinyint':
+								$table_definition[$f]['max'] = 255;
+								break;
+							case 'smallint':
+								$table_definition[$f]['max'] = 65535;
+								break;
+							case 'mediumint':
+								$table_definition[$f]['max'] = 16777215;
+								break;
+							case 'int':
+								$table_definition[$f]['max'] = 4294967295;
+								break;
+							case 'largeint':
+								$table_definition[$f]['max'] = 18446744073709551615;
+								break;
+						}
+					} else {
+						switch($table_definition[$f]['type']){
+							case 'tinyint':
+								$table_definition[$f]['min'] = -127;
+								$table_definition[$f]['max'] = 127;
+								break;
+							case 'smallint':
+								$table_definition[$f]['min'] = -32767;
+								$table_definition[$f]['max'] = 32767;
+								break;
+							case 'mediumint':
+								$table_definition[$f]['min'] = -8388607;
+								$table_definition[$f]['max'] = 8388607;
+								break;
+							case 'int':
+								$table_definition[$f]['min'] = -2147483647;
+								$table_definition[$f]['max'] = 2147483647;
+								break;
+							case 'largeint':
+								$table_definition[$f]['min'] = -9223372036854775807;
+								$table_definition[$f]['max'] = 9223372036854775807;
+								break;
+						}
+					}
+				}
+			}
+			
+			if(isset($d['Null']) && $d['Null'] == 'NO'){
+				$table_definition[$f]['required'] = true;
+			} else {
+				$table_definition[$f]['required'] = false;
+			}
+			
+			$table_definition[$f]['default'] = (isset($d['Default']) && !empty($d['Default']))?$d['Default']:null;
+			
+			$table_definition[$f]['primary'] = (isset($d['Key']) && $d['Key'] == 'PRI')?true:false;
+			
+			$table_definition[$f]['primary'] = (isset($d['Key']) && $d['Key'] == 'PRI')?true:false;
+
+// 					case 'Extra': // autoinc, etc
+			
+		}
+		
+		return $table_definition;
+		
+	}
+	
+	// got table definition
+	// need form fields in mustache templates
+	// write js to build the form
+	// write sitemap grabber for page list for save paths
+	// 
 	
 	public function handleRequest(){
 		
-		// ----- Page builder & Sitemap -----
-		// Grab all controller files into an array
-		// Check the db to see if they exist in the sitemap
-		// Insert the ones that dont exist already
-		// Requery the database for the ones that exist
-		// Put them in a data field so they can be used on the view
+		$TableDefinitionForm = $this->getForm('TableDefinition',FormValidator::METHOD_GET);
+		if($TableDefinitionForm->isSubmitted()){
+			$table_definition = $this->getTableDefinition($TableDefinitionForm->getFieldData('table_name'));
+			echo json_encode($table_definition); die;
+			//$this->getDataObject()->set($TableDefinitionForm->getFieldData('table_name'), $table_definition);
+			return;
+		}
+		
+// 		$TableDefinitionForm = $this->getForm('TableDefinition',FormValidator::METHOD_GET);
+// 		if($TableDefinitionForm->isSubmitted()){
+// 			$this->handleRequestForTableDefinition($TableDefinitionForm->getFieldData('table_name'));
+// 			return;
+// 		}
+		
+		$db = $this->getConnections()->MySQL();
 		
 		// ----- Models & Actions -----
-		// Query the database to see which tables it has
-		// Check the file system to see which files are missing, and build a collection of them for the view
+		// Gather requirements:
+		// A list of tables
+		
+		$table_names = array();
+		$object_names = array();
+		$db->query('SHOW TABLES');
+		$x=0;
+		while($db->readRow()){
+			$table_name = array_pop($db->row_data);
+			$table_names[$table_name] = $table_name;
+			$object_name_parts = explode('_',$table_name);
+			foreach($object_name_parts as $key => $object_name_part){
+				$object_name_parts[$key] = ucfirst($object_name_part);
+			}
+			$object_names[$table_name] = implode('',$object_name_parts);
+			$x++;
+		}
+//  		pr($table_names);
+//  		pr($object_names);
+		$this->getDataObject()->set('table_names', $table_names);
+		$this->getDataObject()->set('object_names', $object_names);
+		
+		// A list of tables that dont have actions
+		$missing_actions = array();
+		foreach($object_names as $key => $object_name){
+			if(!File::exists(Path::toActions().'Custom/'.$object_name.'Actions.php')){
+				$missing_actions[$key] = $object_name;
+			}
+		}
+// 		pr($missing_actions);
+		$this->getDataObject()->set('missing_actions', $missing_actions);
+		
+		// A list of tables that dont have models
+		$missing_models = array();
+		foreach($object_names as $key => $object_name){
+			if(!File::exists(Path::toModels().'Custom/'.$object_name.'.php')){
+				$missing_models[$key] = $object_name;
+			}
+		}
+// 		pr($missing_models);
+		$this->getDataObject()->set('missing_models', $missing_models);
 		
 		// ----- Form / View builder -----
-		// ... tbd
+		// A list of form input types
+		$allowed_input_types = ['checkbox','date','datetime','file','full_name','mutliselect','password','radio_list','select','text','textarea','time'];
+//		pr($allowed_input_types);
+		$this->getDataObject()->set('allowed_input_types', $allowed_input_types);
 		
-		$DataModelForm = $this->getForm('DataModel');
-		$DataActionForm = $this->getForm('ActionModel');
+		// Final json encodable array
+		$validators = array();
+		
+		// A list of validator types
+		$validator_types = array();
+		$validator_type_methods = array();
+		$validator_type_method_arguments = array();
+		$methods = get_class_methods('FormValidator');
+		foreach($methods as $method){
+			if(mb_substr($method, 0, mb_strlen('check')) == 'check' && $method != 'checkArray'){
+				$validator_type = mb_substr($method, mb_strlen('check'), mb_strlen($method) - mb_strlen('check'));
+				if(class_exists('Valid'.$validator_type)){
+					$validator_types[] = $validator_type;
+					$tmp_validator_type_methods = get_class_methods('Valid'.$validator_type);
+					foreach($tmp_validator_type_methods as $the_method){
+						if(!in($the_method, array('__construct','cast','getData','getErrors'))){
+							$validator_type_methods['Valid'.$validator_type][] = $the_method;
+							$Reflection = new ReflectionMethod('Valid'.$validator_type, $the_method);
+							if(count($Reflection->getParameters()) > 0){
+								$params = $Reflection->getParameters();
+								$actual_params = array();
+								foreach($params as $param){
+									$actual_params[] = $param->name;
+								}
+								$validator_type_method_arguments['Valid'.$validator_type][$the_method] = $actual_params;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+//		pr($validator_type_method_arguments);
+
+		foreach($validator_type_method_arguments as $validator_name => $validator_methods){
+			$methods = array();
+			foreach($validator_methods as $validator_method_name => $validator_method_parameters){
+				$methods[] = array(
+					'method_name'=>$validator_method_name,
+					'parameters'=>$validator_method_parameters
+				);
+			}
+			$validators[] = array(
+				'validator_type'=>substr($validator_name,5,mb_strlen($validator_name)),
+				'methods'=>$methods
+			);
+		}
+		
+/*		
+		$validators = {
+			'validators':[
+				{ 
+					'validator_type': 'blah',
+					'methods': [
+						{
+							'method_name': 'blah',
+							'parameters': [
+								'parameter_name':'blah'
+							]
+						}
+					]
+				}
+			]
+		};
+		
+{{#validators}}
+	<span>{{ validator_type }}</span>
+	{{#methods}}
+		<label class="checkbox inline">
+		  <input type="checkbox" id="" value="{{method_name}}"> {{method_name}}
+		</label>
+		{{#parameters}}
+			<input class="span1" type="text" placeholder="{{parameter_name}}">
+		{{/parameters}}
+	{{/methods}}
+{{/validators}}		
+*/	
+		
+//		pr($validator_type_methods);
+//		pr($validator_type_method_arguments);
+		//		pr($validator_types);
+		$this->getDataObject()->set('validators', $validators);
+		
+		// Requery the database for the ones that exist
+		$SitemapCollection = SitemapActions::selectList();
+		
+		// Put them in a data field so they can be used on the view
+		$this->getDataObject()->set('SitemapCollection',$SitemapCollection);
+		
+		
 		$FormBuilderForm = $this->getForm('FormBuilder');
 		
 		// Check for form login from local page request
@@ -62,527 +312,19 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 	
 	public function renderJSON(){ return $this->output = parent::renderJSON(); }
 	public function renderHTML(){
-		$template = File::read(Path::toJS().'Pages/DeveloperTools/FormBuilder/layout.mustache');
-		return $this->_page_body = $this->getHelpers()->Mustache()->render($template, array('data goes here'));
+		$this->addCss('Libraries/Bootstrap/colorpicker');
+		$this->addCss('Libraries/Bootstrap/datetimepicker');
+		return $this->_page_body = parent::renderHTML();
 	}
+// 	public function renderHTML(){
+// 		$template = File::read(Path::toJS().'Pages/DeveloperTools/FormBuilder/layout.mustache');
+// 		return $this->_page_body = $this->getHelpers()->Mustache()->render($template, $this->data);
+// 	}
 	
-	private function buildModel(){
-		$RuntimeInfo = RuntimeInfo::instance();
-		$db = $RuntimeInfo->connections()->MySQL();
-				
-		$blank_model = file_get_contents(Path::toFramework().File::osPath('Scaffolding/Model.txt'));
-		
-		$table_names = array();
-		$object_names = array();
-		$db->query('SHOW TABLES');
-		$x=0;
-		while($db->readRow()){
-			$table_name = array_pop($db->row_data);
-			$table_names[$x] = $table_name;
-			$object_name_parts = explode('_',$table_name);
-			foreach($object_name_parts as $key => $object_name_part){
-				$object_name_parts[$key] = ucfirst($object_name_part);
-			}
-			$object_names[$x] = implode('',$object_name_parts);
-			$x++;
-		}
-		
-		echo '
-		<h3>Create objects for:</h3>
-		<form method="POST" action="?">
-		<ul>';
-		foreach($table_names as $key => $table_name){
-			
-			$object_fields = array();
-			$db->query('DESC '.$table_name);
-			
-			while($db->readRow()){
-				$split_pos = stripos($db->row_data['Type'], '(');
-				if($split_pos > 0){
-					$type = substr($db->row_data['Type'],0,$split_pos);
-				} else {
-					$type = $db->row_data['Type'];
-				}
 
-				if(substr($db->row_data['Field'],0,3) == 'is_'){
-					$object_fields[$db->row_data['Field']] = 'DataType::BOOLEAN';
-					continue;
-				}
-				
-				switch($type){
-					case 'enum': 
-					case 'char': 
-					case 'varchar': 
-					case 'text': 
-					case 'tinytext': 
-					case 'mediumtext': 
-					case 'longtext': 
-					case 'set': 
-						$object_fields[$db->row_data['Field']] = 'DataType::TEXT';
-					break;
-					case 'blob': 
-					case 'varblob': 
-					case 'tinyblob': 
-					case 'mediumblob': 
-					case 'longblob': 
-//					case 'clob': 
-					case 'binary': 
-					case 'varbinary': 
-						$object_fields[$db->row_data['Field']] = 'DataType::BINARY';
-					break;
-					case 'bit': 
-					case 'bool': 
-					case 'boolean': 
-						$object_fields[$db->row_data['Field']] = 'DataType::BOOLEAN';
-					break;
-					case 'int': 
-					case 'tinyint': 
-					case 'smallint': 
-					case 'mediumint': 
-					case 'integer': 
-					case 'bigint': 
-					case 'decimal': 
-					case 'dec': 
-					case 'float': 
-					case 'double': 
-					case 'double precision': 
-					case 'serial': 
-					case 'number': 
-						$object_fields[$db->row_data['Field']] = 'DataType::NUMBER';
-					break;
-					case 'date': 
-					case 'year': 
-						$object_fields[$db->row_data['Field']] = 'DataType::DATE';
-					break;
-					case 'datetime': 
-						$object_fields[$db->row_data['Field']] = 'DataType::DATETIME';
-					break;
-					case 'time': 
-						$object_fields[$db->row_data['Field']] = 'DataType::TIME';
-					break;
-					case 'timestamp': 
-						$object_fields[$db->row_data['Field']] = 'DataType::TIMESTAMP';
-					break;
-				}
-			}
-			
-			$file_path = File::osPath(Path::toModels().'/Custom/'.$object_names[$key].'.php');
-			
-			if(	isset($_POST['list']) && 
-				in_array($object_names[$key],array_keys($_POST['list'])) && 
-				$_POST['list'][$object_names[$key]] == 1 &&
-				!file_exists($file_path)){
-				
-				$buffer = array();
-				
-				// for storing the objects associated with keys of this type
-				$foreign_object_names = array();
-				
-				foreach($object_fields as $field => $type){
-					// check to see if they're IDs and if they are, add objects to them
-					$buffer[] = "'{$field}'=>{$type}";
-					if(lower(substr($field,-3)) == '_id' && substr($field,0,-3) != $table_name){
-						$key_name = substr($field,0,-3);
-						$name_parts = explode('_',$key_name);
-						$foreign_object_name = '';
-						foreach($name_parts as $name_part){
-							$foreign_object_name .= ucfirst($name_part);
-						}
-						
-						$buffer[] = "'{$foreign_object_name}'=>DataType::OBJECT";
-						$foreign_object_names[] = $foreign_object_name;
-					}
-				}
-				
-				// Replace all the ObjectName occurances with the actual objects name
-				$model = str_replace('ObjectName', $object_names[$key], $blank_model);
-				
-				// add column names to the array
-				$model = str_replace('(array());', '(array(
-			'.implode(",\n\t\t\t",$buffer).'
-		),true);', $model);
-				
-				// add any foreign key'd object requests into the model
-				$keyed_objects = '';
-				foreach($foreign_object_names as $foreign_object_name){
-					$keyed_objects .= '
-	public function get'.$foreign_object_name.'(){
-		return ($this->getObject(\''.$foreign_object_name.'\') instanceof '.$foreign_object_name.')
-			?$this->_data[\''.$foreign_object_name.'\']
-			:new '.$foreign_object_name.'();
-	}
-	';
-				}
-				$model = str_replace('/* Foreign Keyed Object Calls */', $keyed_objects, $model);
-				
-				file_put_contents($file_path, $model);
-				chmod($file_path, 0755);
-				
-				echo '<li>Created '.$file_path.'</li>';
-				echo '<li><pre>'.htmlentities($model).'</pre></li>';
-			}
-			
-			if(file_exists($file_path)){
-				echo '<li>'.$object_names[$key].' exists</li>';
-			} else {
-				echo '<li><input type="checkbox" name="list['.$object_names[$key].']" value="1">'.$object_names[$key].'</li>';
-			}
-		}
-		echo '
-		</ul>
-		<input type="submit" value="create">
-		</form>
-		';
-	}
-	
-	private function buildAction(){
-				$RuntimeInfo = RuntimeInfo::instance();
-		$db = $RuntimeInfo->connections()->MySQL();
-		
-		$blank_action = file_get_contents(Path::toFramework().File::osPath('Scaffolding/Action.txt'));
-		
-		$table_names = array();
-		$object_names = array();
-		$db->query('SHOW TABLES');
-		$x=0;
-		while($db->readRow()){
-			$table_name = array_pop($db->row_data);
-			$table_names[$x] = $table_name;
-			$object_name_parts = explode('_',$table_name);
-			foreach($object_name_parts as $key => $object_name_part){
-				$object_name_parts[$key] = ucfirst($object_name_part);
-			}
-			$object_names[$x] = implode('',$object_name_parts);
-			$x++;
-		}
-		
-		echo '
-		<h3>Create actions for:</h3>
-		<form method="POST" action="?">
-		<ul>';
-		foreach($table_names as $key => $table_name){
-			
-			$object_fields = array();
-			
-			$int_array = array(); // all integers must be handled differently for proper sanitizing and math functionality
-			$boolean_array = array(); // match all columns with is_ as the first bit
-			$string_array = array(); 
-			$binary_array = array(); 
-			$date_array = array(); 
-			$datetime_array = array(); 
-			$time_array = array(); 
-			
-			$primary_key = 'id'; // if table_name_id is matched, uses this as primary key. default to id even if it doesnt exist. Query would error anyway
-			$update_columns = array(); // contains modified_datetime if it exists
-			$insert_columns = array(); // contains created_datetime if it exists
-			
-			// crud
-			$insert = '';
-			$list = '';
-			$select = '';
-			$update = '';
-			$delete = '';
-			
-			$db->query('DESC '.$table_name);
-			
-			$first_id_found = false;
-			
-			while($db->readRow()){
-				$split_pos = stripos($db->row_data['Type'], '(');
-				if($split_pos > 0){
-					$type = substr($db->row_data['Type'],0,$split_pos);
-				} else {
-					$type = $db->row_data['Type'];
-				}
-				
-				if( $db->row_data['Field'] == $table_name.'_id' || 
-					$db->row_data['Field'] == 'id' || 
-					($first_id_found == false && substr($db->row_data['Field'],-3) == '_id') // use the first id found as the primary key
-					){
-					$primary_key = $db->row_data['Field'];
-					$first_id_found = true;
-				} else {
-					if($db->row_data['Field'] == 'created_datetime' || $db->row_data['Field'] == 'created'){
-						$insert_columns[] = $db->row_data['Field'];
-					} else if($db->row_data['Field'] == 'modified_datetime' || $db->row_data['Field'] == 'modified') {
-						$update_columns[] = $db->row_data['Field'];
-					} else {
-						$insert_columns[] = $db->row_data['Field'];
-						$update_columns[] = $db->row_data['Field'];
-					}
-					
-					if(substr($db->row_data['Field'],0,3) == 'is_'){
-						$object_fields[$db->row_data['Field']] = 'boolean';
-						$boolean_array[] = $db->row_data['Field'];
-						continue;
-					}
-				}
-				
-				switch($type){
-					case 'enum': 
-					case 'char': 
-					case 'varchar': 
-					case 'text': 
-					case 'tinytext': 
-					case 'mediumtext': 
-					case 'longtext': 
-					case 'set': 
-						$object_fields[$db->row_data['Field']] = 'text';
-						$string_array[] = $db->row_data['Field'];
-					break;
-					case 'blob': 
-					case 'varblob': 
-					case 'tinyblob': 
-					case 'mediumblob': 
-					case 'longblob': 
-//					case 'clob': 
-					case 'binary': 
-					case 'varbinary': 
-						$object_fields[$db->row_data['Field']] = 'binary';
-						$binary_array[] = $db->row_data['Field'];
-					break;
-					case 'bit': 
-					case 'bool': 
-					case 'boolean': 
-						$object_fields[$db->row_data['Field']] = 'boolean';
-						$boolean_array[] = $db->row_data['Field'];
-					break;
-					case 'int': 
-					case 'tinyint': 
-					case 'smallint': 
-					case 'mediumint': 
-					case 'integer': 
-					case 'bigint': 
-					case 'decimal': 
-					case 'dec': 
-					case 'float': 
-					case 'double': 
-					case 'double precision': 
-					case 'serial': 
-					case 'number': 
-						$object_fields[$db->row_data['Field']] = 'number';
-						$int_array[] = $db->row_data['Field'];
-					break;
-					case 'date': 
-					case 'year': 
-						$object_fields[$db->row_data['Field']] = 'date';
-						$date_array[] = $db->row_data['Field'];
-					break;
-					case 'datetime': 
-						$object_fields[$db->row_data['Field']] = 'datetime';
-						$datetime_array[] = $db->row_data['Field'];
-					break;
-						case 'time': 
-						$object_fields[$db->row_data['Field']] = 'time';
-						$time_array[] = $db->row_data['Field'];
-					break;
-					case 'timestamp': 
-						$object_fields[$db->row_data['Field']] = 'timestamp';
-						$int_array[] = $db->row_data['Field']; // these get filtered as integers really
-					break;
-				}
-			}
-			
-			// get uniques so there aren't duplications for booleans and such
-			$int_array = array_unique($int_array);
-			$boolean_array = array_unique($boolean_array);
-			$string_array = array_unique($string_array); 
-			$binary_array = array_unique($binary_array); 
-			$date_array = array_unique($date_array); 
-			$datetime_array = array_unique($datetime_array); 
-			$time_array = array_unique($time_array); 
-			
-			
-			$file_path = Path::toActions().File::osPath('Custom/'.$object_names[$key].'Actions.php');
-			
-			if(	isset($_POST['list']) && 
-				in_array($object_names[$key],array_keys($_POST['list'])) && 
-				$_POST['list'][$object_names[$key]] == 1 &&
-				!file_exists($file_path)){
-				
-				// INSERT LOGIC	
-				
-				$set_columns = array();
-				$value_columns = array();
-				$data_to_columns = array();
-				$integer_columns = array();
-				
-				foreach($insert_columns as $field){
-					$set_columns[] = "{$field}";
-					$value_columns[] = ":{$field}";
-					if($field == 'created_datetime' || $field == 'created'){
-						$data_to_columns[] = "':{$field}' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime')";
-					} else if(in_array($field, $date_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('date')";
-					} else if(in_array($field, $datetime_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('datetime')";
-					} else if(in_array($field, $time_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('time')";
-					} else if(in_array($field, $binary_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBinary('{$field}')";
-					} else if(in_array($field, $int_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getInteger('{$field}')";
-					} else if(in_array($field, $boolean_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBoolean('{$field}')";
-					} else {
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getString('{$field}')";
-					}
-					if(in_array($field, $int_array) || $field == $primary_key || in_array($field, $boolean_array)){
-						$integer_columns[] = "':{$field}'";
-					}
-				}
-				
-				$insert = '\'
-			INSERT INTO '.$table_name.' (
-				'.implode(",\n\t\t\t\t",$set_columns).'
-			) VALUES (
-				'.implode(",\n\t\t\t\t",$value_columns).'
-			)\',
-			// bind data to sql variables
-			array(
-				'.implode(",\n\t\t\t\t",$data_to_columns).',
-				\':'.$primary_key.'\' => $'.$object_names[$key].'->getInteger(\''.$primary_key.'\')
-			),
-			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
-			array(
-				'.implode(",\n\t\t\t\t",$integer_columns).((count($integer_columns)>0)?',':'').'
-				\':'.$primary_key.'\'
-			)
-		';		
-				
-				
-				// SELECT LOGIC	
-				
-				$select = '\'
-			SELECT 
-				'.implode(",\n\t\t\t\t",array_keys($object_fields)).'
-			FROM '.$table_name.' 
-			WHERE '.$primary_key.'=:'.$primary_key.'\',
-			// bind data to sql variables
-			array(
-				\':'.$primary_key.'\' => (int)$'.$primary_key.'
-			),
-			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
-			array(
-				\':'.$primary_key.'\'
-			)
-		';		
-				
-				
-				// LIST LOGIC	
-				
-				$list = '\'
-			SELECT 
-				'.implode(",\n\t\t\t\t",array_keys($object_fields)).'
-			FROM '.$table_name.' 
-			\',
-			// bind data to sql variables
-			array(
-			),
-			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
-			array(
-			),
-			\''.$object_names[$key].'\'
-		';		
-				
-				
-				// UPDATE LOGIC	
-				
-				$set_columns = array();
-				$data_to_columns = array();
-				$integer_columns = array();
-				foreach($update_columns as $field){
-					$set_columns[] = "{$field}=:{$field}";
-					if($field == 'modified_datetime' || $field == 'modified'){
-						$data_to_columns[] = "':{$field}' => RuntimeInfo::instance()->now()->getMySQLFormat('datetime')";
-					} else if(in_array($field, $date_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('date')";
-					} else if(in_array($field, $datetime_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('datetime')";
-					} else if(in_array($field, $time_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getDateTimeObject('{$field}')->getMySQLFormat('time')";
-					} else if(in_array($field, $binary_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBinary('{$field}')";
-					} else if(in_array($field, $int_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getInteger('{$field}')";
-					} else if(in_array($field, $boolean_array)){
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getBoolean('{$field}')";
-					} else {
-						$data_to_columns[] = "':{$field}' => \${$object_names[$key]}->getString('{$field}')";
-					}
-					if(in_array($field, $int_array) || $field == $primary_key){
-						$integer_columns[] = "':{$field}'";
-					}
-				}
-				
-				$update = '\'
-			UPDATE '.$table_name.' 
-			SET '.implode(",\n\t\t\t\t",$set_columns).'
-			WHERE '.$primary_key.'=:'.$primary_key.'
-			\',
-			// bind data to sql variables
-			array(
-				'.implode(",\n\t\t\t\t",$data_to_columns).',
-				\':'.$primary_key.'\' => $'.$object_names[$key].'->getInteger(\''.$primary_key.'\')
-			),
-			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
-			array(
-				'.implode(",\n\t\t\t\t",$integer_columns).((count($integer_columns)>0)?',':'').'
-				\':'.$primary_key.'\'
-			)
-		';
-				
-				
-				// DELETE LOGIC	
-				
-				$delete = '\'
-			DELETE 
-			FROM '.$table_name.' 
-			WHERE '.$primary_key.'=:'.$primary_key.'\',
-			// bind data to sql variables
-			array(
-				\':'.$primary_key.'\' => (int)$'.$primary_key.'
-			),
-			// which fields are non-string, unquoted types (boolean, float, int, decimal, etc)
-			array(
-				\':'.$primary_key.'\'
-			)
-		';
-			
-				// primary key search and replace
-				$action = str_replace('$id', '$'.$primary_key, $blank_action);
-				$action = str_replace('primary_key', $primary_key, $action);
-				// crud methods search and replace
-				$action = str_replace('/* insert */', $insert, $action);
-				$action = str_replace('/* list */', $list, $action);
-				$action = str_replace('/* select */', $select, $action);
-				$action = str_replace('/* update */', $update, $action);
-				$action = str_replace('/* delete */', $delete, $action);
-				
-				$action = str_replace('ObjectName', $object_names[$key], $action);
-				file_put_contents($file_path, $action);
-				chmod($file_path, 0755);
-				
-				echo '<li>Created '.$file_path.'</li>';
-				echo '<li><pre>'.htmlentities($action).'</pre></li>';
-			}
-			
-			if(file_exists($file_path)){
-				echo '<li>'.$object_names[$key].' exists</li>';
-			} else {
-				echo '<li><input type="checkbox" name="list['.$object_names[$key].']" value="1">'.$object_names[$key].'</li>';
-			}
-		}
-		echo '
-		</ul>
-		<input type="submit" value="create">
-		</form>
-		';
-	}
-	
 	private function buildForm(){
 
-				$RuntimeInfo = RuntimeInfo::instance();
+		$RuntimeInfo = RuntimeInfo::instance();
 		$db = $RuntimeInfo->mysql();
 				
 		if(isset($_POST['o'])){ // handle form submission from xhr request
