@@ -10,11 +10,23 @@
 		<div class="tab-pane" id="b{{validator_type}}">
 		{{#methods}}
 			<label class="checkbox input-block-level">
-				<input type="checkbox" class="methods" name="bv_{{validator_type}}_{{method_name}}" value="{{method_name}}"> {{method_name}}
+				<input 
+					type="checkbox" 
+					class="methods" 
+					id="bv_{{validator_type}}_{{method_name}}" 
+					name="FormBuilder[Validator][{{validator_type}}][{{method_name}}]" 
+					value="{{method_name}}"
+				> {{method_name}}
 			</label>
 			<div class="parameters">
 			{{#parameters}}
-				<input class="input-block-level" name="bp_{{validator_type}}_{{method_name}}_{{.}}" type="text" placeholder="{{.}}">
+				<input 
+					class="input-block-level" 
+					id="bp_{{validator_type}}_{{method_name}}_{{parameter_name}}" 
+					name="FormBuilder[Validator][{{validator_type}}][{{method_name}}][{{parameter_name}}]" 
+					type="text" 
+					placeholder="{{parameter_definition}}"
+				>
 			{{/parameters}}
 			</div>
 		{{/methods}}

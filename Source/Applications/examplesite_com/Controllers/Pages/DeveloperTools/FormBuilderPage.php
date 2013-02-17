@@ -222,7 +222,21 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 								$params = $Reflection->getParameters();
 								$actual_params = array();
 								foreach($params as $param){
-									$actual_params[] = $param->name;
+									
+									$param_info = ReflectionParameter::export(
+										array(
+											$param->getDeclaringClass()->name, 
+											$param->getDeclaringFunction()->name
+										), 
+										$param->name, 
+										true
+									);
+									$param_info = str_replace(array('<','>'), array('(',')'), $param_info);
+									$start = mb_strpos($param_info,'[')+1;
+									$end = (mb_strlen($param_info) - $start)-1;
+									$param_definition = trim(mb_substr($param_info, $start, $end));
+									
+									$actual_params[$param->name] = $param_definition;
 								}
 								$validator_type_method_arguments['Valid'.$validator_type][$the_method] = $actual_params;
 							}
@@ -235,10 +249,21 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 		foreach($validator_type_methods as $validator_name => $validator_methods){
 			$methods = array();
 			foreach($validator_methods as $validator_method_name){
-				$validator_method_parameters = (isset($validator_type_method_arguments[$validator_name][$validator_method_name]) 
-												&& count($validator_type_method_arguments[$validator_name][$validator_method_name])>0)
-													?$validator_type_method_arguments[$validator_name][$validator_method_name]
-													:array();
+				if(isset($validator_type_method_arguments[$validator_name][$validator_method_name]) 
+				&& count($validator_type_method_arguments[$validator_name][$validator_method_name]) > 0){
+					$params = $validator_type_method_arguments[$validator_name][$validator_method_name];
+//					pr($params);
+					$validator_method_parameters = array();
+					foreach($params as $param_name => $param_definition){
+						$validator_method_parameters[] = array(
+							'parameter_name'=>$param_name,
+							'parameter_definition'=>$param_definition
+						);
+					}
+				} else {
+					$validator_method_parameters = array();
+				}
+				
 				$methods[] = array(
 					'method_name'=>$validator_method_name,
 					'parameters'=>$validator_method_parameters
@@ -249,9 +274,32 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 				'methods'=>$methods
 			);
 		}
-
 		
-/*		
+// 		pr("
+// \$validators = {
+// 	'validators':[
+// 		{ 
+// 			'validator_type': 'blah',
+// 			'methods': [
+// 				{
+// 					'method_name': 'blah',
+// 					'parameters': [
+// 						{
+// 							'parameter_name':'blah',
+// 							'parameter_definition':'blah'
+// 						}
+// 					]
+// 				}
+// 			]
+// 		}
+// 	]
+// };
+// 				");
+		
+// 		pr($validators);
+		
+/*
+
 		$validators = {
 			'validators':[
 				{ 
@@ -260,7 +308,10 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 						{
 							'method_name': 'blah',
 							'parameters': [
-								'parameter_name':'blah'
+								{
+									'parameter_name':'blah',
+									'parameter_definition':'blah'
+								}
 							]
 						}
 					]
