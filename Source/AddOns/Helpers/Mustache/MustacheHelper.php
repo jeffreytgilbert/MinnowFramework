@@ -18,7 +18,7 @@ final class MustacheHelper extends Helper{
 		
 		$this->_instance = new Mustache_Engine(
 			array(
-				'cache' => File::osPath(RuntimeInfo::instance()->appSettings()->get('temporary_files_folder').'/MustacheTemplates'),
+				'cache' => File::osPath(Path::toRoot().RuntimeInfo::instance()->appSettings()->get('temporary_files_folder').'/MustacheTemplates'),
 				'cache_file_mode' => 0755, // May not be necessary
 				'logger' => RuntimeInfo::instance()->getConnections()->Logger()->getLoggerInstance() // Use default monolog instance for logging
 			)
