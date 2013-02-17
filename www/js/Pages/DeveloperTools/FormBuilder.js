@@ -117,6 +117,9 @@ require(
 					ValidatorList
 				));
 				
+				$('#EditField .method_name').tooltip({placement:'right'});
+				$('#EditField .method_name').tooltip();
+				
 				$('.parameters',this.self).hide();
 			},
 			'.methods change': function(element, jquery_event){
@@ -141,6 +144,10 @@ require(
 					'/js/Pages/DeveloperTools/FormBuilder/BuilderValidatorInput.mustache',
 					ValidatorList
 				));
+				
+				
+				$('#AddField .method_name').tooltip({placement:'right'});
+				$('#AddField .method_name').tooltip();
 				
 				$('.parameters',this.self).hide();
 			},

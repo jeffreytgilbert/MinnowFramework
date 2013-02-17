@@ -206,7 +206,7 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 					$ReflechtionClass = new ReflectionClass('Valid'.$validator_type);
 					if(count($ReflechtionClass->getMethods()) > 0){
 						$these_methods = $ReflechtionClass->getMethods();
-						$actual_methods = array();
+						
 						foreach($these_methods as $method){
 							$tmp_validator_type_methods[$method->name] = $method->class;
 						}
@@ -214,7 +214,9 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 					
 					foreach($tmp_validator_type_methods as $the_method => $class_origin){
 						if(!in($the_method, array('__construct','cast','getData','getErrors', 'throwException'))){
-							$validator_type_methods['Valid'.$validator_type][] = $the_method;
+							//$validator_type_methods['Valid'.$validator_type][] = $the_method;
+							$validator_type_methods['Valid'.$validator_type][] = array($class_origin=>$the_method);
+							
 							$Reflection = new ReflectionMethod($class_origin, $the_method);
 							if(count($Reflection->getParameters()) > 0){
 								$params = $Reflection->getParameters();
@@ -245,14 +247,30 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 		}
 		
 		foreach($validator_type_methods as $validator_name => $validator_methods){
+//			pr($validator_methods);die;
+			
 			$methods = array();
 			foreach($validator_methods as $validator_method_name){
+// 				pr(__LINE__);
+// 				pr($validator_name);
+// 				pr($validator_method_name);
+				// Set the class origin 
+				$validator_class_origin = $validator_name;
+				if(is_array($validator_method_name)){
+					$validator_class_origin = key($validator_method_name);
+					$validator_method_name = current($validator_method_name);
+				}
+//				pr('ME'.$validator_method_name);
+				
 				if(isset($validator_type_method_arguments[$validator_name][$validator_method_name]) 
 				&& count($validator_type_method_arguments[$validator_name][$validator_method_name]) > 0){
 					$params = $validator_type_method_arguments[$validator_name][$validator_method_name];
-//					pr($params);
+// 					pr('MEH'.$validator_method_name);
+// 					pr($params);
 					$validator_method_parameters = array();
 					foreach($params as $param_name => $param_definition){
+// 						pr($param_name);
+// 						pr($param_definition);
 						$validator_method_parameters[] = array(
 							'parameter_name'=>$param_name,
 							'parameter_definition'=>$param_definition
@@ -264,9 +282,11 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 				
 				$methods[] = array(
 					'method_name'=>$validator_method_name,
+					'class_origin'=>$validator_class_origin,
 					'parameters'=>$validator_method_parameters
 				);
 			}
+			
 			$validators[] = array(
 				'validator_type'=>substr($validator_name,5,mb_strlen($validator_name)),
 				'methods'=>$methods
