@@ -92,30 +92,23 @@ require(
 			field_order: ''
 		});
 		
-		FormBuilderController = can.Control({
-			
-			// instance cache for jquery objects for these two forms
-			FieldBuilder:null,
-			FieldEditor:null,
-			
+		FieldEditorController = can.Control({
+			self:null,
+			FieldEditorView:null,
 			init: function(){
-				this.FieldBuilder = $('#AddField');
-				this.FieldEditor = $('#EditField');
+				this.self = $('#EditField');
 				
-				var FieldEditorView = can.view(
+				this.self.hide();
+				
+				this.FieldEditorView = can.view(
 					'/js/Pages/DeveloperTools/FormBuilder/FieldEditor.mustache', 
 					LiveFieldEditor
 				);
-				
-				// initialize tooltips for editor
-				$('.form-actions',this.FieldEditor).tooltip({selector:'button'});
 
-				this.FieldEditor.hide();
 				// jquery selector, but through can so it can have data bindings
-				can.$('#EditField').append(FieldEditorView);
+				can.$('#EditField').append(this.FieldEditorView);
 				
 				$.each(input_types_allowed, function(key,value){
-					$('#FieldBuilder_field_type').append('<option>'+value+'</option>'); 
 					$('#FieldEditor_field_type').append('<option>'+value+'</option>'); 
 				});
 				
@@ -124,20 +117,57 @@ require(
 					ValidatorList
 				));
 				
+				$('.parameters',this.self).hide();
+			},
+			'.methods change': function(element, jquery_event){
+				if($(element).filter(':checked').val()){
+					$(element).parent().next().show();
+				} else {
+					$(element).parent().next().hide();
+				}
+			}
+		});
+		
+		FieldBuilderController = can.Control({
+			self:null,
+			init: function(){
+				this.self = $('#AddField');
+				
+				$.each(input_types_allowed, function(key,value){
+					$('#FieldBuilder_field_type').append('<option>'+value+'</option>'); 
+				});
+				
 				can.$('#FieldBuilderValidators').append(can.view(
 					'/js/Pages/DeveloperTools/FormBuilder/BuilderValidatorInput.mustache',
 					ValidatorList
 				));
 				
-				$('.methods').change(function(evt){
-					if($(this).filter(':checked').val()){
-						$(this).parent().next().show();
-					} else {
-						$(this).parent().next().hide();
-					}
+				$('.parameters',this.self).hide();
+			},
+			'.methods change': function(element, jquery_event){
+				if($(element).filter(':checked').val()){
+					$(element).parent().next().show();
+				} else {
+					$(element).parent().next().hide();
+				}
+			}
+		});
+		
+		FormBuilderController = can.Control({
+			
+			// instance cache for jquery objects for these two forms
+			FieldBuilder:null,
+			FieldEditor:null,
+			
+			init: function(){
+				
+				this.FieldBuilder = new FieldBuilderController('#AddField',{
+					// options to pass builder constructor
 				});
-				$('.parameters').hide();
-//				console.log(ValidatorList);
+				
+				this.FieldEditor = new FieldEditorController('#EditField',{
+					// options to pass editor constructor
+				});
 				
 			},
 			'#TablePicker change': function(element, jquery_event){
@@ -157,7 +187,7 @@ require(
 						
 						$.each(data, function(key, val){
 							field_position = field_list.length;
-							field_list[field_position] = FieldEditor = new can.Observe({
+							field_list[field_position] = FieldEditorObj = new can.Observe({
 								form_name: example_form_name,
 								input_type: input_type_map[val.type],
 								input_name: key,
@@ -172,7 +202,7 @@ require(
 							// In theory, this binds the view to the data in this object
 							var FieldView = can.view(
 								'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+input_type_map[val.type]+'.mustache', 
-								FieldEditor
+								FieldEditorObj
 							);
 							
 							can.$('#ExampleForm').append(
@@ -212,9 +242,11 @@ require(
 							
 							// If Add Field form is visible, hide it and show the hidden edit field, then bind actions to it
 							if($('#AddField:visible').length){ 
+//								console.log(self.FieldBuilder);
+//								console.log(self.FieldEditor);
 								// show the edit fields
-								self.FieldBuilder.hide();
-								self.FieldEditor.show();
+								$(self.FieldBuilder.element[0]).hide();
+								$(self.FieldEditor.element[0]).show();
 								
 								$('#FieldEditor_field_type').val(CurrentField.input_type);
 								

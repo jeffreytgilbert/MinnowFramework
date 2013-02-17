@@ -211,9 +211,7 @@ class FormBuilderPage extends PageController implements HTMLCapable, JSONCapable
 							$tmp_validator_type_methods[$method->name] = $method->class;
 						}
 					}
-//  					if($validator_type == 'CreditCard'){
-// 						pr($tmp_validator_type_methods);
-//  					}
+					
 					foreach($tmp_validator_type_methods as $the_method => $class_origin){
 						if(!in($the_method, array('__construct','cast','getData','getErrors', 'throwException'))){
 							$validator_type_methods['Valid'.$validator_type][] = $the_method;
