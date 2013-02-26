@@ -1,4 +1,3 @@
-
 Welcome to the MinnowFramework
 ==============================
 A tiny PHP framework for catching big fish. 
@@ -29,7 +28,7 @@ Shorter list of cons:
 
 - Requires PHP 5.4
 - Will not utilize namespace support in PHP until [namespace support](https://bugs.php.net/bug.php?id=47472) is fixed.
-- This framework is newly open sourced and may contain typos.
+- This framework is newly open sourced and may contain typos or lack some features in more mature frameworks.
 - This project needs more documentation, and more people to write it.
 
 > For more information on Minnow, please view our Demo site here: http://minnow.badpxl.com/
