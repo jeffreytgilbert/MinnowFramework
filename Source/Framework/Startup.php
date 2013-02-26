@@ -42,9 +42,9 @@ final class Startup{
 	}
 	
  	// launch the application only once, but when launched, store instance in runtime info static var
- 	public static function launchApplication($settings_folder_path='../../Settings', $application_name=null){
+ 	public static function launchApplication($settings_folder_path='../../Settings', $application_name, $web_root){
  		// constructor stores itself. no need for a return
-		new Startup($settings_folder_path, $application_name);
+		new Startup($settings_folder_path, $application_name, $web_root);
 	}
 
 	private $_application_name;
@@ -52,6 +52,9 @@ final class Startup{
 	
 	private $_settings_folder_path;
 	public function settingsFolderPath(){ return $this->_settings_folder_path; }
+	
+	private $_web_root;
+	public function getWebRoot(){ return $this->_web_root; }
 	
 	private $_now;
 	public function now(){ return $this->_now; }
@@ -90,36 +93,17 @@ final class Startup{
 // 	private $_systemCache;
 // 	public function systemCache(){ return $this->_systemCache; }
 	
-	private function __construct($settings_folder_path, $application_name){
+	private function __construct($settings_folder_path, $application_name, $web_root){
 		
+		// Why is this the default? For error catching? 
 		header('Content-Type: text/html; charset=UTF-8');
 		
-		// required first step for RuntimeInfo::instance to function
-		if($application_name){ // allow for application name to be set so multiple applications can be launched simultaneously 
-			$this->_application_name = $application_name;
-		} else { // else, look for an existing install 
-			$here = dirname(__FILE__);
-			$parts = explode(SLASH, $here);
-			array_pop($parts); // pop Framework off
-			array_push($parts, 'Applications');
-			$application_path = implode(SLASH, $parts);
-			$applications = File::foldersInFolderToArray($application_path);
-			if(count($applications) === 1){
-				$this->_application_name = current($applications);
-			} else if(count($applications) == 0) {
-				// @todo Eventually this prompts you with a GUI to setup your application by clicking through a form to setup some permissions and folders and dumps out the paths to things
-				die('Fatal Error: Startup was expecting an application name to load, and none were found in the Applications path.');
-			} else {
-				die('Fatal Error: Found multiple applications during startup, but none were specified when running Runtime::launchApplication().');
-			}
-			// cleanup
-			unset($here, $parts, $applications, $application_path);
-		}
-
+		$this->_application_name = $application_name;
 		$this->_settings_folder_path = $settings_folder_path;
+		$this->_web_root = $web_root;
 		
 		// Save the instance so it can be easily recalled
-		RuntimeInfo::instance($this->_application_name, $this);
+		RuntimeInfo::instance($this);
 		
 		// this is where i need to collect the settings information from the settings folder. 
 		

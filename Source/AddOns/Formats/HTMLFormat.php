@@ -39,7 +39,7 @@ trait HTMLFormat{
 		$this->addCss('Pages/'.$path);
 		$this->addJs('Pages/'.$path);
 		
-		$this->_page_body = $this->runCodeReturnOutput('Pages/'.$path.'/layout.php');
+		$this->_page_body = $Page->runCodeReturnOutput('Pages/'.$path.'/layout.php');
 		return $this->_page_body;
 	}
 	

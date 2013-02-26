@@ -15,6 +15,7 @@ class ValidString extends ValidationRule{
 	const INVALID_STRING_BAD_OPTION = 'INVALID_STRING_BAD_OPTION';
 	const INVALID_STRING_CONTAINS_NO_MATCH = 'INVALID_STRING_CONTAINS_NO_MATCH';
 	const INVALID_STRING_CONTAINS_BAD_MATCH = 'INVALID_STRING_CONTAINS_BAD_MATCH';
+	const INVALID_STRING_FORMAT = 'INVALID_STRING_FORMAT';
 	
 	public function minLength($limit){
 		if( mb_strlen($this->getData()) <= $limit ){ 
@@ -51,13 +52,27 @@ class ValidString extends ValidationRule{
 		return $this;
 	}
 	
+	public function allowValidVariableName(){
+		$matches = null;
+		preg_match('/[A-Za-z][A-Za-z0-9_]*/',  $this->getData(), $matches);
+		if(count($matches)>0){
+			if($this->getData() != current($matches)){
+				$this->throwException(self::INVALID_STRING_FORMAT);
+			}
+		} else {
+			$this->throwException(self::INVALID_STRING_FORMAT);
+		}
+		
+		return $this;
+	}
+	
 	public function allowSimpleAlphabetCharactersOnly($allow_dashes=false, $allow_underscores=false){
 		$allowances = '';
 		if($allow_dashes){ $allowances = '-'; }
 		if($allow_underscores){ $allowances = '_'; }
 		
 		if(preg_match('/[^A-z\s'.$allowances.']+/s',  $this->getData())){
-			$this->throwException(self::INVALID_WORD_FORMAT);
+			$this->throwException(self::INVALID_STRING_FORMAT);
 		}
 		return $this;
 	}
@@ -68,7 +83,7 @@ class ValidString extends ValidationRule{
 		if($allow_underscores){ $allowances = '_'; }
 		
 		if(preg_match('/[^\p{L}\p{M}\p{Zs}'.$allowances.']+/us',  $this->getData())){
-			$this->throwException(self::INVALID_WORD_FORMAT);
+			$this->throwException(self::INVALID_STRING_FORMAT);
 		}
 		return $this;
 	}

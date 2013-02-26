@@ -279,7 +279,7 @@ abstract class Controller {
 		extract($this->getDataObject()->toArray());
 		
 		if($start_path_in_view_folder){
-			$base_path = dirname(__FILE__).'/../../Applications/'.$this->getRuntimeInfo()->getApplicationName().'/Views/';
+			$base_path = Path::toViews();
 		} else {
 			$base_path = '';
 		}

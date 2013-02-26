@@ -32,58 +32,28 @@ final class Run{
 		self::fromRoot('Source/AddOns/Formats/'.$source_path);
 	}
 
-	public static function fromApp($source_path, $app_name=null){
-		if(is_null($app_name)){
-			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/'.$source_path);
-		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/'.$source_path);
-		}
+	public static function fromApp($source_path){
+		self::fromRoot('Source/Application/'.$source_path);
 	}
 
-	public static function fromActions($source_path, $app_name=null){
-		if(is_null($app_name)){
-			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Actions/'.$source_path);
-		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Actions/'.$source_path);
-		}
+	public static function fromActions($source_path){
+		self::fromRoot('Source/Application/Actions/'.$source_path);
 	}
 
-	public static function fromComponents($source_path, $app_name=null){
-		if(is_null($app_name)){
-			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Controllers/Components/'.$source_path);
-		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Controllers/Components/'.$source_path);
-		}
+	public static function fromComponents($source_path){
+		self::fromRoot('Source/Application/Controllers/Components/'.$source_path);
 	}
 
-	public static function fromControllers($source_path, $app_name=null){
-		if(is_null($app_name)){
-			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Controllers/'.$source_path);
-		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Controllers/'.$source_path);
-		}
+	public static function fromControllers($source_path){
+		self::fromRoot('Source/Application/Controllers/'.$source_path);
 	}
 
-	public static function fromModels($source_path, $app_name=null){
-		if(is_null($app_name)){
-			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Models/'.$source_path);
-		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Models/'.$source_path);
-		}
+	public static function fromModels($source_path){
+		self::fromRoot('Source/Application/Models/'.$source_path);
 	}
 	
-	public static function fromViews($source_path, $app_name=null){
-		if(is_null($app_name)){
-			$RuntimeInfo = RuntimeInfo::instance();
-			self::fromRoot('Source/Applications/'.$RuntimeInfo->getApplicationName().'/Actions/'.$source_path);
-		} else {
-			self::fromRoot('Source/Applications/'.$app_name.'/Actions/'.$source_path);
-		}
+	public static function fromViews($source_path){
+		self::fromRoot('Source/Application/Actions/'.$source_path);
 	}
 
 	public static function fromFramework($source_path){

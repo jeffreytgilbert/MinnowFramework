@@ -6,5 +6,5 @@
 
 require_once(dirname(__FILE__).'/../Source/Framework/Startup.php'); // path to source folder where framework and application logic are stored
 
-Startup::launchApplication( dirname(__FILE__).'/../../Settings/' ); // path to settings folder where all connection, helper, and application settings are stored
+Startup::launchApplication( dirname(__FILE__).'/../../Settings/', 'examplesite_com', dirname(__FILE__) ); // path to settings folder where all connection, helper, and application settings are stored
 RuntimeInfo::instance()->handlePageRequest();

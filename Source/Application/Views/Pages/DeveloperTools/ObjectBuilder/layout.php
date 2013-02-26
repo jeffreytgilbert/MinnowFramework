@@ -38,38 +38,32 @@
 	
 		<form name="ActionBuilder" id="PageBuilderForm" method="post">
 			<fieldset>
-				<legend>Build actions</legend>
+				<legend>PHP Object Builder</legend>
 				
-				<?php foreach($missing_actions as $table_name => $action_name): ?>
-				
-				<label class="checkbox">
-					<input 
-						name="ActionBuilder[<?= $table_name ?>]" 
-						type="checkbox" 
-						value="1" 
-					> <?= $action_name ?>Actions
-				</label>
-				
-				<?php endforeach; ?>
-				
-				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Build files</button>
-				</div>
-			</fieldset>
-		</form>
-		
-		<form name="ModelBuilder" id="PageBuilderForm" method="post">
-			<fieldset>
-				<legend>Build models</legend>
+				<h5>Missing Models:</h5>
 				
 				<?php foreach($missing_models as $table_name => $model_name): ?>
 				
 				<label class="checkbox">
 					<input 
-						name="ModelBuilder[<?= $table_name ?>]" 
+						name="ObjectBuilder[models][]" 
 						type="checkbox" 
-						value="1" 
+						value="<?= $table_name ?>" 
 					> <?= $model_name ?>
+				</label>
+				
+				<?php endforeach; ?>
+				
+				<h5>Missing Actions:</h5>
+				
+				<?php foreach($missing_actions as $table_name => $action_name): ?>
+				
+				<label class="checkbox">
+					<input 
+						name="ObjectBuilder[actions][]" 
+						type="checkbox" 
+						value="<?= $table_name ?>" 
+					> <?= $action_name ?>Actions
 				</label>
 				
 				<?php endforeach; ?>
