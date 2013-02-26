@@ -128,6 +128,34 @@ require(
 				} else {
 					$(element).parent().next().hide();
 				}
+			},
+			'#SaveChangesButton click': function(element, jquery_event){
+				console.log('clicked save');
+				
+				CurrentField.form_name = LiveFieldEditor.attr('form_name');
+				CurrentField.input_type = LiveFieldEditor.attr('input_type');
+				CurrentField.input_name = LiveFieldEditor.attr('input_name');
+				CurrentField.input_label = LiveFieldEditor.attr('input_label');
+				CurrentField.input_value = LiveFieldEditor.attr('input_value');
+				CurrentField.input_value = LiveFieldEditor.attr('default_value');
+				CurrentField.size = LiveFieldEditor.attr('size');
+				CurrentField.required = LiveFieldEditor.attr('required');
+				CurrentField.field_order = LiveFieldEditor.attr('field_order');
+
+				$('#EditField').hide();
+				$('#AddField').show();
+				
+			},
+			'#CancelChangesButton click': function(element, jquery_event){
+				console.log('clicked cancel');
+				
+				console.log(FormBuilderController.FieldEditor);
+				
+				$('#EditField').hide();
+				$('#AddField').show();
+			},
+			'#DeleteFieldButton click': function(element, jquery_event){
+				console.log('clicked delete');
 			}
 		});
 		
@@ -158,6 +186,48 @@ require(
 					$(element).parent().next().hide();
 				}
 			}
+		});
+		
+		
+		// Create a model here that gets passed in with all the values that need to be bound to this field
+		
+		FormField = can.Control({
+			init: function(){
+				
+				field_position = this.options.field_position;
+				
+				FieldEditorObj = this.options.FieldEditorObj;
+				
+				// In theory, this binds the view to the data in this object
+				var FieldView = can.view(
+					'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+FieldEditorObj.attr('input_type')+'.mustache', 
+					FieldEditorObj
+				);
+				
+				can.$('#ExampleForm').append(
+					'<div id="field'+field_position+'" class="field_editor_container" style="position:relative;" data-field-position="'+field_position+'">'
+						+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
+						+'<div class="field_container"></div>'
+						+'<div class="rules"></div>'
+					+'</div>'
+				);
+				
+				can.$('#field'+field_position).append(FieldView);
+				
+				$('#field'+field_position).hover(function(evt){
+					$(this).addClass('highlighted_field');
+					$('.top-right-link',$(this)).show();
+				}, function(evt){
+					$(this).removeClass('highlighted_field');
+					$('.top-right-link',$(this)).hide();
+				});
+//			},
+//			'hover': function(element, jquery_event){
+//				var self = this;
+//				console.log('this is the hover state');
+//				
+			}
+			
 		});
 		
 		FormBuilderController = can.Control({
@@ -191,6 +261,7 @@ require(
 						$('#ExampleForm').unbind().html('');
 						
 						var field_list = [];
+						var field_controllers = [];
 						
 						$.each(data, function(key, val){
 							field_position = field_list.length;
@@ -206,34 +277,15 @@ require(
 								field_order: field_position
 							});
 							
-							// In theory, this binds the view to the data in this object
-							var FieldView = can.view(
-								'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+input_type_map[val.type]+'.mustache', 
-								FieldEditorObj
-							);
-							
-							can.$('#ExampleForm').append(
-								'<div id="field'+field_position+'" class="field_editor_container" style="position:relative;" data-field-position="'+field_position+'">'
-									+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
-									+'<div class="field_container"></div>'
-									+'<div class="rules"></div>'
-								+'</div>'
-							);
-							
-							can.$('#field'+field_position).append(FieldView);
-							
-							$('#field'+field_position).hover(function(evt){
-								$(this).addClass('highlighted_field');
-								$('.top-right-link',$(this)).show();
-							}, function(evt){
-								$(this).removeClass('highlighted_field');
-								$('.top-right-link',$(this)).hide();
+							field_controllers[field_controllers.length] = new FormField('#field'+field_position,{
+								'field_position':field_position,
+								'FieldEditorObj':FieldEditorObj
 							});
 							
 						});
 						
 						// bind focus handler to the inputs that were just created
-						$('.top-right-link').click(function(){
+						$('.top-right-link').click(function(){ // edit link
 							
 							CurrentField = field_list[$(this).parent().attr('data-field-position')];
 							
@@ -268,7 +320,13 @@ require(
 						
 						// once fields have been built, throw the date picker handler on the time ones.
 						$('.bs_datepicker').each(function(){ 
-							$(this).datetimepicker();
+							$(this).datetimepicker({
+								format: "dd MM yyyy - hh:ii p",
+								autoclose: true,
+								todayBtn: true,
+								showMeridian: true,
+								minuteStep: 10
+							});
 						});
 						
 					},

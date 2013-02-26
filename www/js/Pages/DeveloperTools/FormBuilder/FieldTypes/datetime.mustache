@@ -1,12 +1,12 @@
 
 <div 
-	class="field input-append date bs_datepicker" 
-	id="dp_{{ form_name }}_{{ input_name }}" 
+	class="input-append date bs_datepicker form_datetime" 
 	data-date="{{ value }}" 
-	data-date-format="yyyy-mm-dd h:ii a"
 	>
 	<label>{{ input_label }}</label>
     <input 
+		id="{{ form_name }}_{{ input_name }}" 
+		name="{{ form_name }}[{{ input_name }}]" 
     	class="field" 
     	size="16" 
     	type="text" 
