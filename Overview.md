@@ -11,27 +11,26 @@
 
 **Source**: Contains the framework and your sites source as well as addons you can install to add functionality to your sites code.
 
-* **Applications**: You may store one or more applications in your application folder, however multiple applications are currently a test feature and should not be used for production code. This ability was added for futureproofing.
-* * **YourApplication**: The name of your application. This can be left as is, but it's recommended you rename your application to the parent domain name.
-* * * **Actions**: This contains the sugar methods for converting data into standard DataObject and DataCollections.
-* * * * **Custom**: Custom action classes inheriting from Actions.
-* * * * **Actions.php**: Edit this file to add sugar methods from connections, or write your own convenience methods and store them here.
-* * * **Models**: Contains data objects which mimic strongly typed objects used in OOP languages. All Objects inherit from a single Model class.
-* * * * **Custom**: Customized objects and collections created based on DataObject.
-* * * * **DataObject.php**: Edit this to add your own methods to all your custom data objects.
-* * * * **DataCollection.php**: Edit this to add your own methods to all your custom data collections.
-* * * **Controllers**: Controllers handle authentication, business logic, and output formats.
-* * * * **Pages**: Contains the controllers which handle all page requests.
-* * * * * **IndexPage.php**: A sample page which can be called from supported formats.
-* * * * * **Err404Page.php**: An example page for 404s which is used when a controller cannot be loaded or found.
-* * * * * **Scaffold-etc.php**: These pages will generate code or files based on a sitemap, the database, and forms you create in example formats.
-* * * * **Components**: Contains business logic components that would need to be reused over many controllers, like a login component for instance.
-* * * * **PageController.php**: Customize page requests and methods in all your controllers with authentication systems, convenience methods, menu logic, etc.
-* * * **Views**: All your view code is stored here. These files are generally PHP or HTML files, but third party support can be added to handle templates.
-* * * * **Pages**: All page request views here.
-* * * * **Emails**: All outgoing email templates here.
-* * * * **Themes**: The themes for your pages should be added here. No need for header / footer documents.
-* * * * **Fragments**: Primarily for menus and includes which aren't page requests, but can be considered "Widgets" or Menus.
+* **Application**: You may store one or more applications in your application folder, however multiple applications are currently a test feature and should not be used for production code. This ability was added for futureproofing.
+* * **Actions**: This contains the sugar methods for converting data into standard DataObject and DataCollections.
+* * * **Custom**: Custom action classes inheriting from Actions.
+* * * **Actions.php**: Edit this file to add sugar methods from connections, or write your own convenience methods and store them here.
+* * **Models**: Contains data objects which mimic strongly typed objects used in OOP languages. All Objects inherit from a single Model class.
+* * * **Custom**: Customized objects and collections created based on DataObject.
+* * * **DataObject.php**: Edit this to add your own methods to all your custom data objects.
+* * * **DataCollection.php**: Edit this to add your own methods to all your custom data collections.
+* * **Controllers**: Controllers handle authentication, business logic, and output formats.
+* * * **Pages**: Contains the controllers which handle all page requests.
+* * * * **IndexPage.php**: A sample page which can be called from supported formats.
+* * * * **Err404Page.php**: An example page for 404s which is used when a controller cannot be loaded or found.
+* * * * **Scaffold-etc.php**: These pages will generate code or files based on a sitemap, the database, and forms you create in example formats.
+* * * **Components**: Contains business logic components that would need to be reused over many controllers, like a login component for instance.
+* * * **PageController.php**: Customize page requests and methods in all your controllers with authentication systems, convenience methods, menu logic, etc.
+* * **Views**: All your view code is stored here. These files are generally PHP or HTML files, but third party support can be added to handle templates.
+* * * **Pages**: All page request views here.
+* * * **Emails**: All outgoing email templates here.
+* * * **Themes**: The themes for your pages should be added here. No need for header / footer documents.
+* * * **Fragments**: Primarily for menus and includes which aren't page requests, but can be considered "Widgets" or Menus.
 * **AddOns**: The extensibility layer of the framework. Third party software can be easily added as connections or helpers with relative ease, and use of settings documents is encouraged for easy deployment to multiple environments.
 * * **Connections**: Used for managing multiple connections to different data services, for instance MySQL, Memcached, SQLite, or 3rd parties like AmazonS3, Instagram, etc.
 * * **Connections.php**: A simple, standard looking "copy paste" away from adding a new connection type. In future iterations of the framework, this can be handled by a GUI control panel.
