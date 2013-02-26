@@ -20,6 +20,7 @@
 * * * **Scaffold.css**: Used by the scaffolding pages
 * * **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
 * * **default.css**: Included with every page request
+* **img**: Static files can be stored here. 
 
 **Source**: Contains the framework and your sites source as well as addons you can install to add functionality to your sites code.
 
@@ -65,4 +66,3 @@
 
 **db**: A folder for storing the database schemas and files. SQLite databases can also be stored here.
 
-**img**: Static files can be stored here. 
