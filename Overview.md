@@ -8,6 +8,18 @@
 * **favicon.ico**: A sample favorites icon. It should be noted that these are being phased out by some browsers for security/authenticity reasons.
 * **crossdomain.xml**: A cross domain file for handling Adobe Flash requests to your APIs. By default, everything is accessable.
 * **apple-touch-icon-etc.png**: Sample icons for Apple iOS devices which show up when making bookmarks on the home screen.
+* **js**: Contains all js and is linked to by the static.php file.
+* * **Pages**: Contains javascript files mapped to the View folder and controller folder structures.
+* * * **Index.js**: Sample js for the index page.
+* * * **Scaffold.js**: Used on the scaffolding pages to build forms and controller logic dynamically.
+* * **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
+* * **default.js**: Included with every page request
+* **css**: Contains all css and is linked to by the static.php file
+* * **Pages**: Contains css files mapped to the View folder an  d controller folder structures.
+* * * **Index.css**: Sample style for the index page.
+* * * **Scaffold.css**: Used by the scaffolding pages
+* * **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
+* * **default.css**: Included with every page request
 
 **Source**: Contains the framework and your sites source as well as addons you can install to add functionality to your sites code.
 
@@ -50,22 +62,6 @@
 * **Framework**: Contains all files in the framework. These files should not be changed by developers. Changing these potentially breaks compatibility with future framework updates.
 
 **Temp**: A temp folder included as a convenience for devs to store files. Currently has no ties to the framework so it can be ignored or removed.
-
-**js**: Contains all js and is linked to by the static.php file.
-
-* **Pages**: Contains javascript files mapped to the View folder and controller folder structures.
-* * **Index.js**: Sample js for the index page.
-* * **Scaffold.js**: Used on the scaffolding pages to build forms and controller logic dynamically.
-* **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
-* **default.js**: Included with every page request
-
-**css**: Contains all css and is linked to by the static.php file
-
-* **Pages**: Contains css files mapped to the View folder an	d controller folder structures.
-* * **Index.css**: Sample style for the index page.
-* * **Scaffold.css**: Used by the scaffolding pages
-* **Libraries**: A folder created for jquery, modernizr, bootstrap, and other js libraries. 
-* **default.css**: Included with every page request
 
 **db**: A folder for storing the database schemas and files. SQLite databases can also be stored here.
 
