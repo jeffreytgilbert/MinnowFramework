@@ -295,7 +295,7 @@ require(
 				'#SaveChangesButton click': function(element, jquery_event){
 					console.log('clicked save');
 					
-//					var OCurrentField = this.options.OCurrentField; // Collect the original data
+					var OCurrentField = this.options.OCurrentField; // Collect the original data
 //					console.log(OCurrentField);
 					
 //					console.log($('#FieldEditor_input_type').val());
@@ -303,8 +303,9 @@ require(
 					// Set validators
 					var validators = this.getValidatorSettings();
 					
-					var OCurrentField = new can.Observe({
+					OCurrentField.attr({
 						table_name: $('#FieldEditor_table_name').val(),
+						object_name: resolve_object_name($('#FieldEditor_table_name').val()),
 						input_type: $('#FieldEditor_input_type').val(),
 						input_name: $('#FieldEditor_input_name').val(),
 						input_label: $('#FieldEditor_input_label').val(),
@@ -313,8 +314,8 @@ require(
 						size: '',
 						required: '',
 						validators: validators
-					});
-//
+					},true);
+					
 					console.log(OCurrentField);
 					
 					// nuke the form field so the controller unbinds everything, then rebuild it with a new view
@@ -327,11 +328,36 @@ require(
 						OCurrentField
 					);
 					
-					// Maybe this could be replaced by this.element.append
 					$('.highlighted_as_editing_field .field_container').append(FieldView);
+					
+					$('.highlighted_as_editing_field .rules').unbind().html('');
+					
+					$.each(validators, function(i,n){
 						
+						var object_size = $.map(n.parameters, function(n, i) { return i; }).length;
+						var tooltip_text = '';
+						if(object_size > 0){
+//							console.log(object_size, n.method_details.method, n.method_details.validator );
+							$.each(n.parameters,function(i,n){
+								tooltip_text += n.parameter_details.parameter + ' = ' + n.value+ '<br>';
+							});
+						}
+						
+						$('.highlighted_as_editing_field .rules')
+							.append('<span class="label label-info tt" data-toggle="tooltip" title="'+tooltip_text+'">'+n.method_details.validator+'->'+n.method_details.method+'</span>');
+					});
+					
+					$('.highlighted_as_editing_field .tt').tooltip({placement:'bottom', html:true});
+					$('.highlighted_as_editing_field .tt').tooltip();
+					
 					$('.field_editor_container').removeClass('highlighted_as_editing_field');
 					
+					$('#EditField :input').val('');
+					$('#EditField :checked').attr('checked',false);
+					$('.parameters',self).hide();
+					$('#FieldEditorValidators').hide();
+					$('#ShowHideButtonOnEditor').html('show');
+
 					$('#EditField').hide();
 					$('#AddField').show();
 					
@@ -444,6 +470,7 @@ require(
 					
 					var OFieldEditor = new can.Observe({
 						table_name: $('#FieldBuilder_table_name').val(),
+						object_name: resolve_object_name($('#FieldBuilder_table_name').val()),
 						input_type: $('#FieldBuilder_input_type').val(),
 						input_name: $('#FieldBuilder_input_name').val(),
 						input_label: $('#FieldBuilder_input_label').val(),
@@ -472,6 +499,32 @@ require(
 					var CFormField = new FormFieldController($('.field_editor_container:last'),{
 						'OFieldEditor':OFieldEditor
 					});
+					
+					$('.field_editor_container:last .rules').unbind().html('');
+					
+					$.each(validators, function(i,n){
+						
+						var object_size = $.map(n.parameters, function(n, i) { return i; }).length;
+						var tooltip_text = '';
+						if(object_size > 0){
+//							console.log(object_size, n.method_details.method, n.method_details.validator );
+							$.each(n.parameters,function(i,n){
+								tooltip_text += n.parameter_details.parameter + ' = ' + n.value+ '<br>';
+							});
+						}
+						
+						$('.field_editor_container:last .rules')
+							.append('<span class="label label-info tt" data-toggle="tooltip" title="'+tooltip_text+'">'+n.method_details.validator+'->'+n.method_details.method+'</span> ');
+					});
+					
+					$('.field_editor_container:last .tt').tooltip({placement:'bottom', html:true});
+					$('.field_editor_container:last .tt').tooltip();
+
+					$('#AddField :input').val('');
+					$('#AddField :checked').attr('checked',false);
+					$('.parameters',self).hide();
+					$('#FieldBuilderValidators').hide();
+					$('#ShowHideButtonOnBuilder').html('show');
 					
 				},
 				
@@ -502,7 +555,7 @@ require(
 					
 					console.log('Caught change event from table generator picker');
 					
-					var example_form_name = resolve_object_name(element.val());
+					var object_name = resolve_object_name(element.val());
 					var table_name = element.val();
 					
 					$.ajax({
@@ -519,7 +572,8 @@ require(
 								//field_position = field_list.length;
 								
 								var OFieldEditor = new can.Observe({
-									table_name: example_form_name,
+									table_name: table_name,
+									object_name: object_name,
 									input_type: input_type_map[val.type],
 									input_name: key,
 									input_label: resolve_input_label(key),
