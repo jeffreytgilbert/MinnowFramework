@@ -25,7 +25,7 @@
 					
 					<tr>
 						<td class="span9">
-							<a href="<?= $SitemapPage->getString('url') ?>" 
+							<a href="/<?= $SitemapPage->getString('url') ?>" 
 								title="<?= $SitemapPage->getStringAsHTMLEntities('description') ?>"
 							><?= ($SitemapPage->getString('title') == '')?$SitemapPage->getStringAsHTMLEntities('url'):$SitemapPage->getStringAsHTMLEntities('title') ?></a>
 						</td>
