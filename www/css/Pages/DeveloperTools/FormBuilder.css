@@ -32,7 +32,7 @@
 	margin-top:-1.5em;
 }
 
-.top-right-link{
+.FormFieldEditButton{
 	position:absolute;
 	top:4px;
 	right:4px;
@@ -60,7 +60,7 @@ border-bottom-right-radius: 0 !important;
 	border-bottom:1px solid #ccc;
 }
 
-.highlighted_as_editing_field .top-right-link{
+.highlighted_as_editing_field .FormFieldEditButton{
 	display:none !important;
 }
 

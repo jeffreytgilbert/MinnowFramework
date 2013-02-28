@@ -71,6 +71,14 @@ require(
 			return d;
 		};
 		
+		var reset_validator_states = function(){
+			$('#EditField :input, #AddField :input').val('');
+			$('#EditField :checked, #AddField :checked').attr('checked',false);
+			$('.parameters').hide();
+			$('#FieldEditorValidators, #FieldBuilderValidators').hide();
+			$('#ShowHideButtonOnEditor, #ShowHideButtonOnBuilder').html('show');
+		};
+		
 		// Make a list for model storage
 		// Store models in the list as fields are created for them in the form builder
 		// Use the models to bind the data to the view
@@ -95,10 +103,6 @@ require(
 				required: '',
 				field_order: ''
 			});
-			
-			
-			
-			// Create a model here that gets passed in with all the values that need to be bound to this field
 			
 			
 			
@@ -143,7 +147,7 @@ require(
 //					console.log('this is the mouse over state');
 					
 					$(this.element).addClass('highlighted_field');
-					$('.top-right-link',$(this.element)).show();
+					$('.FormFieldEditButton',$(this.element)).show();
 					
 				},
 				
@@ -151,12 +155,14 @@ require(
 //					console.log('this is the mouse out state');
 					
 					$(this.element).removeClass('highlighted_field');
-					$('.top-right-link',$(this.element)).hide();
+					$('.FormFieldEditButton',$(this.element)).hide();
 				},
 				
 				// bind focus handler to the inputs that were just created
-				'.top-right-link click':function(element, jquery_event){
-//					CurrentField = field_list[$(this.element).attr('data-field-position')];
+				'.FormFieldEditButton click':function(element, jquery_event){
+					
+					reset_validator_states();
+					
 					var OCurrentField = this.options.OFieldEditor;
 					
 					// copy over all the field data to the editor.
@@ -168,16 +174,24 @@ require(
 					// Update the field type picker to the correct input type
 					$('#FieldEditor_input_type').val(OCurrentField.attr('input_type'));
 					
+//					console.log(OCurrentField);
+					
+//					console.log(OCurrentField.attr('validators'));
+					
+					OCurrentField.attr('validators').each(function(validator_data, validator_method_id){
+						
+						$('#'+validator_method_id).attr('checked','checked').parent().next().show();
+						
+						validator_data.parameters.each(function(parameter_data, validator_parameter_id){
+							$('#'+validator_parameter_id).val(parameter_data.value);
+						});
+					});
+					
 					// If Add Field form is visible, hide it and show the hidden edit field, then bind actions to it
 					if($('#AddField:visible').length){ 
-//						console.log(self.FieldBuilder);
-//						console.log(self.FieldEditor);
 						// show the edit fields
 						$('#AddField').hide();
 						$('#EditField').show();
-						
-//					} else {
-						// do things when its already visible, but not the same things done when its not visible
 					}
 					
 					$('.field_editor_container').removeClass('highlighted_as_editing_field');
@@ -271,8 +285,6 @@ require(
 							}
 						}
 						
-//						console.log($(this).attr('id'));
-//						console.log(OCurrentFieldInEditor.attr());
 //						console.log($(this).attr('name'),': ', $(this).val());
 					});
 //					console.log(validators);
@@ -285,7 +297,8 @@ require(
 				},
 				
 				'.methods change': function(element, jquery_event){
-					if($(element).filter(':checked').val()){
+//					console.log('This parameter was opted in',$(element));
+					if($(element)[0].checked == true){
 						$(element).parent().next().show();
 					} else {
 						$(element).parent().next().hide();
@@ -321,7 +334,7 @@ require(
 					// nuke the form field so the controller unbinds everything, then rebuild it with a new view
 					$('.highlighted_as_editing_field').children('.field_container').remove();
 					
-					$('.highlighted_as_editing_field .top-right-link').after('<div class="field_container"></div>');
+					$('.highlighted_as_editing_field .FormFieldEditButton').after('<div class="field_container"></div>');
 					
 					var FieldView = can.view(
 						'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+OCurrentField.attr('input_type')+'.mustache', 
@@ -344,7 +357,8 @@ require(
 						}
 						
 						$('.highlighted_as_editing_field .rules')
-							.append('<span class="label label-info tt" data-toggle="tooltip" title="'+tooltip_text+'">'+n.method_details.validator+'->'+n.method_details.method+'</span>');
+							.append('<span class="label label-info tt" data-toggle="tooltip" title="'+tooltip_text+'">'
+									+n.method_details.validator+'->'+n.method_details.method+'</span> ');
 					});
 					
 					$('.highlighted_as_editing_field .tt').tooltip({placement:'bottom', html:true});
@@ -352,12 +366,8 @@ require(
 					
 					$('.field_editor_container').removeClass('highlighted_as_editing_field');
 					
-					$('#EditField :input').val('');
-					$('#EditField :checked').attr('checked',false);
-					$('.parameters',self).hide();
-					$('#FieldEditorValidators').hide();
-					$('#ShowHideButtonOnEditor').html('show');
-
+					reset_validator_states();
+					
 					$('#EditField').hide();
 					$('#AddField').show();
 					
@@ -456,17 +466,7 @@ require(
 					
 					var ExampleForm = $('#ExampleForm');
 					
-//					var OFieldEditor = $('#field'+this.options.OCurrentField.attr('field_position')).data('OFieldEditor');
-//					console.log(OFieldEditor);
-					
-//					var OCurrentField = this.options.OCurrentField;
-//					console.log(this.options.OCurrentField);
-					
 					validators = this.getValidatorSettings();
-//					
-//					console.log(OCurrentFieldInEditor);
-//					// Set changed data back to the object the editor originally spawned from
-//					//OCurrentField.attr(OCurrentFieldInEditor.attr());
 					
 					var OFieldEditor = new can.Observe({
 						table_name: $('#FieldBuilder_table_name').val(),
@@ -490,7 +490,7 @@ require(
 					// Build a container for the form field to be applied
 					ExampleForm.append(
 						'<div class="field_editor_container" style="position:relative;">'
-							+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
+							+'<button class="FormFieldEditButton btn-mini" style="display:none">Edit</button>'
 							+'<div class="field_container"></div>'
 							+'<div class="rules"></div>'
 						+'</div>'
@@ -514,22 +514,21 @@ require(
 						}
 						
 						$('.field_editor_container:last .rules')
-							.append('<span class="label label-info tt" data-toggle="tooltip" title="'+tooltip_text+'">'+n.method_details.validator+'->'+n.method_details.method+'</span> ');
+							.append('<span class="label label-info tt" data-toggle="tooltip" title="'+tooltip_text+'">'
+									+n.method_details.validator+'->'+n.method_details.method+'</span> ');
 					});
 					
 					$('.field_editor_container:last .tt').tooltip({placement:'bottom', html:true});
 					$('.field_editor_container:last .tt').tooltip();
-
-					$('#AddField :input').val('');
-					$('#AddField :checked').attr('checked',false);
-					$('.parameters',self).hide();
-					$('#FieldBuilderValidators').hide();
-					$('#ShowHideButtonOnBuilder').html('show');
+					
+					reset_validator_states();
+					
 					
 				},
 				
 				'.methods change': function(element, jquery_event){
-					if($(element).filter(':checked').val()){
+					console.log('This parameter was opted in',$(element));
+					if($(element)[0].checked == true){
 						$(element).parent().next().show();
 					} else {
 						$(element).parent().next().hide();
@@ -591,7 +590,7 @@ require(
 								// Build a container for the form field to be applied
 								ExampleForm.append(
 									'<div class="field_editor_container" style="position:relative;">'
-										+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
+										+'<button class="FormFieldEditButton btn-mini" style="display:none">Edit</button>'
 										+'<div class="field_container"></div>'
 										+'<div class="rules"></div>'
 									+'</div>'
