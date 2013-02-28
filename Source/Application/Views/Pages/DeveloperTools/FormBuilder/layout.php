@@ -46,35 +46,62 @@ var ValidatorList = {'validators':<?= json_encode($validators) ?>};
 	
 		<form name="FieldBuilder" id="FieldBuilderForm">
 			<fieldset>
-				<legend>Form Editor</legend>
+				<legend>Configure your field:</legend>
 				
 				<div id="AddField">
 				
+					<Label>Field Type:</Label>
 					<select 
-						name="FieldBuilder[field_type]" 
-						id="FieldBuilder_field_type" 
-						class="input-block-level">
-						<option>Field Type:</option>
+						name="FieldBuilder[input_type]" 
+						id="FieldBuilder_input_type" 
+						class="input-block-level"
+						required="required">
+						<option></option>
 					</select>
 					
+					<label for="FieldBuilder_table_name">Table name</label>
+					<input 
+						name="FieldBuilder[table_name]" 
+						id="FieldBuilder_table_name" 
+						type="text" 
+						class="input-block-level" 
+						placeholder="example_table_name" 
+						required="required"
+						value="">
+					
+					<label for="FieldBuilder_input_label">Input label</label>
 					<input 
 						name="FieldBuilder[input_label]" 
-						id="FieldBuilder_field_type" 
+						id="FieldBuilder_input_label" 
 						type="text" 
 						class="input-block-level" 
-						placeholder="Label" 
+						placeholder="Example field label" 
+						required="required"
 						value="">
 					
+					<label for="FieldBuilder_input_name">DB column name</label>
+					<input 
+						name="FieldBuilder[input_name]" 
+						id="FieldBuilder_input_name" 
+						type="text" 
+						class="input-block-level" 
+						placeholder="example_column_name" 
+						required="required"
+						value="">
+					
+					<label for="FieldEditor_default_value">Default Value</label>
 					<input 
 						name="FieldBuilder[default_value]" 
-						id="FieldBuilder_field_type" 
+						id="FieldBuilder_default_value" 
 						type="text" 
 						class="input-block-level" 
-						placeholder="Default Value" 
+						placeholder="" 
 						value="">
 					
-					<h5>Form validation methods:</h5>
-					
+					<div>
+						<button class="btn-mini" style="float:right" id="ShowHideButtonOnBuilder">show</button>
+						<h5>Form validation methods:</h5>
+					</div>
 					<div id="FieldBuilderValidators"></div>
 					
 					<div class="form-actions">
@@ -90,6 +117,18 @@ var ValidatorList = {'validators':<?= json_encode($validators) ?>};
 	</div>
 </div>
 
-
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="outline: -webkit-focus-ring-color auto 0;">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+    <h3 id="myModalLabel">Hey! You forgot something!</h3>
+  </div>
+  <div class="modal-body">
+    <p>One or more of the settings required to build this form field wasn't filled in, so it could not be built.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
 
 

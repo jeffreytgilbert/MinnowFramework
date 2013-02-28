@@ -6,6 +6,7 @@ require(
 		'bs/bootstrap-datetimepicker',
 		'bs/bootstrap-colorpicker',
 		'can/view/mustache'
+//		'can/vendor/tracker/tracker'
 	],
 	function($, can){
 		
@@ -77,276 +78,506 @@ require(
 		// 
 
 		// Set up the page routing for when table selection changes
-		can.route( 'filter/:table_name' );
-		can.route( '', { } );
-		
-		// SampleFormController could control how the fields react once the data has been entered into them
-		
-		var LiveFieldEditor = new can.Observe({
-			form_name: '',
-			input_name: '',
-			input_label: '',
-			input_value: '',
-			size: '',
-			required: '',
-			field_order: ''
-		});
-		
-		FieldEditorController = can.Control({
-			self:null,
-			FieldEditorView:null,
-			init: function(){
-				this.self = $('#EditField');
-				
-				this.self.hide();
-				
-				this.FieldEditorView = can.view(
-					'/js/Pages/DeveloperTools/FormBuilder/FieldEditor.mustache', 
-					LiveFieldEditor
-				);
-
-				// jquery selector, but through can so it can have data bindings
-				can.$('#EditField').append(this.FieldEditorView);
-				
-				$.each(input_types_allowed, function(key,value){
-					$('#FieldEditor_field_type').append('<option>'+value+'</option>'); 
-				});
-				
-				can.$('#FieldEditorValidators').append(can.view(
-					'/js/Pages/DeveloperTools/FormBuilder/EditorValidatorInput.mustache',
-					ValidatorList
-				));
-				
-				$('#EditField .method_name').tooltip({placement:'right'});
-				$('#EditField .method_name').tooltip();
-				
-				$('.parameters',this.self).hide();
-			},
-			'.methods change': function(element, jquery_event){
-				if($(element).filter(':checked').val()){
-					$(element).parent().next().show();
-				} else {
-					$(element).parent().next().hide();
-				}
-			},
-			'#SaveChangesButton click': function(element, jquery_event){
-				console.log('clicked save');
-				
-				CurrentField.form_name = LiveFieldEditor.attr('form_name');
-				CurrentField.input_type = LiveFieldEditor.attr('input_type');
-				CurrentField.input_name = LiveFieldEditor.attr('input_name');
-				CurrentField.input_label = LiveFieldEditor.attr('input_label');
-				CurrentField.input_value = LiveFieldEditor.attr('input_value');
-				CurrentField.input_value = LiveFieldEditor.attr('default_value');
-				CurrentField.size = LiveFieldEditor.attr('size');
-				CurrentField.required = LiveFieldEditor.attr('required');
-				CurrentField.field_order = LiveFieldEditor.attr('field_order');
-
-				$('#EditField').hide();
-				$('#AddField').show();
-				
-			},
-			'#CancelChangesButton click': function(element, jquery_event){
-				console.log('clicked cancel');
-				
-				console.log(FormBuilderController.FieldEditor);
-				
-				$('#EditField').hide();
-				$('#AddField').show();
-			},
-			'#DeleteFieldButton click': function(element, jquery_event){
-				console.log('clicked delete');
-			}
-		});
-		
-		FieldBuilderController = can.Control({
-			self:null,
-			init: function(){
-				this.self = $('#AddField');
-				
-				$.each(input_types_allowed, function(key,value){
-					$('#FieldBuilder_field_type').append('<option>'+value+'</option>'); 
-				});
-				
-				can.$('#FieldBuilderValidators').append(can.view(
-					'/js/Pages/DeveloperTools/FormBuilder/BuilderValidatorInput.mustache',
-					ValidatorList
-				));
-				
-				
-				$('#AddField .method_name').tooltip({placement:'right'});
-				$('#AddField .method_name').tooltip();
-				
-				$('.parameters',this.self).hide();
-			},
-			'.methods change': function(element, jquery_event){
-				if($(element).filter(':checked').val()){
-					$(element).parent().next().show();
-				} else {
-					$(element).parent().next().hide();
-				}
-			}
-		});
-		
-		
-		// Create a model here that gets passed in with all the values that need to be bound to this field
-		
-		FormField = can.Control({
-			init: function(){
-				
-				field_position = this.options.field_position;
-				
-				FieldEditorObj = this.options.FieldEditorObj;
-				
-				// In theory, this binds the view to the data in this object
-				var FieldView = can.view(
-					'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+FieldEditorObj.attr('input_type')+'.mustache', 
-					FieldEditorObj
-				);
-				
-				can.$('#ExampleForm').append(
-					'<div id="field'+field_position+'" class="field_editor_container" style="position:relative;" data-field-position="'+field_position+'">'
-						+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
-						+'<div class="field_container"></div>'
-						+'<div class="rules"></div>'
-					+'</div>'
-				);
-				
-				can.$('#field'+field_position).append(FieldView);
-				
-				$('#field'+field_position).hover(function(evt){
-					$(this).addClass('highlighted_field');
-					$('.top-right-link',$(this)).show();
-				}, function(evt){
-					$(this).removeClass('highlighted_field');
-					$('.top-right-link',$(this)).hide();
-				});
-//			},
-//			'hover': function(element, jquery_event){
-//				var self = this;
-//				console.log('this is the hover state');
-//				
-			}
-			
-		});
-		
-		FormBuilderController = can.Control({
-			
-			// instance cache for jquery objects for these two forms
-			FieldBuilder:null,
-			FieldEditor:null,
-			
-			init: function(){
-				
-				this.FieldBuilder = new FieldBuilderController('#AddField',{
-					// options to pass builder constructor
-				});
-				
-				this.FieldEditor = new FieldEditorController('#EditField',{
-					// options to pass editor constructor
-				});
-				
-			},
-			'#TablePicker change': function(element, jquery_event){
-				
-				var self = this;
-				
-				var example_form_name = resolve_object_name(element.val());
-				var table_name = element.val();
-				
-				$.ajax({
-					url: '/DeveloperTools/FormBuilder.JSON/?TableDefinition[table_name]='+table_name,
-					dataType: 'json',
-					success:function(data, textStatus, jqXHR){
-						$('#ExampleForm').unbind().html('');
-						
-						var field_list = [];
-						var field_controllers = [];
-						
-						$.each(data, function(key, val){
-							field_position = field_list.length;
-							field_list[field_position] = FieldEditorObj = new can.Observe({
-								form_name: example_form_name,
-								input_type: input_type_map[val.type],
-								input_name: key,
-								input_label: resolve_input_label(key),
-								input_value: (!val['default'])?'':val['default'],
-								default_value: (!val['default'])?'':val['default'],
-								size: val['size'],
-								required: (!val['required'])?'':'required',
-								field_order: field_position
-							});
-							
-							field_controllers[field_controllers.length] = new FormField('#field'+field_position,{
-								'field_position':field_position,
-								'FieldEditorObj':FieldEditorObj
-							});
-							
-						});
-						
-						// bind focus handler to the inputs that were just created
-						$('.top-right-link').click(function(){ // edit link
-							
-							CurrentField = field_list[$(this).parent().attr('data-field-position')];
-							
-							LiveFieldEditor.attr('form_name', CurrentField.form_name);
-							LiveFieldEditor.attr('input_type', CurrentField.input_type);
-							LiveFieldEditor.attr('input_name', CurrentField.input_name);
-							LiveFieldEditor.attr('input_label', CurrentField.input_label);
-							LiveFieldEditor.attr('input_value', CurrentField.input_value);
-							LiveFieldEditor.attr('default_value', CurrentField.input_value);
-							LiveFieldEditor.attr('size', CurrentField.size);
-							LiveFieldEditor.attr('required', CurrentField.required);
-							LiveFieldEditor.attr('field_order', CurrentField.field_order);
-							
-							// If Add Field form is visible, hide it and show the hidden edit field, then bind actions to it
-							if($('#AddField:visible').length){ 
-//								console.log(self.FieldBuilder);
-//								console.log(self.FieldEditor);
-								// show the edit fields
-								$(self.FieldBuilder.element[0]).hide();
-								$(self.FieldEditor.element[0]).show();
-								
-								$('#FieldEditor_field_type').val(CurrentField.input_type);
-								
-							} else {
-								// do things when its already visible
-							}
-							
-							$('#FieldEditor_field_type').val(CurrentField.input_type);
-							
-							
-						});
-						
-						// once fields have been built, throw the date picker handler on the time ones.
-						$('.bs_datepicker').each(function(){ 
-							$(this).datetimepicker({
-								format: "dd MM yyyy - hh:ii p",
-								autoclose: true,
-								todayBtn: true,
-								showMeridian: true,
-								minuteStep: 10
-							});
-						});
-						
-					},
-					failure:function(jqXHR, textStatus, errorThrown){
-						console.log(textStatus + ':' + errorThrown);
-					}
-				});				
-			},
-			'#FieldPicker change': function(){
-				$('#field_type_picker').change(function(key,value){
-					console.log('show new options for this field type.');
-				});
-			}
-		});
+//		can.route( 'filter/:table_name' );
+//		can.route( '', { } );
+//		
 		
 		$(document).ready(function(){
+			
+			// SampleFormController could control how the fields react once the data has been entered into them
+			
+			var OCurrentFieldInEditor = new can.Observe({
+				form_name: '',
+				input_name: '',
+				input_label: '',
+				input_value: '',
+				size: '',
+				required: '',
+				field_order: ''
+			});
+			
+			
+			
+			// Create a model here that gets passed in with all the values that need to be bound to this field
+			
+			
+			
+					
+			
+			// This controller manages the functionality of a field that has been added to the example form
+			var FormFieldController = can.Control({ // Declare the Form Field class structure
+				init: function(element, options){
+					
+					var self = $(this.element);
+					
+					console.log('This form field has been created at position '+this.options.field_position);
+					
+					var OFieldEditor = this.options.OFieldEditor;
+					
+					// In theory, this binds the view to the data in this object
+					var FieldView = can.view(
+						'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+OFieldEditor.attr('input_type')+'.mustache', 
+						OFieldEditor
+					);
+					
+					// Maybe this could be replaced by this.element.append
+					$('.field_container',self).append(FieldView);
+					
+					// Store the field editor observer object used to render the view in the view so it can be retrieved and edited
+					self.data('OFieldEditor',OFieldEditor);
+					
+					// once fields have been built, throw the date picker handler on the time ones.
+					$('.bs_datepicker', element).each(function(){ 
+						$(this).datetimepicker({
+							format: "dd MM yyyy - hh:ii p",
+							autoclose: true,
+							todayBtn: true,
+							showMeridian: true,
+							minuteStep: 10
+						});
+					});
+
+				},
+				
+				'mouseenter': function(element, jquery_event){
+//					console.log('this is the mouse over state');
+					
+					$(this.element).addClass('highlighted_field');
+					$('.top-right-link',$(this.element)).show();
+					
+				},
+				
+				'mouseleave': function(element, jquery_event){
+//					console.log('this is the mouse out state');
+					
+					$(this.element).removeClass('highlighted_field');
+					$('.top-right-link',$(this.element)).hide();
+				},
+				
+				// bind focus handler to the inputs that were just created
+				'.top-right-link click':function(element, jquery_event){
+//					CurrentField = field_list[$(this.element).attr('data-field-position')];
+					var OCurrentField = this.options.OFieldEditor;
+					
+					// copy over all the field data to the editor.
+					OCurrentFieldInEditor.attr(OCurrentField.attr());
+					
+					// set the current field observer in the editor so it can save changes 
+					CFieldEditor.setCurrentFieldObj(OCurrentField);
+					
+					// Update the field type picker to the correct input type
+					$('#FieldEditor_input_type').val(OCurrentField.attr('input_type'));
+					
+					// If Add Field form is visible, hide it and show the hidden edit field, then bind actions to it
+					if($('#AddField:visible').length){ 
+//						console.log(self.FieldBuilder);
+//						console.log(self.FieldEditor);
+						// show the edit fields
+						$('#AddField').hide();
+						$('#EditField').show();
+						
+//					} else {
+						// do things when its already visible, but not the same things done when its not visible
+					}
+					
+					$('.field_editor_container').removeClass('highlighted_as_editing_field');
+					$(element).parent().addClass('highlighted_as_editing_field');
+					
+				}
+				
+			});		
+			
+			
+			
+			
+			// This controller manages editing view of the Form Editor panel
+			var FieldEditorController = can.Control({ // Declare the Field editor class structure
+				
+				init: function(element, options){
+					
+					console.log('Form field editor initialized');
+					
+					var self = $(this.element);
+					
+					self.hide();
+					
+					var VFieldEditor = can.view(
+						'/js/Pages/DeveloperTools/FormBuilder/FieldEditor.mustache', 
+						OCurrentFieldInEditor
+					);
+
+					// jquery selector, but through can so it can have data bindings
+					can.$('#EditField').append(VFieldEditor);
+					
+					$.each(input_types_allowed, function(key,value){
+						$('#FieldEditor_input_type').append('<option>'+value+'</option>'); 
+					});
+					
+					can.$('#FieldEditorValidators').append(can.view(
+						'/js/Pages/DeveloperTools/FormBuilder/EditorValidatorInput.mustache',
+						ValidatorList
+					));
+					
+					$('#EditField .method_name').tooltip({placement:'right'});
+					$('#EditField .method_name').tooltip();
+					
+					$('.parameters',this.self).hide();
+					
+					// Initialize validator list states/handlers
+
+					$('#ShowHideButtonOnEditor').toggle(function(){
+						$('#FieldEditorValidators').slideDown('fast');
+						$(this).html('hide');
+					},function(){
+						$('#FieldEditorValidators').slideUp('fast');
+						$(this).html('show');
+					});
+					
+					$('#ShowHideButtonOnBuilder').toggle(function(){
+						$('#FieldBuilderValidators').slideDown('fast');
+						$(this).html('hide');
+					},function(){
+						$('#FieldBuilderValidators').slideUp('fast');
+						$(this).html('show');
+					});
+					
+					$('#FieldEditorValidators').hide();
+					$('#FieldBuilderValidators').hide();
+					
+				},
+				
+				getValidatorSettings: function(){
+					
+					var validators = {};
+					// Run through all the fields and 
+					$('#FieldEditorValidators :input').each(function(){
+						if($(this).attr('name') && $(this).attr('name') != ''){
+							
+//							console.log($(this).attr('name'),': ', $(this).val());
+//							console.log($('#'+$(this).attr('id')+':checked').length);
+//							console.log($(this).attr('type'));
+							if($(this).attr('type') == 'checkbox' && $('#'+$(this).attr('id')+':checked').length > 0){
+								var parameters = {};
+								$(':input',$(this).parent().next()).each(function(){
+									parameters[$(this).attr('id')] = {
+										'parameter_details':$(this).data(),
+										'value':$(this).val()
+									};
+								});
+								validators[$(this).attr('id')] = {
+									'method_details':$(this).data(),
+									'parameters':parameters
+								};
+							}
+						}
+						
+//						console.log($(this).attr('id'));
+//						console.log(OCurrentFieldInEditor.attr());
+//						console.log($(this).attr('name'),': ', $(this).val());
+					});
+//					console.log(validators);
+					//OCurrentFieldInEditor.attr('validators',validators);
+					return validators;
+				},
+				
+				setCurrentFieldObj: function(OCurrentField){ 
+					this.options.OCurrentField = OCurrentField; 
+				},
+				
+				'.methods change': function(element, jquery_event){
+					if($(element).filter(':checked').val()){
+						$(element).parent().next().show();
+					} else {
+						$(element).parent().next().hide();
+					}
+				},
+				
+				'#SaveChangesButton click': function(element, jquery_event){
+					console.log('clicked save');
+					
+//					var OCurrentField = this.options.OCurrentField; // Collect the original data
+//					console.log(OCurrentField);
+					
+//					console.log($('#FieldEditor_input_type').val());
+					
+					// Set validators
+					var validators = this.getValidatorSettings();
+					
+					var OCurrentField = new can.Observe({
+						table_name: $('#FieldEditor_table_name').val(),
+						input_type: $('#FieldEditor_input_type').val(),
+						input_name: $('#FieldEditor_input_name').val(),
+						input_label: $('#FieldEditor_input_label').val(),
+						input_value: $('#FieldEditor_default_value').val(),
+						default_value: $('#FieldEditor_default_value').val(),
+						size: '',
+						required: '',
+						validators: validators
+					});
+//
+					console.log(OCurrentField);
+					
+					// nuke the form field so the controller unbinds everything, then rebuild it with a new view
+					$('.highlighted_as_editing_field').children('.field_container').remove();
+					
+					$('.highlighted_as_editing_field .top-right-link').after('<div class="field_container"></div>');
+					
+					var FieldView = can.view(
+						'/js/Pages/DeveloperTools/FormBuilder/FieldTypes/'+OCurrentField.attr('input_type')+'.mustache', 
+						OCurrentField
+					);
+					
+					// Maybe this could be replaced by this.element.append
+					$('.highlighted_as_editing_field .field_container').append(FieldView);
+						
+					$('.field_editor_container').removeClass('highlighted_as_editing_field');
+					
+					$('#EditField').hide();
+					$('#AddField').show();
+					
+				},
+				
+				'#CancelChangesButton click': function(element, jquery_event){
+					console.log('clicked cancel');
+					
+					$('.field_editor_container').removeClass('highlighted_as_editing_field');
+
+					$('#EditField').hide();
+					$('#AddField').show();
+				},
+				
+				'#DeleteFieldButton click': function(element, jquery_event){
+					console.log('clicked delete');
+					
+					$('.highlighted_as_editing_field').remove();
+					
+					$('#EditField').hide();
+					$('#AddField').show();
+				}
+			});
+			
+
+			
+			
+			
+			// This controller manages the Add Field view and its functionality for the Form Editor
+			var FieldBuilderController = can.Control({ // Declare the Field builder class structure
+				init: function(element, options){
+					
+					console.log('Form field builder initialized');
+					
+					var self = $(this.element);
+					
+					$.each(input_types_allowed, function(key,value){
+						$('#FieldBuilder_input_type').append('<option>'+value+'</option>'); 
+					});
+					
+					can.$('#FieldBuilderValidators').append(can.view(
+						'/js/Pages/DeveloperTools/FormBuilder/BuilderValidatorInput.mustache',
+						ValidatorList
+					));
+					
+					$('#AddField .method_name').tooltip({placement:'right'});
+					$('#AddField .method_name').tooltip();
+					
+					$('.parameters',self).hide();
+				},
+				
+				getValidatorSettings: function(){
+					
+					var validators = {};
+					// Run through all the fields and 
+					$('#FieldBuilderValidators :input').each(function(){
+						if($(this).attr('name') && $(this).attr('name') != ''){
+							
+//							console.log($(this).attr('name'),': ', $(this).val());
+//							console.log($('#'+$(this).attr('id')+':checked').length);
+//							console.log($(this).attr('type'));
+							if($(this).attr('type') == 'checkbox' && $('#'+$(this).attr('id')+':checked').length > 0){
+								var parameters = {};
+								$(':input',$(this).parent().next()).each(function(){
+									parameters[$(this).attr('id')] = {
+										'parameter_details':$(this).data(),
+										'value':$(this).val()
+									};
+								});
+								validators[$(this).attr('id')] = {
+									'method_details':$(this).data(),
+									'parameters':parameters
+								};
+							}
+						}
+						
+//						console.log($(this).attr('id'));
+//						console.log(OCurrentFieldInEditor.attr());
+//						console.log($(this).attr('name'),': ', $(this).val());
+					});
+					//console.log(validators);
+					//OCurrentFieldInEditor.attr('validators',validators);
+					return validators;
+				},
+				
+				'#AddFieldButton click': function(element, jquery_event){
+					console.log('clicked add field button');
+					
+					if( $('#FieldBuilder_table_name').val() == '' || 
+						$('#FieldBuilder_input_type').val() == '' || 
+						$('#FieldBuilder_input_name').val() == '' ||
+						$('#FieldBuilder_input_label').val() == ''){
+						$('#myModal').modal({});
+						return;
+					}
+					
+					var ExampleForm = $('#ExampleForm');
+					
+//					var OFieldEditor = $('#field'+this.options.OCurrentField.attr('field_position')).data('OFieldEditor');
+//					console.log(OFieldEditor);
+					
+//					var OCurrentField = this.options.OCurrentField;
+//					console.log(this.options.OCurrentField);
+					
+					validators = this.getValidatorSettings();
+//					
+//					console.log(OCurrentFieldInEditor);
+//					// Set changed data back to the object the editor originally spawned from
+//					//OCurrentField.attr(OCurrentFieldInEditor.attr());
+					
+					var OFieldEditor = new can.Observe({
+						table_name: $('#FieldBuilder_table_name').val(),
+						input_type: $('#FieldBuilder_input_type').val(),
+						input_name: $('#FieldBuilder_input_name').val(),
+						input_label: $('#FieldBuilder_input_label').val(),
+						input_value: $('#FieldBuilder_default_value').val(),
+						default_value: $('#FieldBuilder_default_value').val(),
+						size: '',
+						required: '',
+						validators: validators
+					});
+					
+					// field_list[field_position] = OFieldEditor;
+					
+					console.log('Adding a new form field controller from the field builder');
+					
+					console.log(OFieldEditor);
+					
+					// Build a container for the form field to be applied
+					ExampleForm.append(
+						'<div class="field_editor_container" style="position:relative;">'
+							+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
+							+'<div class="field_container"></div>'
+							+'<div class="rules"></div>'
+						+'</div>'
+					);
+					
+					var CFormField = new FormFieldController($('.field_editor_container:last'),{
+						'OFieldEditor':OFieldEditor
+					});
+					
+				},
+				
+				'.methods change': function(element, jquery_event){
+					if($(element).filter(':checked').val()){
+						$(element).parent().next().show();
+					} else {
+						$(element).parent().next().hide();
+					}
+				}
+			});
+
+			
+			
+			
+			
+			// This controller manages the overall application and it's primary purpose is starting the application up and 
+			// generating example forms off of database table descriptions
+			var FormBuilderController = can.Control({ // Declare the Form Builder class structure
+				
+				init: function(element, options){
+					
+					console.log('Form builder initialized');
+
+				},
+				
+				'#TablePicker change': function(element, jquery_event){
+					
+					console.log('Caught change event from table generator picker');
+					
+					var example_form_name = resolve_object_name(element.val());
+					var table_name = element.val();
+					
+					$.ajax({
+						url: '/DeveloperTools/FormBuilder.JSON/?TableDefinition[table_name]='+table_name,
+						dataType: 'json',
+						success:function(data, textStatus, jqXHR){
+							var ExampleForm = $('#ExampleForm');
+							ExampleForm.unbind().html('');
+							
+//							var field_list = [];
+//							var field_controllers = [];
+//							
+							$.each(data, function(key, val){
+								//field_position = field_list.length;
+								
+								var OFieldEditor = new can.Observe({
+									table_name: example_form_name,
+									input_type: input_type_map[val.type],
+									input_name: key,
+									input_label: resolve_input_label(key),
+									input_value: (!val['default'])?'':val['default'],
+									default_value: (!val['default'])?'':val['default'],
+									size: val['size'],
+									required: (!val['required'])?'':'required',
+									validators: {}
+								});
+								
+								// field_list[field_position] = OFieldEditor;
+								
+								console.log('Add a new form field controller');
+								
+								// Build a container for the form field to be applied
+								ExampleForm.append(
+									'<div class="field_editor_container" style="position:relative;">'
+										+'<button class="top-right-link btn-mini" style="display:none">Edit</button>'
+										+'<div class="field_container"></div>'
+										+'<div class="rules"></div>'
+									+'</div>'
+								);
+								
+								var CFormField = new FormFieldController($('.field_editor_container:last'),{
+									'OFieldEditor':OFieldEditor
+								});
+								
+							});
+							
+						},
+						failure:function(jqXHR, textStatus, errorThrown){
+							console.log(textStatus + ':' + errorThrown);
+						}
+					});				
+				},
+				'#FieldPicker change': function(){
+					$('#field_type_picker').change(function(key,value){
+						console.log('show new options for this field type.');
+					});
+				}
+			});
+			
+			var CFieldBuilder = new FieldBuilderController('#AddField',{
+				// options to pass builder constructor
+			});
+		
+			var CFieldEditor = new FieldEditorController('#EditField',{
+				// options to pass editor constructor
+			});
+			
 			// Initialize the default control foro this page
-			new FormBuilderController('#FormBuilder',{
+			var CFormBuilder = new FormBuilderController('#FormBuilder',{
+				CFieldBuilder : CFieldBuilder,
+				CFieldEditor : CFieldEditor
 				// things that would be passed in if there were things that the app was waiting to load, which there arent
 			});
+
+			
 		});
 		
 	}
@@ -360,19 +591,3 @@ require(
 // Create settings in a hidden form that will be submitted to the server for the build request
 // Allow data bindings for settings that span between labels on sample form and hidden inputs
 // Create saving mechanism that builds the controller logic and form in the layout and saves them to the files already present and backs up the old files
-
-//TableDefinition.findOne( { table_name:'account_status' }, function( Table ){
-////console.log( Table );
-////console.log( Table.account_status_id );
-////account_status_id = TD.Data.account_status_id;
-////created_datetime = TD.Data.created_datetime;
-////hierarchical_order = TD.Data.hierarchical_order;
-////status_type = TD.Data.status_type;
-//
-//$.each(Table, function(key,value){
-//console.log(Table[key]);
-//});
-//
-//}, function( xhr ){
-//// called if an error
-//});

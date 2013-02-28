@@ -1,28 +1,55 @@
 
+<Label>Field Type:</Label>
 <select 
-	name="FieldEditor[field_type]" 
-	id="FieldEditor_field_type" 
-	class="input-block-level">
-	<option>Field Type:</option>
+	name="FieldEditor[input_type]" 
+	id="FieldEditor_input_type" 
+	class="input-block-level"
+	required="required">
 </select>
 
+<label for="FieldEditor_table_name">Table name</label>
 <input 
-	name="FieldEditor[input_label]" 
-	id="FieldEditor_field_type" 
+	name="FieldEditor[table_name]" 
+	id="FieldEditor_table_name" 
 	type="text" 
 	class="input-block-level" 
-	placeholder="Label" 
+	placeholder="example_table_name" 
+	required="required"
+	value="{{ table_name }}">
+
+<label for="FieldEditor_input_label">Input label</label>
+<input 
+	name="FieldEditor[input_label]" 
+	id="FieldEditor_input_label" 
+	type="text" 
+	class="input-block-level" 
+	placeholder="Example field label" 
+	required="required"
 	value="{{ input_label }}">
 
+<label for="FieldEditor_input_name">DB column name</label>
+<input 
+	name="FieldEditor[input_name]" 
+	id="FieldEditor_input_name" 
+	type="text" 
+	class="input-block-level" 
+	placeholder="example_column_name" 
+	required="required"
+	value="{{ input_name }}">
+
+<label for="FieldEditor_default_value">Default Value</label>
 <input 
 	name="FieldEditor[default_value]" 
 	id="FieldEditor_field_type" 
 	type="text" 
 	class="input-block-level" 
-	placeholder="Default Value" 
+	placeholder="" 
 	value="{{ default_value }}">
 
-<h5>Form validation methods:</h5>
+<div>
+	<button class="btn-mini" style="float:right" id="ShowHideButtonOnEditor">show</button>
+	<h5>Form validation methods:</h5>
+</div>
 
 <div id="FieldEditorValidators"></div>
 

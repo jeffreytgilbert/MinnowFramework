@@ -1,12 +1,12 @@
 
-<label class="desc" id="title{{ input_name }}" for="{{ form_name }}_{{ input_name }}">
+<label class="desc" id="title{{ input_name }}" for="{{ table_name }}_{{ input_name }}">
 	Name
 </label>
 <span>
-	<input id="{{ form_name }}_{{ input_name }}" class="field text fn" maxlength="{{ size }}" type="text" name="{{ form_name }}[{{ input_name }}]" value="{{ input_value }}" {{ required }}>
+	<input id="{{ table_name }}_{{ input_name }}" class="field text fn" maxlength="{{ size }}" type="text" name="{{ table_name }}[{{ input_name }}]" value="{{ input_value }}" {{ required }}>
 	<label>First</label>
 </span>
 <span>
-	<input id="{{ form_name }}_{{ input_name2 }}" class="field text ln" maxlength="{{ size }}" type="text" name="{{ form_name }}[{{ input_name2 }}]" value="{{ input_value2 }}" {{ required }}>
+	<input id="{{ table_name }}_{{ input_name2 }}" class="field text ln" maxlength="{{ size }}" type="text" name="{{ table_name }}[{{ input_name2 }}]" value="{{ input_value2 }}" {{ required }}>
 	<label>Last</label>
 </span>

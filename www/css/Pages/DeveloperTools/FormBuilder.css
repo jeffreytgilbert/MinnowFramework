@@ -43,6 +43,27 @@
 	background-color:rgba(0,0,0,0.05);	
 }
 
+.highlighted_as_editing_field{
+	background-color:rgba(0,0,0,0.1);	
+	margin-right:-19px;
+	padding-right:24px !important;
+	opacity:.55;
+-webkit-border-top-right-radius: 0 !important;
+-webkit-border-bottom-right-radius: 0 !important;
+-moz-border-bottom-right-top-right-radius: 0 !important;
+-moz-border-radius: 0 !important;
+border-top-right-radius: 0 !important;
+border-bottom-right-radius: 0 !important;
+	border-top:1px solid #ccc;
+	border-left:1px solid #ccc;
+	border-right:0;
+	border-bottom:1px solid #ccc;
+}
+
+.highlighted_as_editing_field .top-right-link{
+	display:none !important;
+}
+
 .field_editor_container{
 padding:5px;
 border-radius:5px;

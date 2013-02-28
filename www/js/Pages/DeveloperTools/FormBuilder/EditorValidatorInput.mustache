@@ -14,8 +14,10 @@
 					type="checkbox" 
 					class="methods" 
 					id="ev_{{validator_type}}_{{method_name}}" 
-					name="FormBuilder[Validator][{{validator_type}}][{{method_name}}]" 
+					name="Validator[{{validator_type}}][{{method_name}}]" 
 					value="{{method_name}}"
+					data-validator="{{validator_type}}"
+					data-method="{{method_name}}"
 				> <span class="method_name" data-toggle="tooltip" title="A method of {{class_origin}}">{{method_name}}</span>
 			</label>
 			<div class="parameters">
@@ -23,9 +25,12 @@
 				<input 
 					class="input-block-level" 
 					id="ep_{{validator_type}}_{{method_name}}_{{parameter_name}}" 
-					name="FormBuilder[Validator][{{validator_type}}][{{method_name}}][{{parameter_name}}]" 
+					name="Validator[{{validator_type}}][{{method_name}}][{{parameter_name}}]" 
 					type="text" 
 					placeholder="{{parameter_definition}}"
+					data-validator="{{validator_type}}"
+					data-method="{{method_name}}"
+					data-parameter="{{parameter_name}}"
 				>
 			{{/parameters}}
 			</div>
