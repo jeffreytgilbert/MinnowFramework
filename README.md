@@ -48,9 +48,11 @@ Alternative install instructions for Windows/FusionLeaf developers:
 -------------------------------------------------------------------
 
 Directions:
-1. Run FusionLeaf Studio.exe
-2. Click Start
-3. Browse to http://localhost
+-----------
+
+* Run FusionLeaf Studio.exe
+* Click Start
+* Browse to http://localhost
 
 > Location of ZIP: https://code.google.com/p/fusionleaf/downloads/list
 
