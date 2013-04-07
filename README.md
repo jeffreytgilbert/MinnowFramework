@@ -44,6 +44,16 @@ To install Minnow:
 * Edit your Apache's httpd.conf file to point your document root to the www folder (this folder can be named anything to reflect subdomains/cnames.
 * Restart Apache
 
+Alternative install instructions for Windows/FusionLeaf developers:
+-------------------------------------------------------------------
+
+Directions:
+1. Run FusionLeaf Studio.exe
+2. Click Start
+3. Browse to http://localhost
+
+> Location of ZIP: https://code.google.com/p/fusionleaf/downloads/list
+
 That should be it if you have all the requirements installed and set up correctly. Message me on github if you have any trouble and I'll help walk you through it.
 
 <a href='http://www.pledgie.com/campaigns/19118'><img alt='Click here to lend your support to: MinnowFramework development and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/19118.png?skin_name=chrome' border='0' /></a> ![MinnowFramwork](http://minnow.badpxl.com/img/Minnow-Framework-logo-icon.png) 
