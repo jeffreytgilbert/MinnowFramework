@@ -1,6 +1,6 @@
 Welcome to the MinnowFramework
 ==============================
-A tiny PHP framework for catching big fish. 
+Development for this project has been halted due to lack of traction and sufficiently better javascript frameworks using NodeJS (such as Express, Meteor, Ember, Angular, etc). If you'd like to continue this project on your own, please fork it without regret.
 
 Short list of pros:
 -------------------
